@@ -33,12 +33,11 @@
     "<span class="hljs-attribute">listen</span>": <span class="hljs-value"><span class="hljs-number">8080</span></span>,
     "<span class="hljs-attribute">local_cmds</span>": <span class="hljs-value">[<span class="hljs-string">"/test"</span>]
 </span>}</code></pre><p>生成 nginx 配置文件：</p>
-<pre class="hljs"><code><span class="hljs-tag">python</span> <span class="hljs-tag">genconf</span><span class="hljs-class">.py</span> <span class="hljs-tag">sample</span><span class="hljs-class">.json</span></code></pre><p>编译安装nginx（以search账户）:</p>
+<pre class="hljs"><code><span class="hljs-tag">python</span> <span class="hljs-tag">genconf</span><span class="hljs-class">.py</span> <span class="hljs-tag">sample</span><span class="hljs-class">.json</span></code></pre><p>编译安装nginx:</p>
 <pre class="hljs"><code><span class="hljs-keyword">cd</span> hustmqha/nginx/
-<span class="hljs-keyword">sh</span> Config.<span class="hljs-keyword">sh</span> &amp;&amp; <span class="hljs-keyword">make</span> install</code></pre><p>如果需要以其他账户安装，例如 <code>/home/jobs/bin</code> 目录，可修改 <code>hustmqha/nginx/Config.sh</code> 文件如下：</p>
-<pre class="hljs"><code>./configure --prefix=<span class="hljs-regexp">/home/jobs</span><span class="hljs-regexp">/bin/hustmqha</span> --add-<span class="hljs-keyword">module</span>=src/addon</code></pre><p>安装完成之后，启动 nginx：</p>
-<pre class="hljs"><code>cd <span class="hljs-regexp">/home/</span>search<span class="hljs-regexp">/hustmqha/</span>sbin
-.<span class="hljs-regexp">/nginx</span></code></pre><p>输入如下测试命令：</p>
+<span class="hljs-keyword">sh</span> Config.<span class="hljs-keyword">sh</span> &amp;&amp; <span class="hljs-keyword">make</span> install</code></pre><p>安装完成之后，启动 nginx：</p>
+<pre class="hljs"><code><span class="hljs-title">cd</span> /<span class="hljs-typedef"><span class="hljs-keyword">data</span>/hustmqha/sbin</span>
+./nginx</code></pre><p>输入如下测试命令：</p>
 <pre class="hljs"><code>curl -<span class="hljs-tag">i</span> -X GET <span class="hljs-string">'localhost:8080/test'</span></code></pre><p>可以看到服务器返回如下内容：</p>
 <pre class="hljs"><code><span class="hljs-status">HTTP/1.1 <span class="hljs-number">200</span> OK</span>
 <span class="hljs-attribute">Server</span>: <span class="hljs-string">nginx/1.9.4</span>

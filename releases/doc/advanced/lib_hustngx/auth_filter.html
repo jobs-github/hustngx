@@ -18,7 +18,7 @@
 <p>例如，你需要 <code>test</code> 无需验证即可访问 nginx， 则可以将它添加到 <code>auth_filter</code> 中，最终生成的 <code>nginx.conf</code> 该字段的内容如下：</p>
 <pre class="hljs"><code><span class="xml">location /test </span><span class="hljs-expression">{
     <span class="hljs-variable">hustmqha</span>;
-    <span class="hljs-begin-block">#http</span>_<span class="hljs-variable">basic</span>_<span class="hljs-variable">auth</span>_<span class="hljs-variable">file</span> <span class="hljs-end-block">/home</span><span class="hljs-end-block">/search</span><span class="hljs-end-block">/hustmqha</span><span class="hljs-end-block">/conf</span><span class="hljs-end-block">/htpasswd</span>;
+    <span class="hljs-begin-block">#http</span>_<span class="hljs-variable">basic</span>_<span class="hljs-variable">auth</span>_<span class="hljs-variable">file</span> <span class="hljs-end-block">/data</span><span class="hljs-end-block">/hustmqha</span><span class="hljs-end-block">/conf</span><span class="hljs-end-block">/htpasswd</span>;
 }</span><span class="xml"></span></code></pre><p>可以看到， <code>http_basic_auth_file</code> 被注释掉了。</p>
 <p><a href="./genconf.html">上一级</a></p>
 <p><a href="../../index.html">根目录</a></p>

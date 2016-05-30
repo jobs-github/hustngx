@@ -16,7 +16,7 @@
     python deploygen<span class="hljs-class">.py</span> [user] [cmd_file] [host_file] &gt; [output]
 sample:
     python deploygen<span class="hljs-class">.py</span> cmd<span class="hljs-class">.json</span> hosts &gt; deploy<span class="hljs-class">.sh</span>
-    python deploygen<span class="hljs-class">.py</span> search cmd<span class="hljs-class">.json</span> hosts &gt; deploy.sh</code></pre><h3 id="--1"><a class="header-link" href="#--1"></a>配置范例</h3>
+    python deploygen<span class="hljs-class">.py</span> jobs cmd<span class="hljs-class">.json</span> hosts &gt; deploy.sh</code></pre><h3 id="--1"><a class="header-link" href="#--1"></a>配置范例</h3>
 <p><code>host_file</code> 文件的编写方法如下：</p>
 <pre class="hljs"><code><span class="hljs-number">192.168</span><span class="hljs-number">.1</span><span class="hljs-number">.101</span>
 <span class="hljs-number">192.168</span><span class="hljs-number">.1</span><span class="hljs-number">.102</span>
@@ -27,7 +27,7 @@ sample:
         "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"ssh"</span></span>,
         "<span class="hljs-attribute">value</span>":
         <span class="hljs-value">[
-            <span class="hljs-string">"cd /home/search/"</span>,
+            <span class="hljs-string">"cd /data/"</span>,
             <span class="hljs-string">"test -d tmp || mkdir -p tmp"</span>,
             <span class="hljs-string">"cd /var/www/html/"</span>,
             <span class="hljs-string">"test -f status.html || echo \"ok\" &gt; status.html"</span>
@@ -37,22 +37,22 @@ sample:
         "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"scp"</span></span>,
         "<span class="hljs-attribute">value</span>":
         <span class="hljs-value">[
-            { "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"nginx.tar.gz"</span></span>, "<span class="hljs-attribute">remote</span>": <span class="hljs-value"><span class="hljs-string">"/home/search/tmp/nginx.tar.gz"</span> </span>},
-            { "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"upgrade.sh"</span></span>, "<span class="hljs-attribute">remote</span>": <span class="hljs-value"><span class="hljs-string">"/home/search/tmp/"</span> </span>}
+            { "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"nginx.tar.gz"</span></span>, "<span class="hljs-attribute">remote</span>": <span class="hljs-value"><span class="hljs-string">"/data/tmp/nginx.tar.gz"</span> </span>},
+            { "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"upgrade.sh"</span></span>, "<span class="hljs-attribute">remote</span>": <span class="hljs-value"><span class="hljs-string">"/data/tmp/"</span> </span>}
         ]
     </span>},
     {
         "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"ssh"</span></span>,
         "<span class="hljs-attribute">value</span>":
         <span class="hljs-value">[
-            <span class="hljs-string">"cd /home/search/tmp/"</span>,
+            <span class="hljs-string">"cd /data/tmp/"</span>,
             <span class="hljs-string">"rm -rf nginx"</span>,
             <span class="hljs-string">"tar -zxf nginx.tar.gz -C ."</span>,
-            <span class="hljs-string">"cd /home/search/tmp/nginx/"</span>,
+            <span class="hljs-string">"cd /data/tmp/nginx/"</span>,
             <span class="hljs-string">"sh Config.sh"</span>,
             <span class="hljs-string">"make -j"</span>,
             <span class="hljs-string">"make install"</span>,
-            <span class="hljs-string">"cd /home/search/tmp/"</span>,
+            <span class="hljs-string">"cd /data/tmp/"</span>,
             <span class="hljs-string">"rm -rf nginx"</span>,
             <span class="hljs-string">"rm -f nginx.tar.gz"</span>
         ]

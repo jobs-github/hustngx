@@ -17,11 +17,11 @@
 <li>参考 <a href="./development.html">Nginx Module Development Process</a> 的要点说明。</li>
 </ul>
 <h3 id="--2"><a class="header-link" href="#--2"></a>代码同步</h3>
-<p>假定现有的工程叫做 <code>hustmqha</code>，目录位于 <code>/home/search/src/hustmqha</code> 下，实现阶段中， <strong>同步生成的新代码至项目</strong> 通常可用如下方法完成（以 <code>hustngx</code> 生成的代码为例）：</p>
+<p>假定现有的工程叫做 <code>hustmqha</code>，目录位于 <code>/data/src/hustmqha</code> 下，实现阶段中， <strong>同步生成的新代码至项目</strong> 通常可用如下方法完成（以 <code>hustngx</code> 生成的代码为例）：</p>
 <ol class="list">
 <li>更新 <code>ngx_wizard</code> <a href="../advanced/ngx_wizard.html">配置文件</a>。</li>
-<li>用 <code>hustngx</code> 以及更新过的配置文件生成 <strong>全新的工程目录</strong> ，假定为 <code>/home/search/tools/hustngx/hustmqha</code> 。</li>
-<li>用文本比对工具（例如 <code>Beyond Compare</code>）对比 <code>/home/search/tools/hustngx/hustmqha</code> 以及 <code>/home/search/src/hustmqha</code> 的差异，并将 <code>/home/search/tools/hustngx/hustmqha</code> 新增的部分 <strong>逐行同步</strong> 至 <code>/home/search/src/hustmqha</code> 。</li>
+<li>用 <code>hustngx</code> 以及更新过的配置文件生成 <strong>全新的工程目录</strong> ，假定为 <code>/data/tools/hustngx/hustmqha</code> 。</li>
+<li>用文本比对工具（例如 <code>Beyond Compare</code>）对比 <code>/data/tools/hustngx/hustmqha</code> 以及 <code>/data/src/hustmqha</code> 的差异，并将 <code>/data/tools/hustngx/hustmqha</code> 新增的部分 <strong>逐行同步</strong> 至 <code>/data/src/hustmqha</code> 。</li>
 <li>如果需要增加新的命令处理接口，重复如上步骤。</li>
 </ol>
 <p><a href="./index.html">上一级</a></p>
