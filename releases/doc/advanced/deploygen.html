@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>deploygen</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="deploygen"><a class="header-link" href="#deploygen"></a>deploygen</h2>
+<p><code>deploygen</code> 是一个独立的代码部署工具，以 <code>json</code> 作为描述语言，生成 <code>hosts</code> 所定义的所有机器的 <strong>一键部署脚本</strong> 。</p>
+<h3 id="-"><a class="header-link" href="#-"></a>使用范例</h3>
+<pre class="hljs"><code>usage:
+    python deploygen<span class="hljs-class">.py</span> [user] [cmd_file] [host_file] &gt; [output]
+sample:
+    python deploygen<span class="hljs-class">.py</span> cmd<span class="hljs-class">.json</span> hosts &gt; deploy<span class="hljs-class">.sh</span>
+    python deploygen<span class="hljs-class">.py</span> search cmd<span class="hljs-class">.json</span> hosts &gt; deploy.sh</code></pre><h3 id="--1"><a class="header-link" href="#--1"></a>配置范例</h3>
+<p><code>host_file</code> 文件的编写方法如下：</p>
+<pre class="hljs"><code><span class="hljs-number">192.168</span><span class="hljs-number">.1</span><span class="hljs-number">.101</span>
+<span class="hljs-number">192.168</span><span class="hljs-number">.1</span><span class="hljs-number">.102</span>
+<span class="hljs-number">192.168</span><span class="hljs-number">.1</span><span class="hljs-number">.103</span></code></pre><p>每行可填写 IP 地址或者域名，各行之间通过回车分割。</p>
+<p>以下是一个完整的 <code>json</code> 配置文件，包含 <code>deploygen</code> 所支持的所有字段：</p>
+<pre class="hljs"><code>[
+    {
+        "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"ssh"</span></span>,
+        "<span class="hljs-attribute">value</span>":
+        <span class="hljs-value">[
+            <span class="hljs-string">"cd /home/search/"</span>,
+            <span class="hljs-string">"test -d tmp || mkdir -p tmp"</span>,
+            <span class="hljs-string">"cd /var/www/html/"</span>,
+            <span class="hljs-string">"test -f status.html || echo \"ok\" &gt; status.html"</span>
+        ]
+    </span>},
+    {
+        "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"scp"</span></span>,
+        "<span class="hljs-attribute">value</span>":
+        <span class="hljs-value">[
+            { "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"nginx.tar.gz"</span></span>, "<span class="hljs-attribute">remote</span>": <span class="hljs-value"><span class="hljs-string">"/home/search/tmp/nginx.tar.gz"</span> </span>},
+            { "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"upgrade.sh"</span></span>, "<span class="hljs-attribute">remote</span>": <span class="hljs-value"><span class="hljs-string">"/home/search/tmp/"</span> </span>}
+        ]
+    </span>},
+    {
+        "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"ssh"</span></span>,
+        "<span class="hljs-attribute">value</span>":
+        <span class="hljs-value">[
+            <span class="hljs-string">"cd /home/search/tmp/"</span>,
+            <span class="hljs-string">"rm -rf nginx"</span>,
+            <span class="hljs-string">"tar -zxf nginx.tar.gz -C ."</span>,
+            <span class="hljs-string">"cd /home/search/tmp/nginx/"</span>,
+            <span class="hljs-string">"sh Config.sh"</span>,
+            <span class="hljs-string">"make -j"</span>,
+            <span class="hljs-string">"make install"</span>,
+            <span class="hljs-string">"cd /home/search/tmp/"</span>,
+            <span class="hljs-string">"rm -rf nginx"</span>,
+            <span class="hljs-string">"rm -f nginx.tar.gz"</span>
+        ]
+    </span>}
+]</code></pre><h3 id="--2"><a class="header-link" href="#--2"></a>字段结构</h3>
+<p><a href="deploygen/key.html"><code>key</code></a><br><a href="deploygen/value.html"><code>value</code></a> =&gt; <a href="deploygen/scp_cmds.html"><code>scp_cmds</code></a>　<code>or</code>　<a href="deploygen/ssh_cmds.html"><code>ssh_cmds</code></a><br>　　　　　　<a href="deploygen/scp_cmd.html"><code>scp_cmd</code></a>  </p>
+<h3 id="--3"><a class="header-link" href="#--3"></a>字段约束</h3>
+<ul class="list">
+<li><p><a href="deploygen/key.html"><code>key</code></a> 如果定义为 <code>scp</code> ，则 <a href="deploygen/value.html"><code>value</code></a> 只能是 <a href="deploygen/scp_cmds.html"><code>scp_cmds</code></a>。</p>
+</li>
+<li><p><a href="deploygen/key.html"><code>key</code></a> 如果定义为 <code>ssh</code> ，则 <a href="deploygen/value.html"><code>value</code></a> 只能是 <a href="deploygen/ssh_cmds.html"><code>ssh_cmds</code></a>。</p>
+</li>
+</ul>
+<h3 id="--4"><a class="header-link" href="#--4"></a>特殊标签</h3>
+<ul class="list">
+<li><code>@index_place_holder</code> : 具体使用方法可参考 <a href="deploygen/ssh_cmds.html"><code>ssh_cmds</code></a> </li>
+</ul>
+<p><a href="./index.html">上一级</a></p>
+<p><a href="../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

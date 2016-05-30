@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>&#x60;auth_filter&#x60;</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="-auth_filter-"><a class="header-link" href="#-auth_filter-"></a><code>auth_filter</code></h2>
+<p><strong>类型:</strong> <code>array</code></p>
+<p><strong>值:</strong> <code>[&quot;&lt;localcmd&gt;&quot;, &quot;&lt;localcmd&gt;&quot;, ... , &quot;&lt;localcmd&gt;&quot;]</code></p>
+<p><strong>范例:</strong> <code>&quot;auth_filter&quot;: [&quot;test&quot;]</code></p>
+<p><strong>父节点:</strong> 无</p>
+<p><code>local_cmds</code> 中关闭 <code>http_basic_auth_module</code> 验证的命令列表。</p>
+<p>例如，你需要 <code>test</code> 无需验证即可访问 nginx， 则可以将它添加到 <code>auth_filter</code> 中，最终生成的 <code>nginx.conf</code> 该字段的内容如下：</p>
+<pre class="hljs"><code><span class="xml">location /test </span><span class="hljs-expression">{
+    <span class="hljs-variable">hustmqha</span>;
+    <span class="hljs-begin-block">#http</span>_<span class="hljs-variable">basic</span>_<span class="hljs-variable">auth</span>_<span class="hljs-variable">file</span> <span class="hljs-end-block">/home</span><span class="hljs-end-block">/search</span><span class="hljs-end-block">/hustmqha</span><span class="hljs-end-block">/conf</span><span class="hljs-end-block">/htpasswd</span>;
+}</span><span class="xml"></span></code></pre><p>可以看到， <code>http_basic_auth_file</code> 被注释掉了。</p>
+<p><a href="./genconf.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

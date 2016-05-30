@@ -1,0 +1,39 @@
+[
+    {
+        "key": "ssh",
+        "value":
+        [
+            "cd /home/search/",
+            "test -d tmp || mkdir -p tmp"
+        ]
+    },
+    {
+        "key": "scp",
+        "value":
+        [
+            { "local": "nginx.tar.gz", "remote": "/home/search/tmp/" },
+            { "local": "upgrade.sh", "remote": "/home/search/tmp/" }
+        ]
+    },
+    {
+        "key": "ssh",
+        "value":
+        [
+            "cd /home/search/tmp/",
+            "rm -rf nginx",
+            "tar -zxf nginx.tar.gz -C .",
+            "cd /home/search/tmp/nginx/",
+            "sh Config.sh",
+            "make -j",
+            "make install",
+            "cd /home/search/tmp/",
+            "rm -rf nginx",
+            "rm -f nginx.tar.gz",
+            "cd /home/search/tmp/",
+            "cp upgrade.sh /home/search/hustmqha/sbin/",
+            "cd /home/search/hustmqha/html/",
+            "rm -f status.html",
+            "echo \"ok\" > status.html"
+        ]
+    }
+]

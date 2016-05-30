@@ -1,0 +1,1 @@
+./configure --prefix=/home/search/hustdict --add-module=src/addon

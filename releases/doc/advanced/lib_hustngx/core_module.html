@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>核心扩展模块</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="-"><a class="header-link" href="#-"></a>核心扩展模块</h2>
+<h3 id="-lib_c_dict-"><a class="header-link" href="#-lib_c_dict-"></a><code>lib_c_dict</code></h3>
+<ul class="list">
+<li><code>c_dict.h</code></li>
+<li><code>c_dict.c</code></li>
+</ul>
+<p>利用 <code>hash table</code> 实现的字典，可以用于自定义 <code>key-value</code> 集合，并提供基本的 <code>set</code>, <code>get</code>, <code>remove</code>, <code>iterator</code> 接口。例如：</p>
+<pre class="hljs"><code><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span>
+{
+    <span class="hljs-keyword">hustmq_ha_queue_base_t</span> base;
+    <span class="hljs-keyword">char</span> <span class="hljs-built_in">queue</span>[HUSTMQ_HA_QUEUE_SIZE + <span class="hljs-number">1</span>];
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * host;
+} <span class="hljs-keyword">hustmq_ha_queue_item_t</span>;
+
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span>
+{
+    <span class="hljs-keyword">c_dict_t</span>(<span class="hljs-keyword">hustmq_ha_queue_item_t</span> *) host_dict; <span class="hljs-comment">// host as key, hustmq_ha_queue_item_t * as value</span>
+} <span class="hljs-keyword">hustmq_ha_queue_value_t</span>;
+
+<span class="hljs-keyword">hustmq_ha_queue_item_t</span> * hustmq_ha_host_dict_get(<span class="hljs-keyword">hustmq_ha_queue_value_t</span> * dict, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * key)
+{
+    <span class="hljs-keyword">if</span> (!dict)
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+    <span class="hljs-keyword">hustmq_ha_queue_item_t</span> ** val = c_dict_get(&amp;dict-&gt;host_dict, key);
+    <span class="hljs-keyword">return</span> val ? *val : <span class="hljs-number">0</span>;
+}
+
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">bool</span> __is_invalid(<span class="hljs-keyword">hustmq_ha_queue_value_t</span> * queue_val)
+{
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> * key;
+    <span class="hljs-keyword">c_dict_iter_t</span> iter = c_dict_iter(&amp;queue_val-&gt;host_dict);
+    <span class="hljs-keyword">while</span> ((key = c_dict_next(&amp;queue_val-&gt;host_dict, &amp;iter)))
+    {
+        <span class="hljs-keyword">hustmq_ha_queue_item_t</span> * queue_item = hustmq_ha_host_dict_get(queue_val, key);
+        <span class="hljs-keyword">if</span> (!queue_item-&gt;base.valid)
+        {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+}    </code></pre><h3 id="-lib_cjson_serialization-"><a class="header-link" href="#-lib_cjson_serialization-"></a><code>lib_cjson_serialization</code></h3>
+<ul class="list">
+<li><code>cjson_serialization.h</code></li>
+<li><code>cjson_serialization.c</code></li>
+<li><code>cjson_serialization.json</code></li>
+<li><code>cjson_serialization_base.h</code></li>
+<li><code>cjson_serialization_base.c</code></li>
+</ul>
+<p>基于 <code>cjson</code> 实现的一套对象序列化的基础库，结合 <code>jsoncgen</code> 可以发挥强大的生产力。可以参考 <code>cjson_serialization.json</code> 的内容如下：</p>
+<pre class="hljs"><code>{
+    "<span class="hljs-attribute">includes</span>": <span class="hljs-value">[<span class="hljs-string">"\"cjson_serialization_base.h\""</span>]</span>,
+    "<span class="hljs-attribute">structs</span>": 
+    <span class="hljs-value">[
+        {
+            "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"json_int_t"</span></span>,
+            "<span class="hljs-attribute">array_methods</span>":
+            <span class="hljs-value">[
+                <span class="hljs-string">"set"</span>, <span class="hljs-string">"eq"</span>, <span class="hljs-string">"dispose"</span>, 
+                <span class="hljs-string">"serialize"</span>, <span class="hljs-string">"deserialize"</span>, 
+                <span class="hljs-string">"dump"</span>, <span class="hljs-string">"loads"</span>, <span class="hljs-string">"save"</span>, <span class="hljs-string">"load"</span>
+            ]
+        </span>},
+        {
+            "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"json_str_t"</span></span>,
+            "<span class="hljs-attribute">array_methods</span>": 
+            <span class="hljs-value">[
+                <span class="hljs-string">"set"</span>, <span class="hljs-string">"eq"</span>, <span class="hljs-string">"dispose"</span>, 
+                <span class="hljs-string">"serialize"</span>, <span class="hljs-string">"deserialize"</span>, 
+                <span class="hljs-string">"dump"</span>, <span class="hljs-string">"loads"</span>, <span class="hljs-string">"save"</span>, <span class="hljs-string">"load"</span>
+            ]
+        </span>},
+        {
+            "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"double"</span></span>,
+            "<span class="hljs-attribute">array_methods</span>": 
+            <span class="hljs-value">[
+                <span class="hljs-string">"set"</span>, <span class="hljs-string">"eq"</span>, <span class="hljs-string">"dispose"</span>, 
+                <span class="hljs-string">"serialize"</span>, <span class="hljs-string">"deserialize"</span>, 
+                <span class="hljs-string">"dump"</span>, <span class="hljs-string">"loads"</span>, <span class="hljs-string">"save"</span>, <span class="hljs-string">"load"</span>
+            ]
+        </span>}
+    ]
+</span>}</code></pre><p>你只需要利用 <code>json</code> 定义对象的描述文件（ <code>cjson_serialization.json</code> ），然后使用 <code>jsoncgen</code> 即可生成对应的实现代码：</p>
+<pre class="hljs"><code><span class="hljs-tag">python</span> <span class="hljs-tag">jsoncgen</span><span class="hljs-class">.py</span> <span class="hljs-tag">-f</span> <span class="hljs-tag">cjson_serialization</span><span class="hljs-class">.json</span></code></pre><p>有关 <code>jsoncgen</code> 的详细用法，可以参考 <a href="../jsoncgen.html">后续章节</a>。</p>
+<h3 id="-lib_ngx_shm_dict-"><a class="header-link" href="#-lib_ngx_shm_dict-"></a><code>lib_ngx_shm_dict</code></h3>
+<ul class="list">
+<li><code>ngx_shm_dict_utils.h</code></li>
+<li><code>ngx_shm_dict_utils.c</code></li>
+<li><code>ngx_shm_dict_reader.h</code></li>
+<li><code>ngx_shm_dict_reader.c</code></li>
+<li><code>ngx_shm_dict_writer.h</code></li>
+<li><code>ngx_shm_dict_writer.c</code></li>
+<li><code>ngx_shm_dict_code.py</code></li>
+<li><code>ngx_shm_dict_code.h</code></li>
+<li><code>ngx_shm_dict_code.c</code></li>
+<li><code>ngx_shm_dict.h</code></li>
+<li><code>ngx_shm_dict.c</code></li>
+<li><code>ngx_shm_dict_test_utils.h</code></li>
+<li><code>ngx_shm_dict_test_utils.c</code></li>
+<li><code>ngx_shm_dict_test.py</code></li>
+<li><code>ngx_shm_dict_test.h</code></li>
+<li><code>ngx_shm_dict_test.c</code></li>
+</ul>
+<p>基于 <code>ngx_rbtree_t</code> 实现的共享内存字典。核心实现来源于 <a href="https://github.com/openresty/lua-nginx-module"><code>lua-nginx-module</code></a> （<code>src/ngx_http_lua_shdict.c</code>）。</p>
+<p>nginx 本身对于共享内存进行了封装，提供了如下操作共享内存的基本接口：</p>
+<pre class="hljs"><code><span class="hljs-keyword">ngx_shm_zone_t</span> * ngx_shared_memory_add(<span class="hljs-keyword">ngx_conf_t</span> *cf, <span class="hljs-keyword">ngx_str_t</span> *name, <span class="hljs-keyword">size_t</span> size, <span class="hljs-keyword">void</span> *tag);
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">ngx_slab_init</span><span class="hljs-params">(ngx_slab_pool_t *pool)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> * <span class="hljs-title">ngx_slab_alloc</span><span class="hljs-params">(ngx_slab_pool_t *pool, size_t size)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">ngx_slab_free</span><span class="hljs-params">(ngx_slab_pool_t *pool, <span class="hljs-keyword">void</span> *p)</span></span>;</code></pre><p>但即便有这些接口，编写基于共享内存的 nginx 模块依然需要大量的代码，其中不少是模式化的工作，具体可以参考：  </p>
+<ul class="list">
+<li><code>ngx_http_limit_req_module.c</code></li>
+<li><code>ngx_http_limit_conn_module.c</code></li>
+</ul>
+<p><code>lib_ngx_shm_dict</code> 将这些模式化的工作进行了抽象，封装成统一的 <code>key-value</code> 操作接口，使得编写基于共享内存的 nginx 模块变得简单。</p>
+<p><code>lib_ngx_shm_dict</code> 支持的基本类型包括：  </p>
+<ul class="list">
+<li><code>int8_t</code>  </li>
+<li><code>uint8_t</code>  </li>
+<li><code>int16_t</code>  </li>
+<li><code>uint16_t</code>  </li>
+<li><code>int32_t</code>  </li>
+<li><code>uint32_t</code>  </li>
+<li><code>int64_t</code>  </li>
+<li><code>uint64_t</code>  </li>
+<li><code>double</code>  </li>
+<li><code>ngx_str_t</code>  </li>
+<li><code>ngx_binary_t</code>  </li>
+</ul>
+<p><code>ngx_shm_dict_code.py</code> 用于生成 <code>ngx_shm_dict_code.h</code> 以及 <code>ngx_shm_dict_code.c</code>，提供所有基本类型的读写接口。以 <code>int8_t</code> 为例，生成的接口定义如下：</p>
+<pre class="hljs"><code><span class="hljs-type">int</span> ngx_shm_dict_get_int8(ngx_shm_zone_t * zone, ngx_str_t * key, int8_t * val);
+<span class="hljs-type">int</span> ngx_shm_dict_add_int8(ngx_shm_zone_t * zone, ngx_str_t * key, int8_t val, uint32_t expire);
+<span class="hljs-type">int</span> ngx_shm_dict_safe_add_int8(ngx_shm_zone_t * zone, ngx_str_t * key, int8_t val, uint32_t expire);
+<span class="hljs-type">int</span> ngx_shm_dict_replace_int8(ngx_shm_zone_t * zone, ngx_str_t * key, int8_t val, uint32_t expire);
+<span class="hljs-type">int</span> ngx_shm_dict_set_int8(ngx_shm_zone_t * zone, ngx_str_t * key, int8_t val, uint32_t expire);
+<span class="hljs-type">int</span> ngx_shm_dict_safe_set_int8(ngx_shm_zone_t * zone, ngx_str_t * key, int8_t val, uint32_t expire);
+<span class="hljs-type">int</span> ngx_shm_dict_incr_int8(ngx_shm_zone_t * zone, ngx_str_t * key, int8_t delta, uint32_t expire, int8_t * <span class="hljs-literal">result</span>);
+<span class="hljs-type">int</span> ngx_shm_dict_decr_int8(ngx_shm_zone_t * zone, ngx_str_t * key, int8_t delta, uint32_t expire, int8_t * <span class="hljs-literal">result</span>);</code></pre><p>其他数据类型的接口定义类似。</p>
+<p><code>ngx_shm_dict.h</code> 提供了对于共享内存字典的初始化以及批量操作的接口：</p>
+<pre class="hljs"><code><span class="hljs-keyword">ngx_shm_zone_t</span> * ngx_shm_dict_init(<span class="hljs-keyword">ngx_conf_t</span> * cf, <span class="hljs-keyword">ngx_str_t</span> * name, <span class="hljs-keyword">size_t</span> size, <span class="hljs-keyword">void</span> * module);
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">ngx_shm_dict_delete</span><span class="hljs-params">(ngx_shm_zone_t * zone, ngx_str_t * key)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">ngx_shm_dict_traverse</span><span class="hljs-params">(ngx_shm_zone_t * zone, ngx_shm_dict_tarverse_cb cb, <span class="hljs-keyword">void</span> * data)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">ngx_shm_dict_get_total_keys</span><span class="hljs-params">(ngx_shm_zone_t * zone, uint8_t include_expires, size_t * total)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">ngx_shm_dict_get_keys</span><span class="hljs-params">(ngx_shm_zone_t * zone, uint8_t include_expires, ngx_pool_t * pool, ngx_shm_dict_keys_t * keys)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">ngx_shm_dict_flush_all</span><span class="hljs-params">(ngx_shm_zone_t * zone)</span></span>;
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">ngx_shm_dict_flush_expired</span><span class="hljs-params">(ngx_shm_zone_t * zone, <span class="hljs-keyword">int</span> attempts)</span></span>;</code></pre><p><code>ngx_shm_dict_test.py</code> 用于生成 <code>ngx_shm_dict_test.h</code> 以及 <code>ngx_shm_dict_test.c</code> ，提供测试接口：</p>
+<pre class="hljs"><code><span class="hljs-keyword">ngx_int_t</span> ngx_shm_dict_test_read(<span class="hljs-keyword">ngx_shm_dict_read_args_t</span> * args, <span class="hljs-keyword">ngx_http_request_t</span> * r);
+<span class="hljs-keyword">ngx_int_t</span> ngx_shm_dict_test_write(<span class="hljs-keyword">ngx_shm_dict_write_args_t</span> * args);
+<span class="hljs-keyword">ngx_int_t</span> ngx_shm_dict_test_incr(<span class="hljs-keyword">ngx_pool_t</span> * pool, <span class="hljs-keyword">ngx_shm_dict_mod_args_t</span> * args);
+<span class="hljs-keyword">ngx_int_t</span> ngx_shm_dict_test_decr(<span class="hljs-keyword">ngx_pool_t</span> * pool, <span class="hljs-keyword">ngx_shm_dict_mod_args_t</span> * args);</code></pre><p>关于 <code>ngx_shm_dict</code> 的详细使用方式，可以参考 <a href="../../appendix/hustdict.html"><code>hustdict</code></a>。</p>
+<p><a href="../lib_hustngx.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

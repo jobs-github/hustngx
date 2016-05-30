@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>jsoncgen</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="jsoncgen"><a class="header-link" href="#jsoncgen"></a>jsoncgen</h2>
+<p><code>jsoncgen</code> 是一个独立而且完整的代码生成工具，以 <code>json</code> 作为描述语言，支持基于 <a href="https://github.com/kbranigan/cJSON"><code>cjson</code></a> 或者 <a href="https://github.com/akheron/jansson"><code>jansson</code></a> 作为 <code>json</code> 的底层解析库，可以批量生成该工具所支持的C语言结构体的函数实现代码。</p>
+<p>目前 <code>hustngx</code> 使用 <code>cjson</code> 作为 <code>json</code> 序列化基础库的实现。</p>
+<h3 id="-"><a class="header-link" href="#-"></a>使用范例</h3>
+<pre class="hljs"><code>usage:
+    python jsoncgen.py [lib] [path] filelist
+        [lib]
+            -j: <span class="hljs-operator"><span class="hljs-keyword">use</span> jansson <span class="hljs-keyword">as</span> <span class="hljs-keyword">json</span> <span class="hljs-keyword">library</span>, 
+                otherwise <span class="hljs-keyword">use</span> cjson <span class="hljs-keyword">as</span> <span class="hljs-keyword">json</span> <span class="hljs-keyword">library</span>
+                NOTE: cjson will be used <span class="hljs-keyword">as</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">value</span>
+        [<span class="hljs-keyword">path</span>]
+            -<span class="hljs-keyword">f</span>: <span class="hljs-keyword">use</span> <span class="hljs-keyword">file</span> <span class="hljs-keyword">in</span> filelist
+            -<span class="hljs-keyword">p</span>: <span class="hljs-keyword">use</span> dir <span class="hljs-keyword">in</span> filelist, will be parsed <span class="hljs-keyword">recursive</span>
+
+<span class="hljs-keyword">sample</span>:
+    python jsoncgen.py -<span class="hljs-keyword">f</span> file1.<span class="hljs-keyword">json</span> file2.<span class="hljs-keyword">json</span> file3.<span class="hljs-keyword">json</span>
+    python jsoncgen.py -<span class="hljs-keyword">p</span> ./dir1/ ./dir2/ ./dir3/
+    python jsoncgen.py -j -<span class="hljs-keyword">f</span> file1.<span class="hljs-keyword">json</span> file2.<span class="hljs-keyword">json</span> file3.<span class="hljs-keyword">json</span>
+    python jsoncgen.py -j -<span class="hljs-keyword">p</span> ./dir1/ ./dir2/ ./dir3/</span></code></pre><h3 id="--1"><a class="header-link" href="#--1"></a>配置范例</h3>
+<p>以下是一个完整的配置文件，包含 <code>jsoncgen</code> 所支持的所有字段：</p>
+<pre class="hljs"><code>{
+    "<span class="hljs-attribute">includes</span>": <span class="hljs-value">[<span class="hljs-string">"\"cjson_serialization_base.h\""</span>]</span>,
+    "<span class="hljs-attribute">structs</span>": 
+    <span class="hljs-value">[
+        {
+            "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"SampleStruct"</span></span>,
+            "<span class="hljs-attribute">members</span>":
+            <span class="hljs-value">[
+                [<span class="hljs-string">"json_int_t"</span>, <span class="hljs-string">"int_val"</span>],
+                [<span class="hljs-string">"double"</span>, <span class="hljs-string">"double_val"</span>],
+                [<span class="hljs-string">"json_str_t"</span>, <span class="hljs-string">"str_val"</span>]
+            ]</span>,
+            "<span class="hljs-attribute">methods</span>" : 
+            <span class="hljs-value">[
+                <span class="hljs-string">"set"</span>, <span class="hljs-string">"eq"</span>, <span class="hljs-string">"dispose"</span>, 
+                <span class="hljs-string">"serialize"</span>, <span class="hljs-string">"deserialize"</span>, 
+                <span class="hljs-string">"dump"</span>, <span class="hljs-string">"loads"</span>, <span class="hljs-string">"save"</span>, <span class="hljs-string">"load"</span>
+            ]</span>,
+            "<span class="hljs-attribute">array_methods</span>":
+            <span class="hljs-value">[
+                <span class="hljs-string">"set"</span>, <span class="hljs-string">"eq"</span>, <span class="hljs-string">"dispose"</span>, 
+                <span class="hljs-string">"serialize"</span>, <span class="hljs-string">"deserialize"</span>, 
+                <span class="hljs-string">"dump"</span>, <span class="hljs-string">"loads"</span>, <span class="hljs-string">"save"</span>, <span class="hljs-string">"load"</span>
+            ]
+        </span>}
+    ]
+</span>}</code></pre><h3 id="--2"><a class="header-link" href="#--2"></a>字段结构</h3>
+<p><a href="jsoncgen/includes.html"><code>includes</code></a><br><a href="jsoncgen/structs.html"><code>structs</code></a><br>　　<a href="jsoncgen/struct.html"><code>struct</code></a><br>　　　　<a href="jsoncgen/name.html"><code>name</code></a><br>　　　　<a href="jsoncgen/members.html"><code>members</code></a><br>　　　　　　<a href="jsoncgen/member.html"><code>member</code></a><br>　　　　<a href="jsoncgen/methods.html"><code>methods</code></a><br>　　　　　　<a href="jsoncgen/method.html"><code>method</code></a><br>　　　　<a href="jsoncgen/array_methods.html"><code>array_methods</code></a><br>　　　　　　<a href="jsoncgen/array_method.html"><code>array_method</code></a>  </p>
+<h3 id="--3"><a class="header-link" href="#--3"></a>字段约束</h3>
+<ul class="list">
+<li><p><a href="jsoncgen/members.html"><code>members</code></a> 和 <a href="jsoncgen/array_methods.html"><code>array_methods</code></a> 至少要定义一个，不可以两个都忽略。</p>
+<ul class="list">
+<li><p>建议定义 <a href="jsoncgen/members.html"><code>members</code></a>，把 <a href="jsoncgen/array_methods.html"><code>array_methods</code></a> 作为可选字段。</p>
+</li>
+<li><p>特殊情况下，可以只定义 <a href="jsoncgen/array_methods.html"><code>array_methods</code></a> ，用于生成基本数据类型的 <strong>数组</strong> 相关的函数实现，可参考 <a href="../lib_hustngx/core_module.html"><code>cjson_serialization</code></a> ， <strong>这种做法你不会用到，因为这只适用于基本类型的数组代码生成，不适用于自定义类型</strong> 。</p>
+</li>
+</ul>
+</li>
+<li><p><a href="jsoncgen/methods.html"><code>methods</code></a> 和 <a href="jsoncgen/array_methods.html"><code>array_methods</code></a> 至少要定义一个，不可以两个都忽略。</p>
+<ul class="list">
+<li><p>建议定义 <a href="jsoncgen/methods.html"><code>methods</code></a>，把 <a href="jsoncgen/array_methods.html"><code>array_methods</code></a> 作为可选字段。</p>
+</li>
+<li><p>如果同时定义了两者，则 <a href="jsoncgen/array_methods.html"><code>array_methods</code></a> 所包含的字段必须全部在 <a href="jsoncgen/methods.html"><code>methods</code></a> 中定义。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><a href="./index.html">上一级</a></p>
+<p><a href="../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

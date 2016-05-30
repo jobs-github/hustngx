@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>&#x60;gen_post_subrequest&#x60;</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="-gen_post_subrequest-"><a class="header-link" href="#-gen_post_subrequest-"></a><code>gen_post_subrequest</code></h2>
+<p><strong>类型:</strong> <code>bool</code></p>
+<p><strong>值:</strong> <code>true | false</code></p>
+<p><strong>属性:</strong> 可选</p>
+<p><strong>父节点:</strong> <a href="./sequential_subrequests.html">sequential_subrequests</a></p>
+<p>是否生成 <code>subrequest</code> 处理完毕之后的回调函数。</p>
+<p>如果配置为 <code>false</code> , 或者忽略该字段，则使用 <strong>公共的回调函数(默认行为)</strong> ；</p>
+<p>如果配置为 <code>true</code> ，则会在对应的 <a href="./handler.html">handler</a> 的代码中生成该文件 <strong>专有的回调函数</strong> ，例如：</p>
+<pre class="hljs"><code>static ngx_int_t __post_subrequest_handler(
+    ngx_http_request_t * r, <span class="hljs-literal">void</span> * <span class="hljs-built_in">data</span>, ngx_int_t rc)
+{
+    hustmqha_autost_ctx_t * ctx = ngx_http_get_addon_module_ctx(r<span class="hljs-subst">-&gt;</span><span class="hljs-keyword">parent</span>);
+    <span class="hljs-keyword">if</span> (ctx <span class="hljs-subst">&amp;&amp;</span> NGX_HTTP_OK == r<span class="hljs-subst">-&gt;</span>headers_out<span class="hljs-built_in">.</span>status)
+    {
+        ctx<span class="hljs-subst">-&gt;</span>base<span class="hljs-built_in">.</span>response<span class="hljs-built_in">.</span>len = ngx_http_get_buf_size(
+            <span class="hljs-subst">&amp;</span>r<span class="hljs-subst">-&gt;</span>upstream<span class="hljs-subst">-&gt;</span>buffer);
+        ctx<span class="hljs-subst">-&gt;</span>base<span class="hljs-built_in">.</span>response<span class="hljs-built_in">.</span><span class="hljs-built_in">data</span> = r<span class="hljs-subst">-&gt;</span>upstream<span class="hljs-subst">-&gt;</span>buffer<span class="hljs-built_in">.</span>pos;
+        <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> you can process the response from backend server here</span>
+    }
+    <span class="hljs-keyword">return</span> ngx_http_finish_subrequest(r);
+}</code></pre><p>通常 nginx 模块对于不同命令的处理逻辑都是不一样的， 因此 <strong>大多数情况下，你需要将该字段配置成 true , 除非你确定公共的回调函数可以 100% 满足你的需求</strong> 。</p>
+<p><a href="../ngx_wizard.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

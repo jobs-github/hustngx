@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>parallel subrequests</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="parallel-subrequests"><a class="header-link" href="#parallel-subrequests"></a>parallel subrequests</h2>
+<p>本节重点讲解 <code>parallel subrequests</code> （多轮并行子请求）相关的技术原理。在阅读本节之前，请先阅读 <a href="./sequential_subrequests.html"><code>sequential subrequests</code></a> （多轮串行子请求）一节的内容。</p>
+<h3 id="-parallel-subrequests-"><a class="header-link" href="#-parallel-subrequests-"></a><code>parallel subrequests</code> 技术的现状</h3>
+<p>基于 <code>nginx</code> 自身提供的 <a href="http://lxr.nginx.org/source/src/http/ngx_http_core_module.c"><code>ngx_http_subrequest</code></a> 很难写出正确的  <code>parallel subrequests</code> 的代码。事实上 <a href="http://www.evanmiller.org/nginx-modules-guide-advanced.html">Emiller&#39;s Advanced Topics In Nginx Module Development</a> 一书中，对于这个主题做了极其简短的描述：</p>
+<blockquote>
+<p>It&#39;s also possible to issue several subrequests at once without waiting for previous subrequests to finish. This technique is, in fact, too advanced even for Emiller&#39;s Advanced Topics in Nginx Module Development. See the SSI module for an example.</p>
+</blockquote>
+<p>翻译成一句话就是：这个主题太复杂了，三言两语讲不清，自己去看 <a href="http://lxr.nginx.org/source/src/http/modules/ngx_http_ssi_filter_module.c"><code>SSI module</code></a> 的源代码吧，接近3000行的一个文件。。。</p>
+<p>曾经笔者尝试去读懂这个文件，以便探求 <code>parallel subrequests</code> 的技术原理，后来放弃了，因为里面处处充斥着 <code>goto</code> 和超过 <code>500</code> 行以上的巨无霸函数。。。</p>
+<h3 id="-ngx_http_subrequest-"><a class="header-link" href="#-ngx_http_subrequest-"></a><code>ngx_http_subrequest</code> 的局限</h3>
+<p><code>ngx_http_subrequest</code> 本质上利用了 <a href="http://lxr.nginx.org/source/src/http/modules/ngx_http_proxy_module.c"><code>ngx_http_proxy_module</code></a> 来实现 <code>http client</code> 的功能。这导致所有基于 <code>ngx_http_subrequest</code> 实现的功能必须融合到 <code>ngx_http_run_posted_requests</code> 所包含的循环之中。nginx本身的设计就是，每处理完一个事件后，将会检查有没有它对应的一个post事件（一对一），如果有则处理。</p>
+<pre class="hljs"><code><span class="hljs-literal">void</span>
+ngx_http_run_posted_requests(ngx_connection_t *c)
+{
+    ngx_http_request_t         *r;
+    ngx_http_posted_request_t  *pr;
+
+    f<span class="hljs-subst">or</span> ( ;; ) {
+
+        <span class="hljs-keyword">if</span> (c<span class="hljs-subst">-&gt;</span>destroyed) {
+            <span class="hljs-keyword">return</span>;
+        }
+
+        r = c<span class="hljs-subst">-&gt;</span><span class="hljs-built_in">data</span>;
+        pr = r<span class="hljs-subst">-&gt;</span>main<span class="hljs-subst">-&gt;</span>posted_requests;
+
+        <span class="hljs-keyword">if</span> (pr == <span class="hljs-built_in">NULL</span>) {
+            <span class="hljs-keyword">return</span>;
+        }
+
+        r<span class="hljs-subst">-&gt;</span>main<span class="hljs-subst">-&gt;</span>posted_requests = pr<span class="hljs-subst">-&gt;</span>next;
+
+        r = pr<span class="hljs-subst">-&gt;</span>request;
+
+        ngx_http_set_log_request(c<span class="hljs-subst">-&gt;</span><span class="hljs-keyword">log</span>, r);
+
+        ngx_log_debug2(NGX_LOG_DEBUG_HTTP, c<span class="hljs-subst">-&gt;</span><span class="hljs-keyword">log</span>, <span class="hljs-number">0</span>,
+                       <span class="hljs-string">"http posted request: \"%V?%V\""</span>, <span class="hljs-subst">&amp;</span>r<span class="hljs-subst">-&gt;</span>uri, <span class="hljs-subst">&amp;</span>r<span class="hljs-subst">-&gt;</span>args);
+
+        r<span class="hljs-subst">-&gt;</span>write_event_handler(r);
+    }
+}</code></pre><p>因此你很难用如下这种直观的方式生成多个子请求：</p>
+<pre class="hljs"><code><span class="hljs-keyword">for</span> (<span class="hljs-built_in">i</span> = <span class="hljs-number">0</span>; <span class="hljs-built_in">i</span> &lt; requests; ++<span class="hljs-built_in">i</span>)
+<span class="hljs-cell">{
+    ngx_http_subrequest(...);
+}</span></code></pre><h3 id="-parallel-subrequests--1"><a class="header-link" href="#-parallel-subrequests--1"></a><code>parallel subrequests</code> 技术要点</h3>
+<p><code>hustngx</code> 采用了一种和 <code>ngx_http_subrequest</code> 完全不同的思路来实现 <code>parallel subrequests</code>。具体来讲， <code>hustngx</code> 实现了一套独立的 <code>http client</code> 来完成反向代理的功能，参考 <a href="lib_hustngx/http_module.html"><code>ngx_http_fetch</code></a>，利用这套实现可以摆脱 <code>ngx_http_subrequest</code> 的局限。</p>
+<p>基于 <code>ngx_http_fetch</code> 的 <code>parallel subrequests</code> 编程范式如下：</p>
+<ul class="list">
+<li>在主循环中调用 <code>ngx_http_fetch</code> 生成多个子请求</li>
+<li><code>r-&gt;main-&gt;count</code> 引用计数加一，将主请求挂住，同时主请求的处理函数返回 <code>NGX_DONE</code></li>
+<li>编写 <code>post_upstream</code> 的实现，处理子请求结果</li>
+<li>合并子请求结果，向主请求返回该结果，释放主请求资源</li>
+</ul>
+<p>具体的实现代码样例可参考如下的写法：</p>
+<pre class="hljs"><code><span class="hljs-comment">// 定义上下文</span>
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span>
+{
+    <span class="hljs-keyword">ngx_http_request_t</span> * r;
+    <span class="hljs-keyword">size_t</span> backends;
+    <span class="hljs-keyword">size_t</span> requests;
+    <span class="hljs-keyword">size_t</span> finished;
+    <span class="hljs-keyword">size_t</span> err_count;
+    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> add your fields here</span>
+} <span class="hljs-keyword">hustmq_ha_autost_ctx_t</span>;
+
+<span class="hljs-comment">// 此处必须显示调用 ngx_http_finalize_request</span>
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> __finialize(<span class="hljs-keyword">ngx_uint_t</span> status, <span class="hljs-keyword">ngx_http_request_t</span> *r)
+{
+    <span class="hljs-keyword">ngx_int_t</span> rc = ngx_http_send_response_imp(status, <span class="hljs-literal">NULL</span>, r);
+    ngx_http_finalize_request(r, rc);
+}
+
+<span class="hljs-comment">// 子请求的回调接口</span>
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">ngx_int_t</span> __post_upstream(<span class="hljs-keyword">ngx_http_request_t</span> * r, <span class="hljs-keyword">void</span> * data, <span class="hljs-keyword">ngx_int_t</span> rc)
+{
+    <span class="hljs-keyword">hustmq_ha_autost_ctx_t</span> * ctx = data;
+    <span class="hljs-comment">// 每完成一个子请求，都将计数器加一</span>
+    ++ctx-&gt;finished;
+
+    <span class="hljs-comment">// 处理当前子请求的结果</span>
+    <span class="hljs-keyword">if</span> (NGX_OK == rc)
+    {
+        <span class="hljs-keyword">if</span> (NGX_HTTP_OK != r-&gt;headers_out.status)
+        {
+            ++ctx-&gt;err_count;
+        }
+    }
+
+    <span class="hljs-comment">// 判断所有的子请求是否完成</span>
+    <span class="hljs-keyword">if</span> (ctx-&gt;finished &gt;= ctx-&gt;requests)
+    {
+        <span class="hljs-comment">// 合并子请求的结果，将结果返回给主请求</span>
+        __finialize((ctx-&gt;requests &lt; ctx-&gt;backends || ctx-&gt;err_count &gt; <span class="hljs-number">0</span>) ? NGX_HTTP_NOT_FOUND : NGX_HTTP_OK, ctx-&gt;r);
+    }
+    <span class="hljs-keyword">return</span> NGX_OK;
+}
+
+<span class="hljs-comment">// 生成多轮并行子请求的入口</span>
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">ngx_int_t</span> __parallel_subrequests(<span class="hljs-keyword">ngx_str_t</span> * backend_uri, <span class="hljs-keyword">ngx_http_request_t</span> * r)
+{
+    <span class="hljs-keyword">ngx_http_hustmq_ha_main_conf_t</span> * mcf = hustmq_ha_get_module_main_conf(r);
+    <span class="hljs-keyword">if</span> (!mcf)
+    {
+        <span class="hljs-keyword">return</span> NGX_ERROR;
+    }
+    <span class="hljs-keyword">hustmq_ha_autost_ctx_t</span> * ctx = ngx_palloc(r-&gt;pool, <span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">hustmq_ha_autost_ctx_t</span>));
+    <span class="hljs-keyword">if</span> (!ctx)
+    {
+        <span class="hljs-keyword">return</span> NGX_ERROR;
+    }
+    <span class="hljs-built_in">memset</span>(ctx, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">hustmq_ha_autost_ctx_t</span>));
+    ngx_http_set_addon_module_ctx(r, ctx);
+    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> you can initialize ctx here</span>
+
+    ctx-&gt;r = r;
+    ctx-&gt;backends = ngx_http_get_backend_count();
+    <span class="hljs-comment">// 设置子请求总数</span>
+    ctx-&gt;requests = ctx-&gt;backends;
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">ngx_http_fetch_header_t</span> headers[] = {
+            { ngx_string(<span class="hljs-string">"Connection"</span>), ngx_string(<span class="hljs-string">"Keep-Alive"</span>) },
+            { ngx_string(<span class="hljs-string">"Content-Type"</span>), ngx_string(<span class="hljs-string">"text/plain"</span>) }
+    };
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">size_t</span> headers_len = <span class="hljs-keyword">sizeof</span>(headers) / <span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">ngx_http_fetch_header_t</span>);
+    <span class="hljs-keyword">ngx_http_auth_basic_key_t</span> auth = { mcf-&gt;username, mcf-&gt;password  };
+
+    <span class="hljs-keyword">ngx_http_upstream_rr_peers_t</span> * peers = ngx_http_get_backends();
+    <span class="hljs-keyword">ngx_http_upstream_rr_peer_t</span> * peer = peers-&gt;peer;
+    <span class="hljs-keyword">while</span> (peer)
+    {
+        <span class="hljs-keyword">ngx_http_fetch_args_t</span> args = {
+            NGX_HTTP_GET,
+            { peer-&gt;sockaddr, peer-&gt;socklen, &amp;peer-&gt;name, peer },
+            *backend_uri,
+            ngx_null_string,
+            { headers, headers_len },
+            ngx_null_string,
+            { <span class="hljs-literal">NULL</span>, <span class="hljs-literal">NULL</span> },
+            { __post_upstream, ctx }
+        };
+        <span class="hljs-comment">// 生成子请求</span>
+        <span class="hljs-keyword">ngx_int_t</span> rc = ngx_http_fetch(&amp;args, &amp;auth);
+        <span class="hljs-keyword">if</span> (NGX_OK != rc)
+        {
+            --ctx-&gt;requests;
+        }
+        peer = peer-&gt;next;
+    }
+    <span class="hljs-keyword">if</span> (ctx-&gt;requests &lt; <span class="hljs-number">1</span>)
+    {
+        <span class="hljs-keyword">return</span> NGX_ERROR;
+    }
+    <span class="hljs-comment">// 引用计数加一，挂住主请求</span>
+    ++r-&gt;main-&gt;count;
+    r-&gt;write_event_handler = ngx_http_request_empty_handler;
+    <span class="hljs-keyword">return</span> NGX_OK;
+}
+
+<span class="hljs-comment">// 主请求的入口函数</span>
+<span class="hljs-keyword">ngx_int_t</span> hustmq_ha_autost_handler(<span class="hljs-keyword">ngx_str_t</span> * backend_uri, <span class="hljs-keyword">ngx_http_request_t</span> *r)
+{
+    <span class="hljs-keyword">if</span> (NGX_ERROR == __parallel_subrequests(backend_uri, r))
+    {
+        ngx_http_send_response_imp(NGX_HTTP_NOT_FOUND, <span class="hljs-literal">NULL</span>, r);
+    }
+    <span class="hljs-comment">// 此处需要返回 NGX_DONE，通知 nginx 当前请求已经处理完毕</span>
+    <span class="hljs-keyword">return</span> NGX_DONE;
+}</code></pre><p><a href="./index.html">上一级</a></p>
+<p><a href="../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

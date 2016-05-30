@@ -1,0 +1,498 @@
+{
+    "module": "hustdb_ha",
+    "includes": ["ngx_http_peer_selector", "ngx_http_fetch"],
+    "main_conf":
+    [
+        ["bool", "debug_sync"],
+        ["bool", "disable_sync"],
+        ["int", "sync_threads"],
+        ["time", "sync_release_interval"],
+        ["time", "sync_checkdb_interval"],
+        ["time", "sync_checklog_interval"],
+        ["string", "zlog_mdc"],
+        ["string", "hustdbtable_file"],
+        ["string", "hustdb_ha_shm_name"],
+        ["size", "hustdb_ha_shm_size"],
+        ["string", "public_pem"],
+        ["int", "identifier_cache_size"],
+        ["time", "identifier_timeout"]
+    ],
+    "handlers":
+    [
+        {
+            "uri": "get",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/get",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "get2",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/get",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "exist",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/exist",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "put",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/put",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "del",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/del",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "keys",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/keys",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests": null
+                }
+            }
+        },
+        {
+            "uri": "hset",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/hset",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "hget",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/hget",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "hget2",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/hget",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "hdel",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/hdel",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "hexist",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/hexist",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "hkeys",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/hkeys",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests": null
+                }
+            }
+        },
+        {
+            "uri": "sadd",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/sadd",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "srem",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/srem",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "sismember",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/sismember",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "smembers",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/smembers",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests": null
+                }
+            }
+        },
+        {
+            "uri": "file_count",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/file_count",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests": null
+                }
+            }
+        },
+        {
+            "uri": "stat",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/stat",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests": null
+                }
+            }
+        },
+        {
+            "uri": "stat_all",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/stat_all",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests": null
+                }
+            }
+        },
+        {
+            "uri": "peer_count"
+        },
+        {
+            "uri": "sync_status"
+        },
+        {
+            "uri": "get_table"
+        },
+        {
+            "uri": "set_table",
+            "action_for_request_body": "read"
+        },
+        {
+            "uri": "zismember",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/zismember",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "zscore",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/zscore",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "zscore2",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/zscore",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "zadd",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/zadd",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "zrem",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/zrem",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "zrangebyrank",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/zrangebyrank",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests": null
+                }
+            }
+        },
+        {
+            "uri": "zrangebyscore",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/zrangebyscore",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests": null
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>get_keys</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="get_keys"><a class="header-link" href="#get_keys"></a>get_keys</h2>
+<p><strong>接口:</strong> <code>/get_keys</code></p>
+<p><strong>方法:</strong> <code>GET</code></p>
+<p><strong>参数:</strong> </p>
+<ul class="list">
+<li><strong>all</strong> （可选）<br>可选值参考：<code>true | false</code>  。<br>当值为 <code>true</code> 时，会获取所有的 <code>key</code>（包含已过期的）；否则只获取未过期的key。<br>如果参数中不包含 <code>all</code> 字段，默认按 <code>false</code> 处理。</li>
+</ul>
+<p><strong>使用范例:</strong></p>
+<pre class="hljs"><code>curl -<span class="hljs-tag">i</span> -X GET <span class="hljs-string">"http://localhost:8085/get_keys?all=true"</span></code></pre><p><a href="../hustdict.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

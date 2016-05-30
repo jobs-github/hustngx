@@ -1,0 +1,16 @@
+ngx_addon_name=ngx_http_hustdict_module
+HTTP_MODULES="$HTTP_MODULES ngx_http_hustdict_module"
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS \
+    $ngx_addon_dir/../core/ngx_shm_dict_test_utils.c\
+    $ngx_addon_dir/../core/ngx_shm_dict_test.c\
+    $ngx_addon_dir/hustdict_utils.c\
+    $ngx_addon_dir/hustdict_set_handler.c\
+    $ngx_addon_dir/hustdict_get_handler.c\
+    $ngx_addon_dir/hustdict_del_handler.c\
+    $ngx_addon_dir/hustdict_flush_all_handler.c\
+    $ngx_addon_dir/hustdict_flush_expired_handler.c\
+    $ngx_addon_dir/hustdict_keys_handler.c\
+    $ngx_addon_dir/hustdict_get_keys_handler.c\
+    $ngx_addon_dir/hustdict_incr_handler.c\
+    $ngx_addon_dir/hustdict_decr_handler.c\
+    $ngx_addon_dir/ngx_http_hustdict_module.c"

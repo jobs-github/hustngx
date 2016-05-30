@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>member</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="member"><a class="header-link" href="#member"></a>member</h2>
+<p><strong>类型:</strong> <code>array</code></p>
+<p><strong>值:</strong> <code>[&quot;&lt;type-str&gt;&quot;, &quot;&lt;name-str&gt;&quot;]</code></p>
+<p><strong>属性:</strong> 参考 <a href="./members.html">members</a></p>
+<p><strong>父节点:</strong> <a href="./members.html">members</a></p>
+<p>描述结构体的成员，其中 <code>&lt;type-str&gt;</code> 可以是基本类型，也可以是自定义类型。</p>
+<p><code>jsoncgen</code> 目前支持的基本类型包括：</p>
+<ul class="list">
+<li><p><code>json_int_t</code></p>
+</li>
+<li><p><code>double</code></p>
+</li>
+<li><p><code>json_str_t</code></p>
+</li>
+</ul>
+<p>如果 <code>&lt;type-str&gt;</code> 是自定义类型，则 <strong>被引用的类型请务必放在前面定义</strong> ，例如：</p>
+<pre class="hljs"><code>{
+    "<span class="hljs-attribute">structs</span>": 
+    <span class="hljs-value">[
+        {
+            "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"BillGates"</span></span>,
+            "<span class="hljs-attribute">members</span>":
+            <span class="hljs-value">[
+                [<span class="hljs-string">"json_int_t"</span>, <span class="hljs-string">"int_val"</span>]
+            ]</span>,
+            "<span class="hljs-attribute">methods</span>" : <span class="hljs-value">[<span class="hljs-string">"serialize"</span>, <span class="hljs-string">"deserialize"</span>]
+        </span>},
+        {
+            "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Jobs"</span></span>,
+            "<span class="hljs-attribute">members</span>":
+            <span class="hljs-value">[
+                [<span class="hljs-string">"BillGates"</span>, <span class="hljs-string">"bill_gates"</span>]
+            ]</span>,
+            "<span class="hljs-attribute">methods</span>" : <span class="hljs-value">[<span class="hljs-string">"serialize"</span>, <span class="hljs-string">"deserialize"</span>]
+        </span>}
+    ]
+</span>}</code></pre><p><a href="../jsoncgen.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

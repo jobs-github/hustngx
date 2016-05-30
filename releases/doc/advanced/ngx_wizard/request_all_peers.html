@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>&#x60;request_all_peers&#x60;</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="-request_all_peers-"><a class="header-link" href="#-request_all_peers-"></a><code>request_all_peers</code></h2>
+<p><strong>类型:</strong> <code>bool</code></p>
+<p><strong>值:</strong> <code>true | false</code></p>
+<p><strong>属性:</strong> 可选</p>
+<p><strong>父节点:</strong> <a href="./subrequests.html">subrequests</a></p>
+<p>执行 <code>sequential subrequests</code> 的时候，是否将命令转发给所有的 <code>backend</code> 节点。</p>
+<p>如果配置为 <code>false</code> , 或者忽略该字段，<code>handler</code> 在转发命令的时候，只要有一台 <code>backend</code> 节点处理成功，就会返回结果给客户端， 例如：</p>
+<pre class="hljs"><code>ngx_int_t hustmqha_put_handler(ngx_str_t * backend_uri, ngx_http_request_t *r)
+{
+    hustmqha_put_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);
+    <span class="hljs-keyword">if</span> (<span class="hljs-subst">!</span>ctx)
+    {
+        <span class="hljs-keyword">return</span> __first_put_handler(backend_uri, r);
+    }
+    <span class="hljs-keyword">if</span> (NGX_HTTP_OK != r<span class="hljs-subst">-&gt;</span>headers_out<span class="hljs-built_in">.</span>status)
+    {
+        ++ctx<span class="hljs-subst">-&gt;</span>count;
+        <span class="hljs-keyword">return</span> (ctx<span class="hljs-subst">-&gt;</span>count &lt; ctx<span class="hljs-subst">-&gt;</span>peer_count) ? ngx_http_run_subrequest(r, <span class="hljs-subst">&amp;</span>ctx<span class="hljs-subst">-&gt;</span>base, <span class="hljs-built_in">NULL</span>)
+            : ngx_http_send_response_imp(NGX_HTTP_NOT_FOUND, <span class="hljs-built_in">NULL</span>, r);
+    }
+    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> you decide the return value</span>
+    <span class="hljs-keyword">return</span> ngx_http_send_response_imp(NGX_HTTP_OK, <span class="hljs-subst">&amp;</span>ctx<span class="hljs-subst">-&gt;</span>base<span class="hljs-built_in">.</span>response, r);
+}</code></pre><p>请注意这一行代码：</p>
+<pre class="hljs"><code><span class="hljs-keyword">if</span> (NGX<span class="hljs-number">_</span>HTTP<span class="hljs-number">_</span>OK != r-&gt;headers<span class="hljs-number">_</span><span class="hljs-keyword">out</span>.status)</code></pre><p>可以看到，如果 <code>subrequest</code> 返回的状态码是200，则 <code>handler</code> 主体不会继续转发命令给下一个节点，而是将处理结果直接返回给客户端。</p>
+<p>如果配置为 <code>true</code> ，则 <code>handler</code> 会把命令转发给所有 <code>backend</code> 节点，例如：</p>
+<pre class="hljs"><code>ngx_int_t hustmqha_pub_handler(ngx_str_t * backend_uri, ngx_http_request_t *r)
+{
+    hustmqha_pub_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);
+    <span class="hljs-keyword">if</span> (<span class="hljs-subst">!</span>ctx)
+    {
+        <span class="hljs-keyword">return</span> __first_pub_handler(backend_uri, r);
+    }
+    ctx<span class="hljs-subst">-&gt;</span>subrequest_peer = ngx_http_get_next_peer(ctx<span class="hljs-subst">-&gt;</span>subrequest_peer);
+    <span class="hljs-keyword">if</span> (ctx<span class="hljs-subst">-&gt;</span>subrequest_peer)
+    {
+        <span class="hljs-keyword">return</span> ngx_http_run_subrequest(r, <span class="hljs-subst">&amp;</span>ctx<span class="hljs-subst">-&gt;</span>base, ctx<span class="hljs-subst">-&gt;</span>subrequest_peer<span class="hljs-subst">-&gt;</span>peer);
+    }
+    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> you decide the return value</span>
+    <span class="hljs-keyword">return</span> ngx_http_send_response_imp(NGX_HTTP_OK, <span class="hljs-subst">&amp;</span>ctx<span class="hljs-subst">-&gt;</span>base<span class="hljs-built_in">.</span>response, r);
+}</code></pre><p>可以看到，这种模式下, <code>handler</code> 不会对上一轮 <code>subrequest</code> 返回的状态码进行判断。</p>
+<p>因此，在进行 <code>sequential subrequests</code> 的时候：</p>
+<ul class="list">
+<li><strong>如果你只需要把命令转发给某一台 <code>backend</code> 节点，则可以忽略该字段</strong>，或者将之设置成 <code>false</code>；</li>
+<li><strong>如果你需要把命令转发给所有 <code>backend</code> 节点，则需要将该字段设置成 <code>true</code></strong> 。</li>
+</ul>
+<p><strong>如果忽略该字段，则 <code>handler</code> 在转发命令的时候，只要有一台 <code>backend</code> 节点处理成功，就会返回结果给客户端</strong>。</p>
+<p><a href="../ngx_wizard.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

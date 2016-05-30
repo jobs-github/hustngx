@@ -1,0 +1,21 @@
+{
+    "module": "hustdict",
+    "includes": ["ngx_shm_dict"],
+    "main_conf":
+    [
+        ["string", "shm_name"],
+        ["int", "shm_size"]
+    ],
+    "handlers":
+    [
+        { "uri": "set", "action_for_request_body": "read", "methods": ["POST"] },
+        { "uri": "get" },
+        { "uri": "del" },
+        { "uri": "flush_all" },
+        { "uri": "flush_expired" },
+        { "uri": "keys" },
+        { "uri": "get_keys" },
+        { "uri": "incr" },
+        { "uri": "decr" }
+    ]
+}

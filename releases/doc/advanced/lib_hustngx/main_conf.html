@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>&#x60;main_conf&#x60;</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="-main_conf-"><a class="header-link" href="#-main_conf-"></a><code>main_conf</code></h2>
+<p><strong>类型:</strong> <code>array</code></p>
+<p><strong>值:</strong> <code>[ [&quot;&lt;key&gt;&quot;, &lt;value&gt;], [&quot;&lt;key&gt;&quot;, &lt;value&gt;], ... , [&quot;&lt;key&gt;&quot;, &lt;value&gt;] ]</code></p>
+<p><strong>范例:</strong> <code>&quot;main_conf&quot;: [ [&quot;test_num&quot;, 1], [&quot;test_flag&quot;, &quot;on&quot;] ]</code></p>
+<p><strong>父节点:</strong> 无</p>
+<p>用于配置 <code>main_conf</code> 相关字段的值。</p>
+<p><code>&lt;key&gt;</code> 的名称请参考 <a href="../ngx_wizard/main_conf.html">main_conf</a> 所定义的字段。前后需要保持一致。</p>
+<p><code>int</code> 对应的 nginx 数据类型为 <code>ngx_int_t</code>，配置样例：</p>
+<pre class="hljs"><code>{
+    "<span class="hljs-attribute">main_conf</span>":
+    <span class="hljs-value">[
+        [<span class="hljs-string">"keepalive_cache_size"</span>, <span class="hljs-number">128</span>]
+    ]
+</span>}</code></pre><p><code>size</code> 对应的 nginx 数据类型为 <code>ssize_t</code>，配置样例：</p>
+<pre class="hljs"><code>{
+    "<span class="hljs-attribute">main_conf</span>":
+    <span class="hljs-value">[
+        [<span class="hljs-string">"fetch_buffer_size"</span>, <span class="hljs-string">"64m"</span>]
+    ]
+</span>}</code></pre><p><code>time</code> 对应的 nginx 数据类型为 <code>ngx_int_t</code>，配置样例：</p>
+<pre class="hljs"><code>{
+    "<span class="hljs-attribute">main_conf</span>":
+    <span class="hljs-value">[
+        [<span class="hljs-string">"long_polling_timeout"</span>, <span class="hljs-string">"180s"</span>],
+        [<span class="hljs-string">"autost_interval"</span>, <span class="hljs-string">"200ms"</span>]
+    ]
+</span>}</code></pre><p><code>bool</code> 对应的 nginx 数据类型为 <code>ngx_bool_t</code>，配置样例：</p>
+<pre class="hljs"><code>{
+    "<span class="hljs-attribute">main_conf</span>":
+    <span class="hljs-value">[
+        [<span class="hljs-string">"status_cache"</span>, <span class="hljs-string">"off"</span>]
+    ]
+</span>}</code></pre><p><code>string</code> 对应的 nginx 数据类型为 <code>ngx_str_t</code>，配置样例：</p>
+<pre class="hljs"><code>{
+    "<span class="hljs-attribute">main_conf</span>":
+    <span class="hljs-value">[
+        [<span class="hljs-string">"autost_uri"</span>, <span class="hljs-string">"/hustmq/stat_all"</span>]
+    ]
+</span>}</code></pre><p><a href="./genconf.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

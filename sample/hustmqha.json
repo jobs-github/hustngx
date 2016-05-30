@@ -1,0 +1,285 @@
+{
+    "module": "hustmq_ha",
+    "includes": ["ngx_http_peer_selector", "ngx_http_fetch"],
+    "main_conf":
+    [
+        ["size", "max_queue_size"],
+        ["bool", "queue_hash"],
+        ["time", "long_polling_timeout"],
+        ["time", "subscribe_timeout"],
+        ["time", "publish_timeout"],
+        ["size", "max_timer_count"],
+        ["bool", "status_cache"],
+        ["size", "fetch_req_pool_size"],
+        ["int", "keepalive_cache_size"],
+        ["int", "connection_cache_size"],
+        ["string", "autost_uri"],
+        ["string", "username"],
+        ["string", "password"],
+        ["time", "fetch_connect_timeout"],
+        ["time", "fetch_send_timeout"],
+        ["time", "fetch_read_timeout"],
+        ["time", "fetch_timeout"],
+        ["size", "fetch_buffer_size"],
+        ["time", "autost_interval"],
+        ["int", "do_post_cache_size"],
+        ["int", "do_get_cache_size"],
+        ["size", "max_do_task_body_size"],
+        ["time", "do_post_timeout"],
+        ["time", "do_get_timeout"]
+    ],
+    "handlers":
+    [
+        {
+            "uri": "worker",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/worker",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "put",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/put",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": true,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "get",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/get",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "ack",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/ack",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "timeout",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/timeout",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "autost",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/stat_all",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "purge",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/purge",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "max",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/max",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "lock",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/lock",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "sub",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/sub",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "pub",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustmq/pub",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "stat_all",
+            "action_for_request_body": "discard",
+            "methods": [],
+            "upstream": null
+        },
+        {
+            "uri": "stat",
+            "action_for_request_body": "discard",
+            "methods": [],
+            "upstream": null
+        },
+        {
+            "uri": "evget",
+            "action_for_request_body": "discard",
+            "methods": [],
+            "upstream": null
+        },
+        {
+            "uri": "evsub",
+            "action_for_request_body": "discard",
+            "methods": [],
+            "upstream": null
+        },
+        {
+            "uri": "do_get",
+            "action_for_request_body": "read",
+            "methods": ["POST"],
+            "upstream": null
+        },
+        {
+            "uri": "do_post",
+            "action_for_request_body": "read",
+            "methods": ["POST"],
+            "upstream": null
+        },
+        {
+            "uri": "do_get_status"
+        },
+        {
+            "uri": "do_post_status"
+        }
+    ]
+}

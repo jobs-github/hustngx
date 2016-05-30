@@ -1,0 +1,9 @@
+{
+    "module": "husttest",
+    "handlers":
+    [
+        {
+            "uri": "test"
+        }
+    ]
+}

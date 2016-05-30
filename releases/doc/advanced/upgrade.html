@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>upgrade</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="upgrade"><a class="header-link" href="#upgrade"></a>upgrade</h2>
+<p>upgrade 是一个进行 nginx 平滑升级的脚本。</p>
+<h3 id="-"><a class="header-link" href="#-"></a>使用范例</h3>
+<pre class="hljs"><code>usage:
+    <span class="hljs-keyword">sh</span> upgrade.<span class="hljs-keyword">sh</span> [user]
+<span class="hljs-keyword">sample</span>:
+    <span class="hljs-keyword">sh</span> upgrade.<span class="hljs-keyword">sh</span> <span class="hljs-keyword">search</span></code></pre><h3 id="nginx-"><a class="header-link" href="#nginx-"></a>nginx 平滑升级的原理</h3>
+<p>nginx 内部定义了如下几个关键的宏：</p>
+<pre class="hljs"><code><span class="hljs-hexcolor">#def</span>ine NGX_SHUTDOWN_SIGNAL      QUIT
+<span class="hljs-hexcolor">#def</span>ine NGX_NOACCEPT_SIGNAL      WINCH
+<span class="hljs-hexcolor">#def</span>ine NGX_CHANGEBIN_SIGNAL     USR2</code></pre><p>这几个宏是实现平滑升级的关键。</p>
+<p>首先需要获得指定用户的 nginx 主进程 pid，假定为 <code>$old_pid</code> ，然后发送 <code>USR2</code> 信号：</p>
+<pre class="hljs"><code>kill -USR2 <span class="hljs-variable">$old</span>_pid</code></pre><p>nginx 会将 <code>$old_pid</code> 对应的 pid 文件（通常为 <code>logs/nginx.pid</code>）重命名，并利用最新的可执行文件启动新的 <code>master</code> 进程；</p>
+<p>之后向 nginx 发送 <code>WINCH</code> 信号：</p>
+<pre class="hljs"><code>kill -WINCH <span class="hljs-variable">$oldpid</span></code></pre><p>nginx 在收到该信号之后会通知老的 <code>worker</code> 进程停止 <code>accept</code> 新的连接，并在处理完老的连接后退出进程。该过程由 <code>master</code> 进程通过如下代码实现：</p>
+<pre class="hljs"><code><span class="hljs-tag">if</span> (ngx_noaccept) {
+    ......
+    <span class="hljs-tag">ngx_signal_worker_processes</span>(cycle, 
+        <span class="hljs-function">ngx_signal_value</span>(NGX_SHUTDOWN_SIGNAL));
+}</code></pre><p>最后，向 nginx 发送 QUIT 信号，通知老的 <code>master</code> 进程退出：</p>
+<pre class="hljs"><code>kill -QUIT <span class="hljs-variable">$oldpid</span></code></pre><p><a href="./index.html">上一级</a></p>
+<p><a href="../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

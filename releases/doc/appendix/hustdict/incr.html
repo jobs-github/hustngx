@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>incr</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="incr"><a class="header-link" href="#incr"></a>incr</h2>
+<p><strong>接口:</strong> <code>/incr</code></p>
+<p><strong>方法:</strong> <code>GET</code></p>
+<p><strong>参数:</strong> </p>
+<ul class="list">
+<li><strong>key</strong> （必选）  </li>
+<li><strong>type</strong> （必选）<br>可选值参考 <a href="./types.html"><code>value-types</code></a> 中的 <strong>数字类型</strong> 。</li>
+<li><strong>delta</strong> （必选）</li>
+<li><strong>expire</strong> （可选）</li>
+</ul>
+<p><strong>使用范例:</strong></p>
+<pre class="hljs"><code>curl -<span class="hljs-tag">i</span> -X GET <span class="hljs-string">"http://localhost:8085/incr?key=test_key&amp;type=uint8&amp;delta=1"</span></code></pre><p><a href="../hustdict.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

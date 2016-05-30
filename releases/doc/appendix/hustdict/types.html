@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>值类型列表</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="-"><a class="header-link" href="#-"></a>值类型列表</h2>
+<p><code>hustdict</code> 支持的值类型如下：  </p>
+<ul class="list">
+<li>数字类型：<ul class="list">
+<li>int8</li>
+<li>uint8</li>
+<li>int16</li>
+<li>uint16</li>
+<li>int32</li>
+<li>uint32</li>
+<li>int64</li>
+<li>uint64</li>
+<li>double</li>
+</ul>
+</li>
+<li>字符串<ul class="list">
+<li>string</li>
+</ul>
+</li>
+<li>二进制<ul class="list">
+<li>binary</li>
+</ul>
+</li>
+</ul>
+<p>其中，<code>string</code> 对应的数据结构为 <code>ngx_str_t</code> , <code>binary</code> 对应的数据结构定义如下：</p>
+<pre class="hljs"><code><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span>
+{
+    <span class="hljs-keyword">size_t</span> len;
+    <span class="hljs-keyword">void</span> * data;
+} <span class="hljs-keyword">ngx_binary_t</span>;</code></pre><p><a href="../hustdict.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

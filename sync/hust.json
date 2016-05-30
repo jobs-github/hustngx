@@ -1,0 +1,152 @@
+[
+    {
+        "src":
+        {
+            "prefix": "../lib_hustngx/nginx/src/core/",
+            "files":
+            [
+                "c_dict.c",
+                "c_dict.h"
+            ]
+        },
+        "des":
+        {
+            "prefix": "../../",
+            "files":
+            [
+                "hustdb/ha/",
+                "hustmq/ha/",
+                "hustlog/"
+            ],
+            "suffix": "nginx/src/core/"
+        }
+    },
+    {
+        "src":
+        {
+            "prefix": "../lib_hustngx/nginx/src/core/",
+            "files":
+            [
+                "cjson_serialization.c",
+                "cjson_serialization.h",
+                "cjson_serialization_base.c",
+                "cjson_serialization_base.h"
+            ]
+        },
+        "des":
+        {
+            "prefix": "../../",
+            "files": 
+            [
+                "hustdb/",
+                "hustmq/"
+            ],
+            "suffix": "ha/nginx/src/core/"
+        }
+    },
+    {
+        "src":
+        {
+            "prefix": "../lib_hustngx/nginx/src/http/modules/",
+            "files":
+            [
+                "ngx_http_basic_auth_module.c",
+                "ngx_http_utils_module.c",
+                "ngx_http_utils_module.h"
+            ]
+        },
+        "des":
+        {
+            "files":
+            [
+                "../../hustdb/ha/",
+                "../../hustmq/ha/",
+                "../../hustlog/",
+                "../hustdict"
+            ],
+            "suffix": "nginx/src/http/modules/"
+        }
+        
+    },
+    {
+        "src":
+        {
+            "prefix": "../lib_hustngx/nginx/src/http/",
+            "files":
+            [
+                "ngx_http_addon_def.h"
+            ]
+        },
+        "des":
+        {
+            "prefix": "../../",
+            "files":
+            [
+                "hustdb/ha/",
+                "hustmq/ha/",
+                "hustlog/"
+            ],
+            "suffix": "nginx/src/http/"
+        }
+    },
+    {
+        "src":
+        {
+            "prefix": "../lib_hustngx/nginx/src/http/",
+            "files":
+            [
+                "ngx_http_peer_selector.h"
+            ]
+        },
+        "des":
+        {
+            "prefix": "../../",
+            "files":
+            [
+                "hustdb/",
+                "hustmq/"
+            ],
+            "suffix": "ha/nginx/src/http/"
+        }
+    },
+    {
+        "src":
+        {
+            "prefix": "../lib_hustngx/nginx/src/http/modules/",
+            "files":
+            [
+                "ngx_http_peer_selector_module.c"
+            ]
+        },
+        "des":
+        {
+            "prefix": "../../",
+            "files":
+            [
+                "hustdb/",
+                "hustmq/"
+            ],
+            "suffix": "ha/nginx/src/http/modules/"
+        }
+    },
+    {
+        "src":
+        {
+            "prefix": "../lib_hustngx/nginx/conf/",
+            "files":
+            [
+                "genconf.py"
+            ]
+        },
+        "des":
+        {
+            "prefix": "../../",
+            "files":
+            [
+                "hustdb/",
+                "hustmq/"
+            ],
+            "suffix": "ha/nginx/conf/"
+        }
+    }
+]

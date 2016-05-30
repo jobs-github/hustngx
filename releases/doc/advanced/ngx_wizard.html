@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>ngx_wizard</title>
+    <link type="text/css" rel="stylesheet" href="../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="ngx_wizard"><a class="header-link" href="#ngx_wizard"></a>ngx_wizard</h2>
+<h3 id="-"><a class="header-link" href="#-"></a>使用范例</h3>
+<pre class="hljs"><code>usage:
+    python ngx_wizard<span class="hljs-class">.py</span> [conf]
+sample:
+    python ngx_wizard<span class="hljs-class">.py</span> ngx_wizard.json</code></pre><h3 id="--1"><a class="header-link" href="#--1"></a>配置范例</h3>
+<p>以下是一个完整的配置文件，包含 <code>ngx_wizard</code> 所支持的所有字段：</p>
+<pre class="hljs"><code>{
+    "<span class="hljs-attribute">module</span>": <span class="hljs-value"><span class="hljs-string">"hustmqha"</span></span>,
+    "<span class="hljs-attribute">includes</span>": 
+    <span class="hljs-value">[
+        <span class="hljs-string">"ngx_http_peer_selector"</span>, 
+        <span class="hljs-string">"ngx_shm_dict"</span>, 
+        <span class="hljs-string">"ngx_http_fetch"</span>
+    ]</span>,
+    "<span class="hljs-attribute">main_conf</span>":
+    <span class="hljs-value">[
+        [<span class="hljs-string">"time"</span>, <span class="hljs-string">"long_polling_timeout"</span>],
+        [<span class="hljs-string">"bool"</span>, <span class="hljs-string">"status_cache"</span>],
+        [<span class="hljs-string">"int"</span>, <span class="hljs-string">"keepalive_cache_size"</span>],
+        [<span class="hljs-string">"string"</span>, <span class="hljs-string">"autost_uri"</span>],
+        [<span class="hljs-string">"size"</span>, <span class="hljs-string">"fetch_buffer_size"</span>],
+        [<span class="hljs-string">"time"</span>, <span class="hljs-string">"autost_interval"</span>]
+    ]</span>,
+    "<span class="hljs-attribute">handlers</span>":
+    <span class="hljs-value">[
+
+        {
+            "<span class="hljs-attribute">uri</span>": <span class="hljs-value"><span class="hljs-string">"put"</span></span>,
+            "<span class="hljs-attribute">action_for_request_body</span>": <span class="hljs-value"><span class="hljs-string">"read"</span></span>,
+            "<span class="hljs-attribute">methods</span>": <span class="hljs-value">[<span class="hljs-string">"PUT"</span>, <span class="hljs-string">"POST"</span>]</span>,
+            "<span class="hljs-attribute">upstream</span>":
+            <span class="hljs-value">{
+                "<span class="hljs-attribute">sequential_subrequests</span>":
+                <span class="hljs-value">{
+                    "<span class="hljs-attribute">backend_uri</span>": <span class="hljs-value"><span class="hljs-string">"/hustmq/put"</span></span>,
+                    "<span class="hljs-attribute">gen_post_subrequest</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+                    "<span class="hljs-attribute">use_round_robin</span>": <span class="hljs-value"><span class="hljs-literal">true</span></span>,
+                    "<span class="hljs-attribute">subrequests</span>":
+                    <span class="hljs-value">{
+                        "<span class="hljs-attribute">use_subrequest_peer</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+                        "<span class="hljs-attribute">request_all_peers</span>": <span class="hljs-value"><span class="hljs-literal">false</span>
+                    </span>}
+                </span>}
+            </span>}
+        </span>},
+        {
+            "<span class="hljs-attribute">uri</span>": <span class="hljs-value"><span class="hljs-string">"get"</span></span>,
+            "<span class="hljs-attribute">action_for_request_body</span>": <span class="hljs-value"><span class="hljs-string">"default"</span></span>,
+            "<span class="hljs-attribute">methods</span>": <span class="hljs-value">[<span class="hljs-string">"GET"</span>]</span>,
+            "<span class="hljs-attribute">upstream</span>":
+            <span class="hljs-value">{
+                "<span class="hljs-attribute">sequential_subrequests</span>":
+                <span class="hljs-value">{
+                    "<span class="hljs-attribute">backend_uri</span>": <span class="hljs-value"><span class="hljs-string">"/hustmq/get"</span></span>,
+                    "<span class="hljs-attribute">gen_post_subrequest</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+                    "<span class="hljs-attribute">use_round_robin</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+                    "<span class="hljs-attribute">subrequests</span>":
+                    <span class="hljs-value">{
+                        "<span class="hljs-attribute">use_subrequest_peer</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+                        "<span class="hljs-attribute">request_all_peers</span>": <span class="hljs-value"><span class="hljs-literal">false</span>
+                    </span>}
+                </span>}
+            </span>}
+        </span>},
+        {
+            "<span class="hljs-attribute">uri</span>": <span class="hljs-value"><span class="hljs-string">"autost"</span></span>,
+            "<span class="hljs-attribute">action_for_request_body</span>": <span class="hljs-value"><span class="hljs-string">"default"</span></span>,
+            "<span class="hljs-attribute">methods</span>": <span class="hljs-value">[<span class="hljs-string">"GET"</span>]</span>,
+            "<span class="hljs-attribute">upstream</span>":
+            <span class="hljs-value">{
+                "<span class="hljs-attribute">backend_uri</span>": <span class="hljs-value"><span class="hljs-string">"/hustmq/stat_all"</span></span>,
+                "<span class="hljs-attribute">parallel_subrequests</span>": <span class="hljs-value"><span class="hljs-literal">true</span>
+            </span>}
+        </span>},
+        {
+            "<span class="hljs-attribute">uri</span>": <span class="hljs-value"><span class="hljs-string">"stat_all"</span></span>,
+            "<span class="hljs-attribute">action_for_request_body</span>": <span class="hljs-value"><span class="hljs-string">"discard"</span></span>,
+            "<span class="hljs-attribute">methods</span>": <span class="hljs-value">[<span class="hljs-string">"GET"</span>]</span>,
+            "<span class="hljs-attribute">upstream</span>": <span class="hljs-value"><span class="hljs-literal">null</span>
+        </span>}
+    ]
+</span>}</code></pre><h3 id="--2"><a class="header-link" href="#--2"></a>字段结构</h3>
+<p><a href="ngx_wizard/module.html"><code>module</code></a><br><a href="ngx_wizard/includes.html"><code>includes</code></a><br><a href="ngx_wizard/main_conf.html"><code>main_conf</code></a><br>　　<a href="ngx_wizard/conf.html"><code>conf</code></a><br><a href="ngx_wizard/handlers.html"><code>handlers</code></a><br>　　<a href="ngx_wizard/handler.html"><code>handler</code></a><br>　　　　<a href="ngx_wizard/uri.html"><code>uri</code></a><br>　　　　<a href="ngx_wizard/action_for_request_body.html"><code>action_for_request_body</code></a><br>　　　　<a href="ngx_wizard/methods.html"><code>methods</code></a><br>　　　　　　<a href="ngx_wizard/method.html"><code>method</code></a><br>　　　　<a href="ngx_wizard/upstream.html"><code>upstream</code></a><br>　　　　　　<a href="ngx_wizard/backend_uri.html"><code>backend_uri</code></a><br>　　　　　　<a href="ngx_wizard/parallel_subrequests.html"><code>parallel_subrequests</code></a><br>　　　　　　<a href="ngx_wizard/sequential_subrequests.html"><code>sequential_subrequests</code></a><br>　　　　　　　　<a href="ngx_wizard/gen_post_subrequest.html"><code>gen_post_subrequest</code></a><br>　　　　　　　　<a href="ngx_wizard/use_round_robin.html"><code>use_round_robin</code></a><br>　　　　　　　　<a href="ngx_wizard/subrequests.html"><code>subrequests</code></a><br>　　　　　　　　　　<a href="ngx_wizard/use_subrequest_peer.html"><code>use_subrequest_peer</code></a><br>　　　　　　　　　　<a href="ngx_wizard/request_all_peers.html"><code>request_all_peers</code></a>  </p>
+<p><strong>字段约束：</strong></p>
+<ul class="list">
+<li><p>以下字段必填：</p>
+<ul class="list">
+<li><p><a href="ngx_wizard/module.html"><code>module</code></a></p>
+</li>
+<li><p><a href="ngx_wizard/handlers.html"><code>handlers</code></a></p>
+</li>
+<li><p><a href="ngx_wizard/uri.html"><code>uri</code></a></p>
+</li>
+</ul>
+</li>
+<li><p><a href="ngx_wizard/parallel_subrequests.html"><code>parallel_subrequests</code></a>  和 <a href="ngx_wizard/sequential_subrequests.html"><code>sequential_subrequests</code></a> <strong>不能共存</strong> ，只能配置其中一种。</p>
+</li>
+<li><p><a href="ngx_wizard/use_round_robin.html"><code>use_round_robin</code></a> 优先级高于 <a href="ngx_wizard/use_subrequest_peer.html"><code>use_subrequest_peer</code></a>，当两个都配置为 <code>true</code> 的时候，只有 <a href="ngx_wizard/use_round_robin.html"><code>use_round_robin</code></a> 生效</p>
+</li>
+</ul>
+<p><a href="./index.html">上一级</a></p>
+<p><a href="../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

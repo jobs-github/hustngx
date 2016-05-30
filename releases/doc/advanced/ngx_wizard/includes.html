@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>includes</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="includes"><a class="header-link" href="#includes"></a>includes</h2>
+<p><strong>类型:</strong> <code>array</code></p>
+<p><strong>值:</strong> <code>ngx_http_peer_selector | ngx_shm_dict | ngx_http_fetch</code></p>
+<p><strong>属性:</strong> 可选</p>
+<p><strong>父节点:</strong> 无</p>
+<p>引入的内置 <code>lib_hustngx</code> 模块列表，目前支持如下模块：  </p>
+<ul class="list">
+<li><code>ngx_http_peer_selector</code></li>
+<li><code>ngx_shm_dict</code></li>
+<li><code>ngx_http_fetch</code></li>
+</ul>
+<p>加入 <code>ngx_shm_dict</code> 模块之后，可以以 <code>key-value</code> 的形式操作共享内存，相关的接口可参考 <a href="../lib_hustngx/core_module.html"><code>lib_ngx_shm_dict</code></a> 。</p>
+<p>加入 <code>ngx_http_fetch</code> 模块之后，可以以 <code>context-free</code> 的方式创建 <code>ngx_http_request_t</code> ，相关的接口可参考 <a href="../lib_hustngx/http_module.html"><code>lib_ngx_http_fetch</code></a> 。</p>
+<p>加入 <code>ngx_http_peer_selector</code> 之后，在进行 <code>subrequest</code> 的过程中，<code>backend</code> 机器节点的选择的 <strong>控制权将属于客户端</strong> （也就是你自己编写的 nginx 模块）。此时你可以自由控制 <code>backend</code> 节点的选择方法和顺序。</p>
+<p>例如：</p>
+<pre class="hljs"><code>static ngx_int_t __first_autost_handler(ngx_str_t * backend_uri, ngx_http_request_t *r)
+{
+    <span class="hljs-attribute">...</span><span class="hljs-attribute">...</span>
+
+    ctx<span class="hljs-subst">-&gt;</span>peer = ngx_http_first_peer(peers<span class="hljs-subst">-&gt;</span>peer);
+    <span class="hljs-keyword">return</span> ngx_http_gen_subrequest(backend_uri, r, ctx<span class="hljs-subst">-&gt;</span>peer,
+        <span class="hljs-subst">&amp;</span>ctx<span class="hljs-subst">-&gt;</span>base, __post_subrequest_handler);
+}
+
+ngx_int_t hustmqha_autost_handler(ngx_str_t * backend_uri, ngx_http_request_t *r)
+{
+    hustmqha_autost_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);
+    <span class="hljs-keyword">if</span> (<span class="hljs-subst">!</span>ctx)
+    {
+        <span class="hljs-keyword">return</span> __first_autost_handler(backend_uri, r);
+    }
+    <span class="hljs-keyword">if</span> (NGX_HTTP_OK != r<span class="hljs-subst">-&gt;</span>headers_out<span class="hljs-built_in">.</span>status)
+    {
+        ctx<span class="hljs-subst">-&gt;</span>peer = ngx_http_next_peer(ctx<span class="hljs-subst">-&gt;</span>peer);
+        <span class="hljs-keyword">return</span> (ctx<span class="hljs-subst">-&gt;</span>peer) ? ngx_http_run_subrequest(r, <span class="hljs-subst">&amp;</span>ctx<span class="hljs-subst">-&gt;</span>base, ctx<span class="hljs-subst">-&gt;</span>peer)
+            : ngx_http_send_response_imp(NGX_HTTP_NOT_FOUND, <span class="hljs-built_in">NULL</span>, r);
+    }
+    <span class="hljs-comment">// <span class="hljs-doctag">TODO:</span> you decide the return value</span>
+    <span class="hljs-keyword">return</span> ngx_http_send_response_imp(NGX_HTTP_OK, <span class="hljs-subst">&amp;</span>ctx<span class="hljs-subst">-&gt;</span>base<span class="hljs-built_in">.</span>response, r);
+}</code></pre><p>注意代码中的如下两处调用：</p>
+<pre class="hljs"><code>ngx_http_gen_subrequest<span class="hljs-list">(<span class="hljs-keyword">backend_uri</span>, r, ctx-&gt;peer, <span class="hljs-keyword">&amp;ctx-&gt;base</span>, __post_subrequest_handler)</span><span class="hljs-comment">;</span>
+ngx_http_run_subrequest<span class="hljs-list">(<span class="hljs-keyword">r</span>, <span class="hljs-keyword">&amp;ctx-&gt;base</span>, ctx-&gt;peer)</span><span class="hljs-comment">;</span></code></pre><p>其中的 <code>ctx-&gt;peer</code> 将会直接传递给 <code>upstream</code> 模块，作为请求的转发节点。</p>
+<p><strong>如果忽略该字段，则不会引入任何内置模块，建议加入 <code>ngx_http_peer_selector</code> 模块</strong>。</p>
+<p><a href="../ngx_wizard.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

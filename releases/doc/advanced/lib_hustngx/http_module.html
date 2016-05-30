@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>http 扩展模块</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="http-"><a class="header-link" href="#http-"></a>http 扩展模块</h2>
+<h3 id="-ngx_http_basic_auth_module-"><a class="header-link" href="#-ngx_http_basic_auth_module-"></a><code>ngx_http_basic_auth_module</code></h3>
+<ul class="list">
+<li><code>ngx_http_basic_auth_module.c</code></li>
+</ul>
+<p>相关背景：</p>
+<p>nginx 内置的 <code>ngx_http_auth_basic_module</code> 由于使用了非对称加密存储的密钥文件（ <code>htpasswd</code> ），导致 <strong>每一次请求都需要对用户信息做加密操作</strong> 。此外其内部实现对于密钥文件采用了实时读取的方式，因此 <strong>每一次请求都会导致重复的 <code>I/O</code> 操作</strong> 。</p>
+<p>经测试，以上两个问题会使得 <code>QPS</code> 下降 <strong>接近一个数量级</strong> 。</p>
+<p><code>ngx_http_basic_auth_module</code> 正是为了解决此问题。该模块对应的密钥文件使用 <strong>明文</strong> 存储，因此可以绕过加密操作所带来的性能问题。此外对于 <code>htpasswd</code> 的内容全部在 nginx 初始化的时候读取完毕，并进行缓存。因此可以避免请求过程中的重复 <code>I/O</code> 操作。</p>
+<p>如果你需要 nginx 提供 <strong>高性能</strong> 的 <code>http basic authentication</code> 服务，则可以使用该模块（事实上目前你也没有其他选择），但这将面临 <strong>安全性的问题</strong> 。</p>
+<p><strong>你需要自行评估使用该模块的利益和风险，酌情使用。</strong></p>
+<h3 id="-ngx_http_peer_selector_module-"><a class="header-link" href="#-ngx_http_peer_selector_module-"></a><code>ngx_http_peer_selector_module</code></h3>
+<ul class="list">
+<li><code>ngx_http_addon_def.h</code></li>
+<li><code>ngx_http_peer_selector.h</code></li>
+<li><code>ngx_http_peer_selector_module.c</code></li>
+</ul>
+<p><a href="../ngx_wizard/includes.html">includes</a> 一节中描述过该模块的功能。</p>
+<p>如果想发挥 <code>subrequest</code> 的最大效用，必须获得 <code>backend</code> 节点选择的控制权，因此 <strong>大多数情况下，建议启用此模块</strong> 。</p>
+<p>如果你想将控制权临时交还给 nginx 内核，可以参考 <a href="../ngx_wizard/use_round_robin.html"><code>use_round_robin</code></a> 的做法。</p>
+<p><code>ngx_http_addon_def.h</code> 属于接口文件，其实现将由 <code>hustngx</code> 自动生成。</p>
+<h3 id="-ngx_http_utils_module-"><a class="header-link" href="#-ngx_http_utils_module-"></a><code>ngx_http_utils_module</code></h3>
+<ul class="list">
+<li><code>ngx_http_addon_def.h</code></li>
+<li><code>ngx_http_utils_module.h</code></li>
+<li><code>ngx_http_utils_module.c</code></li>
+</ul>
+<p>这是 <code>lib_hustngx</code> 非常重要的一个基础模块，定义了一整套用于 http 模块开发的基础数据结构以及函数库，简化了 <code>sequential subrequests</code> 的编写方式。</p>
+<p>以下是部分和 <code>sequential subrequests</code> 相关的接口定义：</p>
+<pre class="hljs"><code><span class="hljs-keyword">ngx_int_t</span> ngx_http_run_subrequest(
+        <span class="hljs-keyword">ngx_http_request_t</span> *r,
+        <span class="hljs-keyword">ngx_http_subrequest_ctx_t</span> * ctx,
+        <span class="hljs-keyword">ngx_http_upstream_rr_peer_t</span> * peer);
+<span class="hljs-keyword">ngx_int_t</span> ngx_http_gen_subrequest(
+        <span class="hljs-keyword">ngx_str_t</span> * backend_uri,
+        <span class="hljs-keyword">ngx_http_request_t</span> *r,
+        <span class="hljs-keyword">ngx_http_upstream_rr_peer_t</span> * peer,
+        <span class="hljs-keyword">ngx_http_subrequest_ctx_t</span> * ctx,
+        ngx_http_post_subrequest_pt handler);
+<span class="hljs-keyword">ngx_int_t</span> ngx_http_finish_subrequest(<span class="hljs-keyword">ngx_http_request_t</span> * r);
+<span class="hljs-keyword">ngx_int_t</span> ngx_http_post_subrequest_handler(<span class="hljs-keyword">ngx_http_request_t</span> * r, <span class="hljs-keyword">void</span> * data, <span class="hljs-keyword">ngx_int_t</span> rc);    
+<span class="hljs-keyword">ngx_http_upstream_rr_peer_t</span> * ngx_http_first_peer(<span class="hljs-keyword">ngx_http_upstream_rr_peer_t</span> * peer);
+<span class="hljs-keyword">ngx_http_upstream_rr_peer_t</span> * ngx_http_next_peer(<span class="hljs-keyword">ngx_http_upstream_rr_peer_t</span> * peer);</code></pre><p>通过这些接口可以使得 <code>sequential subrequests</code> 的实现变得模式化。</p>
+<h3 id="-ngx_http_fetch_module-"><a class="header-link" href="#-ngx_http_fetch_module-"></a><code>ngx_http_fetch_module</code></h3>
+<ul class="list">
+<li><code>ngx_http_fetch_utils.h</code></li>
+<li><code>ngx_http_fetch_utils.c</code></li>
+<li><code>ngx_http_fetch_cache.h</code></li>
+<li><code>ngx_http_fetch_cache.c</code></li>
+<li><code>ngx_http_fetch_encode.h</code></li>
+<li><code>ngx_http_fetch_encode.c</code></li>
+<li><code>ngx_http_fetch_decode.h</code></li>
+<li><code>ngx_http_fetch_decode.c</code></li>
+<li><code>ngx_http_fetch_keepalive.h</code></li>
+<li><code>ngx_http_fetch_keepalive.c</code></li>
+<li><code>ngx_http_fetch_upstream_handler.h</code></li>
+<li><code>ngx_http_fetch_upstream_handler.c</code></li>
+<li><code>ngx_http_fetch_upstream.h</code></li>
+<li><code>ngx_http_fetch_upstream.c</code></li>
+<li><code>ngx_http_fetch.h</code></li>
+<li><code>ngx_http_fetch.c</code></li>
+<li><code>ngx_http_fetch_module.c</code></li>
+<li><code>ngx_http_fetch_test.h</code></li>
+<li><code>ngx_http_fetch_test.c</code></li>
+</ul>
+<p>该模块提供上下文无关的 http 访问接口（<code>context-free</code>），你可以在不依赖于任何外部 <code>ngx_http_request_t</code> 的条件下构造一个完全独立的 <code>ngx_http_request_t</code> 对象，并向上游主机发起 http 请求（<code>upstream</code>）。</p>
+<p><strong>所有编写过 <code>subrequest</code> 代码的朋友，想必都了解这一点（<code>context-free</code>）意味着什么 ^_^</strong></p>
+<p>通常情况下，如果你想构造一个 <code>subrequest</code> ，你必须配置 nginx 反向代理的接口，并且要由客户端来驱动该子请求的产生。 <strong>在这种设计下，一个子请求的生成必须依赖于一个父请求的上下文。</strong></p>
+<p>但是在特殊情况下，你所构造的子请求并不需要依赖于父请求（例如，周期性地向上游主机抓取数据，这通常开一个定时任务即可）， <code>ngx_http_fetch_module</code> 正是为解决此类问题而出现。</p>
+<p>此外， <code>ngx_http_fetch_module</code> 提供的接口使得编写如下形式的代码成为可能：</p>
+<pre class="hljs"><code><span class="hljs-keyword">for</span> (<span class="hljs-built_in">i</span> = <span class="hljs-number">0</span>; <span class="hljs-built_in">i</span> &lt; <span class="hljs-built_in">size</span>; ++<span class="hljs-built_in">i</span>)
+<span class="hljs-cell">{
+    ngx_http_fetch(args_list[i], auth);
+}</span></code></pre><p><code>ngx_http_fetch_module</code> 的设计大量参考了 nginx 源代码，包括：</p>
+<ul class="list">
+<li><code>ngx_http_proxy_module.c</code>  </li>
+<li><code>ngx_http_upstream_keepalive_module.c</code></li>
+<li><code>ngx_http_core_module.c</code></li>
+</ul>
+<p><code>ngx_http_fetch_module</code> 的使用非常简单，只需要了解如下接口：</p>
+<pre class="hljs"><code><span class="hljs-keyword">ngx_int_t</span> ngx_http_fetch(<span class="hljs-keyword">const</span> <span class="hljs-keyword">ngx_http_fetch_args_t</span> * args, <span class="hljs-keyword">const</span> <span class="hljs-keyword">ngx_http_auth_basic_key_t</span> * auth);</code></pre><p>具体的写法可以参考 <a href="../parallel_subrequests.html"><code>parallel subrequests</code></a> 。</p>
+<p><a href="../lib_hustngx.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

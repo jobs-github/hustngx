@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>&#x60;action_for_request_body&#x60;</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="-action_for_request_body-"><a class="header-link" href="#-action_for_request_body-"></a><code>action_for_request_body</code></h2>
+<p><strong>类型:</strong> <code>string</code></p>
+<p><strong>值:</strong> <code>read | discard | default</code></p>
+<p><strong>属性:</strong> 可选</p>
+<p><strong>父节点:</strong> <a href="./handler.html">handler</a></p>
+<p>nginx 模块各个 <code>handler</code> 对于http请求的包体的处理方法。各个值的含义如下：</p>
+<ul class="list">
+<li><p><code>read</code>: 读取请求包体</p>
+</li>
+<li><p><code>discard</code>: 丢弃请求包体</p>
+</li>
+<li><p><code>default</code>: 对请求包体不做任何处理</p>
+</li>
+</ul>
+<p>各个 <code>handler</code> 可以根据具体的业务逻辑配置所需要的值。</p>
+<p><strong>如果忽略该字段，则按照 <code>default</code> 行为进行处理</strong>。</p>
+<p><a href="../ngx_wizard.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>

@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <title>&#x60;ssh_cmds&#x60;</title>
+    <link type="text/css" rel="stylesheet" href="../../assets/css/github-markdown.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="../../assets/css/hljs-github.min.css"/>
+  </head>
+  <body>
+    <article class="markdown-body"><h2 id="-ssh_cmds-"><a class="header-link" href="#-ssh_cmds-"></a><code>ssh_cmds</code></h2>
+<p><strong>类型:</strong> <code>array</code></p>
+<p><strong>值:</strong> <code>[&quot;&lt;cmd-str&gt;&quot;, &quot;&lt;cmd-str&gt;&quot;, ... , &quot;&lt;cmd-str&gt;&quot;]</code></p>
+<p><strong>属性:</strong> <a href="./key.html"><code>key</code></a> 如果定义为 <code>ssh</code> ，则 <a href="./value.html"><code>value</code></a> 只能是 <a href="./ssh_cmds.html"><code>ssh_cmds</code></a></p>
+<p><strong>父节点:</strong> 无</p>
+<p><code>ssh</code> 远程执行的命令列表。<code>&lt;cmd-str&gt;</code> 代表标准的 linux 命令。</p>
+<p>如果需要执行复杂的命令，例如带有条件分支或者循环，可以写成一个单独的脚本，然后在 <code>&lt;cmd-str&gt;</code> 列表中加入脚本的执行代码：</p>
+<pre class="hljs"><code>[
+    {
+        "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"scp"</span></span>,
+        "<span class="hljs-attribute">value</span>":
+        <span class="hljs-value">[
+            ......
+            { "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"upgrade.sh"</span></span>, "<span class="hljs-attribute">remote</span>": <span class="hljs-value"><span class="hljs-string">"/home/search/tmp/"</span> </span>}
+            ......
+        ]
+    </span>},
+    {
+        "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"ssh"</span></span>,
+        "<span class="hljs-attribute">value</span>":
+        <span class="hljs-value">[
+            ......
+            <span class="hljs-string">"sh upgrader.sh"</span>
+            ......
+        ]
+    </span>}
+    ......
+]</code></pre><p><strong>特殊标签:</strong> <code>@index_place_holder</code></p>
+<p>如果在 <code>&lt;cmd-str&gt;</code> 中配置了 <code>@index_place_holder</code> ，则 <code>deploygen</code> 会根据 <code>host_file</code> 中各个机器出现的次序 <strong>依次将该标签替换为对应的序号</strong> 。</p>
+<p>例如，将 <code>deploy.json</code> 配置为如下内容：</p>
+<pre class="hljs"><code>[
+    {
+        "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"scp"</span></span>,
+        "<span class="hljs-attribute">value</span>":
+        <span class="hljs-value">[
+            { "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"zookeeper-3.4.8.tar.gz"</span></span>, "<span class="hljs-attribute">remote</span>": <span class="hljs-value"><span class="hljs-string">"/data/"</span> </span>}
+        ]
+    </span>},
+    {
+        "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"ssh"</span></span>,
+        "<span class="hljs-attribute">value</span>":
+        <span class="hljs-value">[
+            <span class="hljs-string">"cd /data"</span>,
+            <span class="hljs-string">"test -d zookeeper-3.4.8 &amp;&amp; mv zookeeper-3.4.8 zookeeper-3.4.8-old"</span>,
+            <span class="hljs-string">"tar -zxf zookeeper-3.4.8.tar.gz -C ."</span>
+        ]
+    </span>},
+    {
+        "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"scp"</span></span>,
+        "<span class="hljs-attribute">value</span>":
+        <span class="hljs-value">[
+            { "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"zoo.cfg"</span></span>, "<span class="hljs-attribute">remote</span>": <span class="hljs-value"><span class="hljs-string">"/data/zookeeper-3.4.8/conf/"</span> </span>}
+        ]
+    </span>},
+    {
+        "<span class="hljs-attribute">key</span>": <span class="hljs-value"><span class="hljs-string">"ssh"</span></span>,
+        "<span class="hljs-attribute">value</span>":
+        <span class="hljs-value">[
+            <span class="hljs-string">"cd /data/zookeeper-3.4.8"</span>,
+            <span class="hljs-string">"mkdir -p data"</span>,
+            <span class="hljs-string">"cd data/"</span>,
+            <span class="hljs-string">"echo \"@index_place_holder\" &gt; myid"</span>,
+            <span class="hljs-string">"cd ../../"</span>,
+            <span class="hljs-string">"rm -f zookeeper-3.4.8.tar.gz"</span>
+        ]
+    </span>}
+]</code></pre><p>编辑 <code>host.txt</code> 内容如下：</p>
+<pre class="hljs"><code>s35<span class="hljs-class">.white</span><span class="hljs-class">.shht</span><span class="hljs-class">.qihoo</span><span class="hljs-class">.net</span>
+s36<span class="hljs-class">.white</span><span class="hljs-class">.shht</span><span class="hljs-class">.qihoo</span><span class="hljs-class">.net</span>
+s37<span class="hljs-class">.white</span><span class="hljs-class">.shht</span><span class="hljs-class">.qihoo</span><span class="hljs-class">.net</span></code></pre><p>运行如下命令：</p>
+<pre class="hljs"><code>python deploygen<span class="hljs-class">.py</span> deploy<span class="hljs-class">.json</span> host<span class="hljs-class">.txt</span> &gt; deploy.sh</code></pre><p>则生成的脚本内容如下：</p>
+<pre class="hljs"><code>#!/bin/<span class="hljs-keyword">sh</span>
+##############################################################################
+# <span class="hljs-keyword">NOTE</span> : Generated <span class="hljs-keyword">by</span> deploygen. It is NOT supposed to modify this <span class="hljs-keyword">file</span>.
+##############################################################################
+echo '[s35.white.shht.qihoo.<span class="hljs-keyword">net</span>]...'
+
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    scp -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    zookeeper-3.4.8.tar.gz \
+    <span class="hljs-keyword">search</span>@s35.white.shht.qihoo.<span class="hljs-keyword">net</span>:/data/
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    ssh -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    <span class="hljs-keyword">search</span>@s35.white.shht.qihoo.<span class="hljs-keyword">net</span> \
+    ' \
+    <span class="hljs-keyword">cd</span> /data; \
+    <span class="hljs-keyword">test</span> -<span class="hljs-keyword">d</span> zookeeper-3.4.8 &amp;&amp; mv zookeeper-3.4.8 zookeeper-3.4.8-old; \
+    tar -zxf zookeeper-3.4.8.tar.gz -C .; \
+    '
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    scp -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    zoo.cfg \
+    <span class="hljs-keyword">search</span>@s35.white.shht.qihoo.<span class="hljs-keyword">net</span>:/data/zookeeper-3.4.8/<span class="hljs-keyword">conf</span>/
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    ssh -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    <span class="hljs-keyword">search</span>@s35.white.shht.qihoo.<span class="hljs-keyword">net</span> \
+    ' \
+    <span class="hljs-keyword">cd</span> /data/zookeeper-3.4.8; \
+    <span class="hljs-keyword">mkdir</span> -p data; \
+    <span class="hljs-keyword">cd</span> data/; \
+    echo <span class="hljs-string">"0"</span> &gt; myid; \
+    <span class="hljs-keyword">cd</span> ../../; \
+    <span class="hljs-keyword">rm</span> -f zookeeper-3.4.8.tar.gz; \
+    '
+
+echo '[s36.white.shht.qihoo.<span class="hljs-keyword">net</span>]...'
+
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    scp -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    zookeeper-3.4.8.tar.gz \
+    <span class="hljs-keyword">search</span>@s36.white.shht.qihoo.<span class="hljs-keyword">net</span>:/data/
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    ssh -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    <span class="hljs-keyword">search</span>@s36.white.shht.qihoo.<span class="hljs-keyword">net</span> \
+    ' \
+    <span class="hljs-keyword">cd</span> /data; \
+    <span class="hljs-keyword">test</span> -<span class="hljs-keyword">d</span> zookeeper-3.4.8 &amp;&amp; mv zookeeper-3.4.8 zookeeper-3.4.8-old; \
+    tar -zxf zookeeper-3.4.8.tar.gz -C .; \
+    '
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    scp -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    zoo.cfg \
+    <span class="hljs-keyword">search</span>@s36.white.shht.qihoo.<span class="hljs-keyword">net</span>:/data/zookeeper-3.4.8/<span class="hljs-keyword">conf</span>/
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    ssh -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    <span class="hljs-keyword">search</span>@s36.white.shht.qihoo.<span class="hljs-keyword">net</span> \
+    ' \
+    <span class="hljs-keyword">cd</span> /data/zookeeper-3.4.8; \
+    <span class="hljs-keyword">mkdir</span> -p data; \
+    <span class="hljs-keyword">cd</span> data/; \
+    echo <span class="hljs-string">"1"</span> &gt; myid; \
+    <span class="hljs-keyword">cd</span> ../../; \
+    <span class="hljs-keyword">rm</span> -f zookeeper-3.4.8.tar.gz; \
+    '
+
+echo '[s37.white.shht.qihoo.<span class="hljs-keyword">net</span>]...'
+
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    scp -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    zookeeper-3.4.8.tar.gz \
+    <span class="hljs-keyword">search</span>@s37.white.shht.qihoo.<span class="hljs-keyword">net</span>:/data/
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    ssh -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    <span class="hljs-keyword">search</span>@s37.white.shht.qihoo.<span class="hljs-keyword">net</span> \
+    ' \
+    <span class="hljs-keyword">cd</span> /data; \
+    <span class="hljs-keyword">test</span> -<span class="hljs-keyword">d</span> zookeeper-3.4.8 &amp;&amp; mv zookeeper-3.4.8 zookeeper-3.4.8-old; \
+    tar -zxf zookeeper-3.4.8.tar.gz -C .; \
+    '
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    scp -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    zoo.cfg \
+    <span class="hljs-keyword">search</span>@s37.white.shht.qihoo.<span class="hljs-keyword">net</span>:/data/zookeeper-3.4.8/<span class="hljs-keyword">conf</span>/
+sudo -<span class="hljs-keyword">u</span> <span class="hljs-keyword">search</span> \
+    ssh -oStrictHostKeyChecking=<span class="hljs-keyword">no</span> \
+    <span class="hljs-keyword">search</span>@s37.white.shht.qihoo.<span class="hljs-keyword">net</span> \
+    ' \
+    <span class="hljs-keyword">cd</span> /data/zookeeper-3.4.8; \
+    <span class="hljs-keyword">mkdir</span> -p data; \
+    <span class="hljs-keyword">cd</span> data/; \
+    echo <span class="hljs-string">"2"</span> &gt; myid; \
+    <span class="hljs-keyword">cd</span> ../../; \
+    <span class="hljs-keyword">rm</span> -f zookeeper-3.4.8.tar.gz; \
+    '
+
+echo 'finish!'</code></pre><p>可以看到， <code>@index_place_holder</code> 依次被替换为对应的序号。</p>
+<p><a href="../deploygen.html">上一级</a></p>
+<p><a href="../../index.html">根目录</a></p>
+    </article>
+  </body>
+</html>
