@@ -4,18 +4,25 @@
     "main_conf":
     [
         ["bool", "debug_sync"],
-        ["bool", "disable_sync"],
-        ["int", "sync_threads"],
-        ["time", "sync_release_interval"],
-        ["time", "sync_checkdb_interval"],
-        ["time", "sync_checklog_interval"],
         ["string", "zlog_mdc"],
         ["string", "hustdbtable_file"],
         ["string", "hustdb_ha_shm_name"],
         ["size", "hustdb_ha_shm_size"],
         ["string", "public_pem"],
         ["int", "identifier_cache_size"],
-        ["time", "identifier_timeout"]
+        ["time", "identifier_timeout"],
+        ["size", "fetch_req_pool_size"],
+        ["int", "keepalive_cache_size"],
+        ["int", "connection_cache_size"],
+        ["time", "fetch_connect_timeout"],
+        ["time", "fetch_send_timeout"],
+        ["time", "fetch_read_timeout"],
+        ["time", "fetch_timeout"],
+        ["size", "fetch_buffer_size"],
+        ["int", "sync_port"],
+        ["string", "sync_status_uri"],
+        ["string", "sync_user"],
+        ["string", "sync_passwd"]
     ],
     "handlers":
     [
