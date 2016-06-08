@@ -370,6 +370,9 @@
             "uri": "sync_status"
         },
         {
+            "uri": "sync_alive"
+        },
+        {
             "uri": "get_table"
         },
         {
