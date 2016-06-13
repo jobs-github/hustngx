@@ -101,7 +101,7 @@ static void __test_peers(
 
 static void __active_ev(ngx_event_t * ev)
 {
-    ngx_http_auth_basic_key_t auth = { ngx_string("hustdbxc"), ngx_string("qihoohustxrbczdb") };
+    ngx_http_auth_basic_key_t auth = { ngx_string("jobs"), ngx_string("jobs") };
     ngx_http_fetch_header_t headers[] = {
         { ngx_string("Connection"), ngx_string("Keep-Alive") },
         { ngx_string("Content-Type"), ngx_string("text/plain") }

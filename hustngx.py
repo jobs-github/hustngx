@@ -82,7 +82,7 @@ def gen_nginx_json(ngx_dir, md):
         '    "proxy":',
         '    {',
         __health_check,
-        '        "auth": "aHVzdGRieGM6cWlob29odXN0eHJiY3pkYg==",',
+        '        "auth": "am9iczpqb2Jz",',
         '        "proxy_connect_timeout": "2s",',
         '        "proxy_send_timeout": "60s",',
         '        "proxy_read_timeout": "60s",',
@@ -148,7 +148,7 @@ def gen_config(ngx_dir, md):
     
 def gen_htpasswd(ngx_dir):
     write_file(os.path.join(
-        ngx_dir, 'conf/htpasswd'), 'hustdbxc:qihoohustxrbczdb')
+        ngx_dir, 'conf/htpasswd'), 'jobs:jobs\n')
         
 def gen_deploy(md_path):
     bin_uri = get_bin_uri("deploygen")
