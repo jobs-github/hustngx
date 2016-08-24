@@ -1,4 +1,4 @@
-{
+ {
     "module": "hustdb_ha",
     "includes": ["ngx_http_peer_selector", "ngx_http_fetch"],
     "main_conf":
@@ -501,6 +501,272 @@
                     "gen_post_subrequest": false,
                     "use_round_robin": false,
                     "subrequests": null
+                }
+            }
+        },
+        {
+            "uri": "cache/exist",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/exist",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/get",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/get",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/ttl",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/ttl",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/put",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/put",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/append",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/append",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/del",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/del",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/expire",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/expire",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/persist",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/persist",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/hexist",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/hexist",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/hget",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/hget",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/hset",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/hset",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/hdel",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/hdel",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/hincrby",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/hincrby",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
+                }
+            }
+        },
+        {
+            "uri": "cache/hincrbyfloat",
+            "action_for_request_body": "default",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustcache/hincrbyfloat",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": false,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": false,
+                        "request_all_peers": true
+                    }
                 }
             }
         }
