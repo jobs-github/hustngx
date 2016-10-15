@@ -22,7 +22,8 @@
         ["int", "sync_port"],
         ["string", "sync_status_uri"],
         ["string", "sync_user"],
-        ["string", "sync_passwd"]
+        ["string", "sync_passwd"],
+        ["string", "binlog_uri"]
     ],
     "handlers":
     [
