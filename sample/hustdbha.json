@@ -305,6 +305,25 @@
             }
         },
         {
+            "uri": "sismember2",
+            "action_for_request_body": "read",
+            "methods": [],
+            "upstream":
+            {
+                "backend_uri": "/hustdb/sismember",
+                "sequential_subrequests":
+                {
+                    "gen_post_subrequest": true,
+                    "use_round_robin": false,
+                    "subrequests":
+                    {
+                        "use_subrequest_peer": true,
+                        "request_all_peers": false
+                    }
+                }
+            }
+        },
+        {
             "uri": "smembers",
             "action_for_request_body": "default",
             "methods": [],
