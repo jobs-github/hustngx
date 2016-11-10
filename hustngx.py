@@ -22,7 +22,7 @@ def manual():
     usage:
         python hustngx.py [nginx] [conf]
     sample:
-        python hustngx.py nginx-1.9.4.tar.gz ngx_wizard/ngx_wizard.json
+        python hustngx.py nginx-1.9.10.tar.gz ngx_wizard/ngx_wizard.json
         """
 
 def write_file(path, data):

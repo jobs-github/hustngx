@@ -15,7 +15,7 @@
 
 运行如下命令：
 
-    python hustngx.py nginx-1.9.4.tar.gz hello.json
+    python hustngx.py nginx-1.9.10.tar.gz hello.json
 
 此时可以看到生成了 `hustmqha` 目录，进入该目录，可以看到如下文件（目录）：
 
@@ -57,7 +57,7 @@
 可以看到服务器返回如下内容：
 
     HTTP/1.1 200 OK
-	Server: nginx/1.9.4
+	Server: nginx/1.9.10
 	Date: Tue, 03 Nov 2015 03:54:37 GMT
 	Content-Type: text/plain
 	Content-Length: 12
