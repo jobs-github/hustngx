@@ -10,6 +10,7 @@
 #include <nginx.h>
 
 
+static void ngx_show_version_info();
 static ngx_int_t ngx_add_inherited_sockets(ngx_cycle_t *cycle);
 static ngx_int_t ngx_get_options(int argc, char *const *argv);
 static ngx_int_t ngx_process_options(ngx_cycle_t *cycle);
@@ -194,64 +195,7 @@ main(int argc, char *const *argv)
     }
 
     if (ngx_show_version) {
-        ngx_write_stderr("nginx version: " NGINX_VER_BUILD NGX_LINEFEED);
-
-        if (ngx_show_help) {
-            ngx_write_stderr(
-                "Usage: nginx [-?hvVtTq] [-s signal] [-c filename] "
-                             "[-p prefix] [-g directives]" NGX_LINEFEED
-                             NGX_LINEFEED
-                "Options:" NGX_LINEFEED
-                "  -?,-h         : this help" NGX_LINEFEED
-                "  -v            : show version and exit" NGX_LINEFEED
-                "  -V            : show version and configure options then exit"
-                                   NGX_LINEFEED
-                "  -t            : test configuration and exit" NGX_LINEFEED
-                "  -T            : test configuration, dump it and exit"
-                                   NGX_LINEFEED
-                "  -q            : suppress non-error messages "
-                                   "during configuration testing" NGX_LINEFEED
-                "  -s signal     : send signal to a master process: "
-                                   "stop, quit, reopen, reload" NGX_LINEFEED
-#ifdef NGX_PREFIX
-                "  -p prefix     : set prefix path (default: "
-                                   NGX_PREFIX ")" NGX_LINEFEED
-#else
-                "  -p prefix     : set prefix path (default: NONE)" NGX_LINEFEED
-#endif
-                "  -c filename   : set configuration file (default: "
-                                   NGX_CONF_PATH ")" NGX_LINEFEED
-                "  -g directives : set global directives out of configuration "
-                                   "file" NGX_LINEFEED NGX_LINEFEED
-                );
-        }
-
-        if (ngx_show_configure) {
-
-#ifdef NGX_COMPILER
-            ngx_write_stderr("built by " NGX_COMPILER NGX_LINEFEED);
-#endif
-
-#if (NGX_SSL)
-            if (SSLeay() == SSLEAY_VERSION_NUMBER) {
-                ngx_write_stderr("built with " OPENSSL_VERSION_TEXT
-                                 NGX_LINEFEED);
-            } else {
-                ngx_write_stderr("built with " OPENSSL_VERSION_TEXT
-                                 " (running with ");
-                ngx_write_stderr((char *) (uintptr_t)
-                                 SSLeay_version(SSLEAY_VERSION));
-                ngx_write_stderr(")" NGX_LINEFEED);
-            }
-#ifdef SSL_CTRL_SET_TLSEXT_HOSTNAME
-            ngx_write_stderr("TLS SNI support enabled" NGX_LINEFEED);
-#else
-            ngx_write_stderr("TLS SNI support disabled" NGX_LINEFEED);
-#endif
-#endif
-
-            ngx_write_stderr("configure arguments:" NGX_CONFIGURE NGX_LINEFEED);
-        }
+        ngx_show_version_info();
 
         if (!ngx_test_config) {
             return 0;
@@ -425,6 +369,69 @@ main(int argc, char *const *argv)
     }
 
     return 0;
+}
+
+
+static void
+ngx_show_version_info()
+{
+    ngx_write_stderr("nginx version: " NGINX_VER_BUILD NGX_LINEFEED);
+
+    if (ngx_show_help) {
+        ngx_write_stderr(
+            "Usage: nginx [-?hvVtTq] [-s signal] [-c filename] "
+                         "[-p prefix] [-g directives]" NGX_LINEFEED
+                         NGX_LINEFEED
+            "Options:" NGX_LINEFEED
+            "  -?,-h         : this help" NGX_LINEFEED
+            "  -v            : show version and exit" NGX_LINEFEED
+            "  -V            : show version and configure options then exit"
+                               NGX_LINEFEED
+            "  -t            : test configuration and exit" NGX_LINEFEED
+            "  -T            : test configuration, dump it and exit"
+                               NGX_LINEFEED
+            "  -q            : suppress non-error messages "
+                               "during configuration testing" NGX_LINEFEED
+            "  -s signal     : send signal to a master process: "
+                               "stop, quit, reopen, reload" NGX_LINEFEED
+#ifdef NGX_PREFIX
+            "  -p prefix     : set prefix path (default: " NGX_PREFIX ")"
+                               NGX_LINEFEED
+#else
+            "  -p prefix     : set prefix path (default: NONE)" NGX_LINEFEED
+#endif
+            "  -c filename   : set configuration file (default: " NGX_CONF_PATH
+                               ")" NGX_LINEFEED
+            "  -g directives : set global directives out of configuration "
+                               "file" NGX_LINEFEED NGX_LINEFEED
+        );
+    }
+
+    if (ngx_show_configure) {
+
+#ifdef NGX_COMPILER
+        ngx_write_stderr("built by " NGX_COMPILER NGX_LINEFEED);
+#endif
+
+#if (NGX_SSL)
+        if (SSLeay() == SSLEAY_VERSION_NUMBER) {
+            ngx_write_stderr("built with " OPENSSL_VERSION_TEXT NGX_LINEFEED);
+        } else {
+            ngx_write_stderr("built with " OPENSSL_VERSION_TEXT
+                             " (running with ");
+            ngx_write_stderr((char *) (uintptr_t)
+                             SSLeay_version(SSLEAY_VERSION));
+            ngx_write_stderr(")" NGX_LINEFEED);
+        }
+#ifdef SSL_CTRL_SET_TLSEXT_HOSTNAME
+        ngx_write_stderr("TLS SNI support enabled" NGX_LINEFEED);
+#else
+        ngx_write_stderr("TLS SNI support disabled" NGX_LINEFEED);
+#endif
+#endif
+
+        ngx_write_stderr("configure arguments:" NGX_CONFIGURE NGX_LINEFEED);
+    }
 }
 
 
@@ -963,6 +970,7 @@ ngx_core_module_create_conf(ngx_cycle_t *cycle)
      *     ccf->pid = NULL;
      *     ccf->oldpid = NULL;
      *     ccf->priority = 0;
+     *     ccf->cpu_affinity_auto = 0;
      *     ccf->cpu_affinity_n = 0;
      *     ccf->cpu_affinity = NULL;
      */
@@ -1004,7 +1012,8 @@ ngx_core_module_init_conf(ngx_cycle_t *cycle, void *conf)
 
 #if (NGX_HAVE_CPU_AFFINITY)
 
-    if (ccf->cpu_affinity_n
+    if (!ccf->cpu_affinity_auto
+        && ccf->cpu_affinity_n
         && ccf->cpu_affinity_n != 1
         && ccf->cpu_affinity_n != (ngx_uint_t) ccf->worker_processes)
     {
@@ -1148,7 +1157,7 @@ ngx_set_user(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         return NGX_CONF_OK;
     }
 
-    value = (ngx_str_t *) cf->args->elts;
+    value = cf->args->elts;
 
     ccf->username = (char *) value[1].data;
 
@@ -1275,7 +1284,24 @@ ngx_set_cpu_affinity(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     value = cf->args->elts;
 
-    for (n = 1; n < cf->args->nelts; n++) {
+    if (ngx_strcmp(value[1].data, "auto") == 0) {
+
+        if (cf->args->nelts > 3) {
+            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+                               "invalid number of arguments in "
+                               "\"worker_cpu_affinity\" directive");
+            return NGX_CONF_ERROR;
+        }
+
+        ccf->cpu_affinity_auto = 1;
+        mask[0] = (uint64_t) -1 >> (64 - ngx_min(64, ngx_ncpu));
+        n = 2;
+
+    } else {
+        n = 1;
+    }
+
+    for ( /* void */ ; n < cf->args->nelts; n++) {
 
         if (value[n].len > 64) {
             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
@@ -1325,6 +1351,8 @@ ngx_set_cpu_affinity(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 uint64_t
 ngx_get_cpu_affinity(ngx_uint_t n)
 {
+    uint64_t          mask;
+    ngx_uint_t        i;
     ngx_core_conf_t  *ccf;
 
     ccf = (ngx_core_conf_t *) ngx_get_conf(ngx_cycle->conf_ctx,
@@ -1332,6 +1360,24 @@ ngx_get_cpu_affinity(ngx_uint_t n)
 
     if (ccf->cpu_affinity == NULL) {
         return 0;
+    }
+
+    if (ccf->cpu_affinity_auto) {
+        mask = ccf->cpu_affinity[ccf->cpu_affinity_n - 1];
+
+        if (mask == 0) {
+            return 0;
+        }
+
+        for (i = 0; /* void */ ; i++) {
+            if ((mask & ((uint64_t) 1 << (i % 64))) && n-- == 0) {
+                break;
+            }
+
+            /* void */
+        }
+
+        return (uint64_t) 1 << (i % 64);
     }
 
     if (ccf->cpu_affinity_n > n) {
@@ -1354,7 +1400,7 @@ ngx_set_worker_processes(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         return "is duplicate";
     }
 
-    value = (ngx_str_t *) cf->args->elts;
+    value = cf->args->elts;
 
     if (ngx_strcmp(value[1].data, "auto") == 0) {
         ccf->worker_processes = ngx_ncpu;

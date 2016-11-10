@@ -272,9 +272,6 @@ NGX_WIN32_ICONS="src/os/win32/nginx.ico"
 NGX_WIN32_RC="src/os/win32/nginx.rc"
 
 
-# the http modules that have their logging formats
-# must be after ngx_http_log_module
-
 HTTP_MODULES="ngx_http_module \
               ngx_http_core_module \
               ngx_http_log_module \
@@ -356,13 +353,17 @@ HTTP_POSTPONE_FILTER_SRCS=src/http/ngx_http_postpone_filter_module.c
 HTTP_FILE_CACHE_SRCS=src/http/ngx_http_file_cache.c
 
 
-HTTP_SPDY_MODULE=ngx_http_spdy_module
-HTTP_SPDY_FILTER_MODULE=ngx_http_spdy_filter_module
-HTTP_SPDY_DEPS="src/http/ngx_http_spdy.h \
-                src/http/ngx_http_spdy_module.h"
-HTTP_SPDY_SRCS="src/http/ngx_http_spdy.c \
-                src/http/ngx_http_spdy_module.c \
-                src/http/ngx_http_spdy_filter_module.c"
+HTTP_V2_MODULE=ngx_http_v2_module
+HTTP_V2_FILTER_MODULE=ngx_http_v2_filter_module
+HTTP_V2_INCS="src/http/v2"
+HTTP_V2_DEPS="src/http/v2/ngx_http_v2.h \
+              src/http/v2/ngx_http_v2_module.h"
+HTTP_V2_SRCS="src/http/v2/ngx_http_v2.c \
+              src/http/v2/ngx_http_v2_table.c \
+              src/http/v2/ngx_http_v2_huff_decode.c \
+              src/http/v2/ngx_http_v2_huff_encode.c \
+              src/http/v2/ngx_http_v2_module.c \
+              src/http/v2/ngx_http_v2_filter_module.c"
 
 
 HTTP_CHARSET_FILTER_MODULE=ngx_http_charset_filter_module
@@ -396,6 +397,10 @@ HTTP_SUB_SRCS=src/http/modules/ngx_http_sub_filter_module.c
 
 HTTP_USERID_FILTER_MODULE=ngx_http_userid_filter_module
 HTTP_USERID_SRCS=src/http/modules/ngx_http_userid_filter_module.c
+
+
+HTTP_SLICE_FILTER_MODULE=ngx_http_slice_filter_module
+HTTP_SLICE_SRCS=src/http/modules/ngx_http_slice_filter_module.c
 
 
 HTTP_REALIP_MODULE=ngx_http_realip_module
