@@ -4,7 +4,7 @@
     "listen": 8085,
     "keepalive_timeout": 540,
     "keepalive": 32768,
-    "http_basic_auth_file": "/home/search/hustdict/conf/htpasswd",
+    "http_basic_auth_file": "/data/hustdict/conf/htpasswd",
     "main_conf":
     [
         ["shm_name", "hust_dict_share_memory"],
