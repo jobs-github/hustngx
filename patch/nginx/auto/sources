@@ -41,7 +41,16 @@ CORE_DEPS="src/core/nginx.h \
            src/core/ngx_open_file_cache.h \
            src/core/ngx_crypt.h \
            src/core/ngx_proxy_protocol.h \
-           src/core/ngx_syslog.h"
+           src/core/ngx_syslog.h \
+           src/core/ngx_shm_dict_utils.h \
+           src/core/ngx_shm_dict_writer.h \
+           src/core/ngx_shm_dict_reader.h \
+           src/core/ngx_shm_dict_code.h \
+           src/core/ngx_shm_dict.h \
+           src/core/c_dict.h \
+           src/core/cJSON.h \
+           src/core/cjson_serialization_base.h \
+           src/core/cjson_serialization.h"
 
 
 CORE_SRCS="src/core/nginx.c \
@@ -77,7 +86,16 @@ CORE_SRCS="src/core/nginx.c \
            src/core/ngx_open_file_cache.c \
            src/core/ngx_crypt.c \
            src/core/ngx_proxy_protocol.c \
-           src/core/ngx_syslog.c"
+           src/core/ngx_syslog.c \
+           src/core/ngx_shm_dict_utils.c \
+           src/core/ngx_shm_dict_writer.c \
+           src/core/ngx_shm_dict_reader.c \
+           src/core/ngx_shm_dict_code.c \
+           src/core/ngx_shm_dict.c \
+           src/core/c_dict.c \
+           src/core/cJSON.c \
+           src/core/cjson_serialization_base.c \
+           src/core/cjson_serialization.c"
 
 
 EVENT_MODULES="ngx_events_module ngx_event_core_module"
