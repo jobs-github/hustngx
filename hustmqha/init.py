@@ -8,7 +8,7 @@ import shutil
 def init_hustmqha(argv):
     cwd = os.path.dirname(os.path.abspath(argv[0]))
     root = os.path.dirname(cwd)
-    os.system('cd .. && python hustngx.py nginx-1.9.10.tar.gz sample/hustmqha.json')
+    os.system('cd .. && python hustngx.py nginx-1.9.11.tar.gz sample/hustmqha.json')
     items = [
         'auto/sources',
         'conf/genhtpasswd.sh',
