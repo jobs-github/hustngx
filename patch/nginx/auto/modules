@@ -65,7 +65,8 @@ if :; then
     ngx_module_name="ngx_http_module \
                      ngx_http_core_module \
                      ngx_http_log_module \
-                     ngx_http_upstream_module"
+                     ngx_http_upstream_module \
+                     ngx_http_fetch_module"
     ngx_module_incs="src/http src/http/modules"
     ngx_module_deps="src/http/ngx_http.h \
                      src/http/ngx_http_request.h \
