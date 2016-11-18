@@ -543,13 +543,12 @@ if [ $HTTP_AUTH_REQUEST = YES ]; then
 fi
 
 if :; then
-    have=NGX_HTTP_UPSTREAM_CHECK . auto/have
     ngx_module_name=ngx_http_upstream_check_module
     ngx_module_incs=
     ngx_module_deps=
     ngx_module_srcs=src/http/modules/ngx_http_upstream_check_module.c
     ngx_module_libs=
-    ngx_module_link=$HTTP_UPSTREAM_CHECK
+    ngx_module_link=YES
 
     . auto/module
 fi
@@ -560,7 +559,7 @@ if :; then
     ngx_module_deps=
     ngx_module_srcs=src/http/modules/ngx_http_peer_selector_module.c
     ngx_module_libs=
-    ngx_module_link=$HTTP_PEER_SELECTOR
+    ngx_module_link=YES
 
     . auto/module
 fi
@@ -574,11 +573,10 @@ if :; then
     ngx_module_incs=
     ngx_module_deps=
     ngx_module_srcs=src/http/modules/ngx_http_basic_auth_module.c
-    ngx_module_libs=
-    ngx_module_link=$HTTP_BASIC_AUTH
+    ngx_module_libs=$CRYPT_LIB
+    ngx_module_link=YES
 
     . auto/module
-    CORE_LIBS="$CORE_LIBS $CRYPT_LIB"
 fi
 
 if [ $HTTP_AUTH_BASIC = YES ]; then
