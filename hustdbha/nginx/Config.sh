@@ -1,0 +1,1 @@
+./configure --with-cc-opt="-g3 -O0" --with-ld-opt="-lzlog -lpthread -lm -ldl -lcrypto" --prefix=/data/hustdbha --add-module=src/addon

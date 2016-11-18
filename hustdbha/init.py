@@ -10,7 +10,6 @@ def init_hustdbha(argv):
     root = os.path.dirname(cwd)
     os.system('cd .. && python hustngx.py nginx-1.10.0.tar.gz sample/hustdbha.json')
     items = [
-        'auto/cc/conf',
         'auto/install',
         'auto/sources',
         'conf/gen_table.py',
