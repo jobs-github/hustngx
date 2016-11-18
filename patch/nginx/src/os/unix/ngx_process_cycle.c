@@ -227,7 +227,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
             }
 
             ngx_log_debug1(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
-                           "termination cycle: %d", delay);
+                           "termination cycle: %M", delay);
 
             itv.it_interval.tv_sec = 0;
             itv.it_interval.tv_usec = 0;
@@ -520,7 +520,7 @@ ngx_pass_open_channel(ngx_cycle_t *cycle, ngx_channel_t *ch)
         }
 
         ngx_log_debug6(NGX_LOG_DEBUG_CORE, cycle->log, 0,
-                      "pass channel s:%d pid:%P fd:%d to s:%i pid:%P fd:%d",
+                      "pass channel s:%i pid:%P fd:%d to s:%i pid:%P fd:%d",
                       ch->slot, ch->pid, ch->fd,
                       i, ngx_processes[i].pid,
                       ngx_processes[i].channel[0]);
@@ -574,7 +574,7 @@ ngx_signal_worker_processes(ngx_cycle_t *cycle, int signo)
     for (i = 0; i < ngx_last_process; i++) {
 
         ngx_log_debug7(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
-                       "child: %d %P e:%d t:%d d:%d r:%d j:%d",
+                       "child: %i %P e:%d t:%d d:%d r:%d j:%d",
                        i,
                        ngx_processes[i].pid,
                        ngx_processes[i].exiting,
@@ -652,7 +652,7 @@ ngx_reap_children(ngx_cycle_t *cycle)
     for (i = 0; i < ngx_last_process; i++) {
 
         ngx_log_debug7(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
-                       "child: %d %P e:%d t:%d d:%d r:%d j:%d",
+                       "child: %i %P e:%d t:%d d:%d r:%d j:%d",
                        i,
                        ngx_processes[i].pid,
                        ngx_processes[i].exiting,
@@ -866,9 +866,9 @@ static void
 ngx_worker_process_init(ngx_cycle_t *cycle, ngx_int_t worker)
 {
     sigset_t          set;
-    uint64_t          cpu_affinity;
     ngx_int_t         n;
     ngx_uint_t        i;
+    ngx_cpuset_t     *cpu_affinity;
     struct rlimit     rlmt;
     ngx_core_conf_t  *ccf;
     ngx_listening_t  *ls;
@@ -1129,7 +1129,7 @@ ngx_channel_handler(ngx_event_t *ev)
         }
 
         ngx_log_debug1(NGX_LOG_DEBUG_CORE, ev->log, 0,
-                       "channel command: %d", ch.command);
+                       "channel command: %ui", ch.command);
 
         switch (ch.command) {
 
