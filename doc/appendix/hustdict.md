@@ -7,7 +7,7 @@
 
 ### 工程配置文件 ###
 
-文件路径：`hustngx/sample/hustdict.json`
+文件路径：`hustngx/samples/schema/hustdict.json`
 
     {
 	    "module": "hustdict",
@@ -33,15 +33,15 @@
 
 运行如下命令：
 
-    python hustngx.py nginx-1.10.0.tar.gz sample/hustdict.json
+    python hustngx.py nginx-1.10.0.tar.gz samples/schema/hustdict.json
 
-即可生成对应的工程模板：`hustngx/sample/hustdict`
+即可生成对应的工程模板：`hustngx/samples/schema/hustdict`
 
 之后的开发可以利用文本比对工具（例如：`BeyondCompare`），将生成的新代码同步至项目目录之中。
 
 ### nginx 配置文件 ###
 
-文件路径：`hustngx/hustdict/nginx/conf/nginx.json`
+文件路径：`hustngx/samples/hustdict/nginx/conf/nginx.json`
 
     {
 	    "module": "hustdict",
@@ -83,13 +83,13 @@
 ### 测试脚本 ###
 
 * `autotest.py`  
-`hustdict` 单元测试脚本。
+`hustdict` 单元测试脚本。路径：`hustngx/samples/hustdict/nginx/autotest.py`  
 
 * `mutitest.py`  
-`hustdict` 压力测试脚本。
+`hustdict` 压力测试脚本。路径：`hustngx/samples/hustdict/nginx/mutitest.py`  
 
 * `mutikill.sh`  
-用于杀掉 `hustdict` 压力测试脚本进程。
+用于杀掉 `hustdict` 压力测试脚本进程。路径：`hustngx/samples/hustdict/nginx/mutikill.sh`  
 
 [上一级](index.md)
 
