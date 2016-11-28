@@ -7,8 +7,8 @@ import shutil
 
 def init_hustdict(argv):
     cwd = os.path.dirname(os.path.abspath(argv[0]))
-    root = os.path.dirname(cwd)
-    os.system('cd .. && python hustngx.py nginx-1.10.0.tar.gz sample/hustdict.json')
+    root = os.path.dirname(os.path.dirname(cwd))
+    os.system('cd ../../ && python hustngx.py nginx-1.10.0.tar.gz samples/schema/hustdict.json')
     items = [
         'src/addon', 
         'conf/nginx.json', 
@@ -17,8 +17,8 @@ def init_hustdict(argv):
         'mutitest.py', 
         'mutikill.sh'
         ]
-    src_dir = os.path.join(root, 'hustdict/nginx')
-    dst_dir = os.path.join(root, 'sample/hustdict/nginx')
+    src_dir = os.path.join(root, 'samples/hustdict/nginx')
+    dst_dir = os.path.join(root, 'samples/schema/hustdict/nginx')
     for item in items:
         src = os.path.join(src_dir, item)
         dst = os.path.join(dst_dir, item)

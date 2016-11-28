@@ -7,8 +7,8 @@ import shutil
 
 def init_hustmqha(argv):
     cwd = os.path.dirname(os.path.abspath(argv[0]))
-    root = os.path.dirname(cwd)
-    os.system('cd .. && python hustngx.py nginx-1.10.0.tar.gz sample/hustmqha.json')
+    root = os.path.dirname(os.path.dirname(cwd))
+    os.system('cd ../../ && python hustngx.py nginx-1.10.0.tar.gz samples/schema/hustmqha.json')
     items = [
         'auto/sources',
         'conf/genhtpasswd.sh',
@@ -20,8 +20,8 @@ def init_hustmqha(argv):
         'test',
         'Config.sh'
         ]
-    src_dir = os.path.join(root, 'hustmqha/nginx')
-    dst_dir = os.path.join(root, 'sample/hustmq_ha/nginx')
+    src_dir = os.path.join(root, 'samples/hustmqha/nginx')
+    dst_dir = os.path.join(root, 'samples/schema/hustmq_ha/nginx')
     for item in items:
         src = os.path.join(src_dir, item)
         dst = os.path.join(dst_dir, item)

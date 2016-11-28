@@ -7,8 +7,8 @@ import shutil
 
 def init_hustdbha(argv):
     cwd = os.path.dirname(os.path.abspath(argv[0]))
-    root = os.path.dirname(cwd)
-    os.system('cd .. && python hustngx.py nginx-1.10.0.tar.gz sample/hustdbha.json')
+    root = os.path.dirname(os.path.dirname(cwd))
+    os.system('cd ../../ && python hustngx.py nginx-1.10.0.tar.gz samples/schema/hustdbha.json')
     items = [
         'auto/install',
         'auto/sources',
@@ -34,8 +34,8 @@ def init_hustdbha(argv):
         'test',
         'Config.sh'
         ]
-    src_dir = os.path.join(root, 'hustdbha/nginx')
-    dst_dir = os.path.join(root, 'sample/hustdb_ha/nginx')
+    src_dir = os.path.join(root, 'samples/hustdbha/nginx')
+    dst_dir = os.path.join(root, 'samples/schema/hustdb_ha/nginx')
     for item in items:
         src = os.path.join(src_dir, item)
         dst = os.path.join(dst_dir, item)
