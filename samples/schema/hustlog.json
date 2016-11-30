@@ -1,0 +1,9 @@
+{
+    "module": "hustlog",
+    "handlers":
+    [
+        {
+            "uri": "hustlog/post"
+        }
+    ]
+}

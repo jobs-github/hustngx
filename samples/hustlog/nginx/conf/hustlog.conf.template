@@ -1,0 +1,12 @@
+[global]
+strict init = true
+buffer min = 2MB
+buffer max = 64MB
+rotate lock file = /tmp/zlog.lock
+file perms = 600
+
+[formats]
+default = "[%d] [%V] [%M(worker)] | %m%n"
+
+[rules]
+*.*             "/data/hustlog/logs/%c.%d(%F).log"; default
