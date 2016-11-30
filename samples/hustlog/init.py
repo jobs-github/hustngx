@@ -20,7 +20,7 @@ def init_hustlog(argv):
         'src/core/nginx.c',
         'src/core/ngx_config.h',
         'src/http/ngx_http_upstream_round_robin.c',
-        'src/http/ngx_http_upstream_round_robin.c',
+        'src/http/ngx_http_upstream_round_robin.h',
         'src/os/unix/ngx_process_cycle.c',
         'test',
         'Config.sh'
