@@ -12,7 +12,8 @@ TYPE = 0
 NAME = 1
 
 FILTER = '@null_string_place_holder'
-merge = lambda l: string.join(filter(lambda item: FILTER != item, l), '\n')
+join_lines = lambda lines, dim: string.join(filter(lambda item: -1 == item.find(FILTER), lines), dim)
+merge = lambda lines: join_lines(lines, '\n')
 
 def manual(): 
     print """
@@ -29,6 +30,9 @@ def load_file(url):
         return f.read()
 def load_from_tpl(url, vars):
     return string.Template(load_file(url)).substitute(vars)
+def load_from_tpl_lines(url, vars):
+    with open(url) as f:
+        return join_lines([string.Template(line).substitute(vars) for line in f], '')
 
 req_params = 'ngx_str_t * backend_uri, ngx_http_request_t *r'
 conf_params = 'ngx_conf_t * cf, ngx_command_t * cmd, void * conf'
@@ -115,21 +119,12 @@ def gen_handler_imp(addon, md, handler):
     __use_parallel = __upstream_has_key('parallel_subrequests')
     __use_sequential = __upstream_has_key('sequential_subrequests')
 
-    # "upstream"
-    #     "sequential_subrequests"
-    #     "parallel_subrequests"
-    
     __gen_ctx = lambda md, handler: load_from_tpl(
-        os.path.join(cwd, 'tpl/parallel_ctx.h'), {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))}
-        ) if __use_parallel(handler) else merge([
-        'typedef struct',
-        '{',
-        '    ngx_http_subrequest_ctx_t base;',
-        '    ngx_http_upstream_rr_peer_t * peer;' if __use_sequential(handler) else FILTER,
-        '    // TODO: add your fields here',
-        '} %s_%s_ctx_t;' % (md, get_uri(handler)),
-        ''
-        ]) if use_upstream(handler) else FILTER
+            os.path.join(cwd, 'tpl/parallel_ctx.h'), {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))}
+        ) if __use_parallel(handler) else load_from_tpl_lines(os.path.join(cwd, 'tpl/upstream_ctx.h'), {
+            'var_peer': '    ngx_http_upstream_rr_peer_t * peer;' if __use_sequential(handler) else FILTER,
+            'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))
+        }) if use_upstream(handler) else FILTER
     __gen_check_parameter = lambda: load_from_tpl(os.path.join(cwd, 'tpl/check.c'), {'var_args': req_params})
     __gen_post_subrequest_handler = lambda md, handler: FILTER if __use_parallel(handler) else merge([
         'static ngx_int_t __post_subrequest_handler(',
