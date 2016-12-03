@@ -31,6 +31,7 @@ cwd = os.path.split(os.path.realpath(__file__))[0]
 parallel_subrequests_uri = os.path.join(cwd, 'tpl/parallel_subrequests.c')
 header_uri = os.path.join(cwd, 'tpl/header.h')
 main_conf_uri = os.path.join(cwd, 'tpl/main_conf.h')
+utils_uri = os.path.join(cwd, 'tpl/utils.h')
 
 def write_file(path, data):
     with open(path, 'w') as f:
@@ -74,19 +75,14 @@ def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf):
         'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
         'var_get_mcf': '%s_get_module_main_conf' % md
         })
-    
-    write_file('%s/%s_utils.h' % (addon, md), gen_head_frame(md, 'utils', merge([
-        '#include <ngx_core.h>',
-        '#include <ngx_http.h>',
-        '#include <ngx_http_addon_def.h>',
-        '#include <ngx_http_utils_module.h>',
-        '#include <ngx_shm_dict.h>' if has_shm_dict else FILTER,
-        '#include <ngx_http_peer_selector.h>' if has_peer_sel else FILTER,
-        '#include <ngx_http_fetch.h>' if has_http_fetch else FILTER,
-        '',
-        __gen_mcf(md, mcf)
-        ])))
-
+    write_file('%s/%s_utils.h' % (addon, md), gen_head_frame(md, 'utils', load_from_tpl(utils_uri, {
+        'var_includes': merge([
+            '#include <ngx_shm_dict.h>' if has_shm_dict else FILTER,
+            '#include <ngx_http_peer_selector.h>' if has_peer_sel else FILTER,
+            '#include <ngx_http_fetch.h>' if has_http_fetch else FILTER
+            ]),
+        'var_mcf': __gen_mcf(md, mcf)
+        })))
     write_file('%s/%s_utils.c' % (addon, md), merge([
         '#include "%s_utils.h"' % md
         ]))
