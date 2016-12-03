@@ -37,16 +37,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/worker",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": true,
-                    "use_round_robin": false,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": false,
-                        "request_all_peers": true
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
@@ -56,16 +47,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/put",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": false,
-                    "use_round_robin": true,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": false,
-                        "request_all_peers": false
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
@@ -75,16 +57,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/get",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": false,
-                    "use_round_robin": false,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": false,
-                        "request_all_peers": false
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
@@ -94,16 +67,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/ack",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": false,
-                    "use_round_robin": false,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": false,
-                        "request_all_peers": true
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
@@ -113,16 +77,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/timeout",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": false,
-                    "use_round_robin": false,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": false,
-                        "request_all_peers": true
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
@@ -132,16 +87,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/stat_all",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": true,
-                    "use_round_robin": false,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": false,
-                        "request_all_peers": false
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
@@ -151,16 +97,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/purge",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": true,
-                    "use_round_robin": false,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": false,
-                        "request_all_peers": false
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
@@ -170,16 +107,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/max",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": true,
-                    "use_round_robin": false,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": false,
-                        "request_all_peers": false
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
@@ -189,16 +117,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/lock",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": true,
-                    "use_round_robin": false,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": false,
-                        "request_all_peers": false
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
@@ -208,16 +127,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/sub",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": false,
-                    "use_round_robin": false,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": true,
-                        "request_all_peers": false
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
@@ -227,16 +137,7 @@
             "upstream":
             {
                 "backend_uri": "/hustmq/pub",
-                "sequential_subrequests":
-                {
-                    "gen_post_subrequest": false,
-                    "use_round_robin": false,
-                    "subrequests":
-                    {
-                        "use_subrequest_peer": true,
-                        "request_all_peers": true
-                    }
-                }
+                "sequential_subrequests": true
             }
         },
         {
