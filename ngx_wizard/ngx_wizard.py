@@ -43,6 +43,7 @@ main_conf_uri = os.path.join(cwd, 'tpl/main_conf.h')
 utils_uri = os.path.join(cwd, 'tpl/utils.h')
 type_dict = json.loads(load_file(os.path.join(cwd, 'tpl/type_dict.json')))
 create_ctx_uri = os.path.join(cwd, 'tpl/create_ctx.c')
+parallel_call_uri = os.path.join(cwd, 'tpl/parallel_call.c')
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
@@ -93,13 +94,7 @@ def gen_handler_dec(addon, md, handlers):
 def gen_create_ctx(md, handler): 
     return load_from_tpl(create_ctx_uri, {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))})
 def gen_parallel_call(use_parallel, handler, end): 
-    return merge([
-        '    if (NGX_ERROR == __parallel_subrequests(backend_uri, r))',
-        '    {',
-        '        ngx_http_send_response_imp(NGX_HTTP_NOT_FOUND, NULL, r);',
-        '    }',
-        end
-        ]) if use_parallel(handler) else FILTER
+    return load_from_tpl(parallel_call_uri, {'var_end': end}) if use_parallel(handler) else FILTER
 def gen_parallel_imp(use_parallel, md, handler):
     # "upstream"
     #     "parallel_subrequests"
