@@ -44,6 +44,7 @@ utils_uri = os.path.join(cwd, 'tpl/utils.h')
 type_dict = json.loads(load_file(os.path.join(cwd, 'tpl/type_dict.json')))
 create_ctx_uri = os.path.join(cwd, 'tpl/create_ctx.c')
 parallel_call_uri = os.path.join(cwd, 'tpl/parallel_call.c')
+parallel_ctx_uri = os.path.join(cwd, 'tpl/parallel_ctx.h')
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
@@ -124,18 +125,10 @@ def gen_handler_imp(addon, md, handler):
     # "upstream"
     #     "sequential_subrequests"
     #     "parallel_subrequests"
-    __gen_ctx = lambda md, handler: merge([
-        'typedef struct',
-        '{',
-        '    ngx_http_request_t * r;',
-        '    size_t backends;',
-        '    size_t requests;',
-        '    size_t finished;',
-        '    size_t err_count;',
-        '    // TODO: add your fields here',
-        '} %s_%s_ctx_t;' % (md, get_uri(handler)),
-        ''
-        ]) if __use_parallel(handler) else merge([
+    
+    __gen_ctx = lambda md, handler: load_from_tpl(
+        parallel_ctx_uri, {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))}
+        ) if __use_parallel(handler) else merge([
         'typedef struct',
         '{',
         '    ngx_http_subrequest_ctx_t base;',
