@@ -42,6 +42,8 @@ get_uri = lambda handler: handler['uri'].replace('/', '_')
 # init tpl
 cwd = os.path.split(os.path.realpath(__file__))[0]
 type_dict = json.loads(load_file(os.path.join(cwd, 'tpl/type_dict.json')))
+read_from_tpl = lambda url, vars: load_from_tpl(os.path.join(cwd, url), vars)
+read_from_tpl_lines = lambda url, vars: load_from_tpl_lines(os.path.join(cwd, url), vars)
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
@@ -60,16 +62,16 @@ def gen_tm():
     return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     
 def gen_head_frame(md, submd, str):
-    return load_from_tpl(os.path.join(cwd, 'tpl/header.h'), {'var_head_def': '__%s_%s_%s_h__' % (md, submd, gen_tm()), 'var_str': str})
+    return read_from_tpl('tpl/header.h', {'var_head_def': '__%s_%s_%s_h__' % (md, submd, gen_tm()), 'var_str': str})
         
 def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf):
     __get_type = lambda t: type_dict[t] if t in type_dict else t
-    __gen_mcf = lambda md, mcf: load_from_tpl(os.path.join(cwd, 'tpl/main_conf.h'), {
+    __gen_mcf = lambda md, mcf: read_from_tpl('tpl/main_conf.h', {
         'var_items': merge(['    %s %s;' % (__get_type(item[TYPE]), item[NAME]) for item in mcf]) if len(mcf) > 0 else FILTER,
         'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
         'var_get_mcf': '%s_get_module_main_conf' % md
         })
-    write_file('%s/%s_utils.h' % (addon, md), gen_head_frame(md, 'utils', load_from_tpl(os.path.join(cwd, 'tpl/utils.h'), {
+    write_file('%s/%s_utils.h' % (addon, md), gen_head_frame(md, 'utils', read_from_tpl('tpl/utils.h', {
         'var_includes': merge([
             '#include <ngx_shm_dict.h>' if has_shm_dict else FILTER,
             '#include <ngx_http_peer_selector.h>' if has_peer_sel else FILTER,
@@ -90,13 +92,13 @@ def gen_handler_dec(addon, md, handlers):
             ) % (md, get_uri(handler), req_params), handlers))
         ])))
 def gen_create_ctx(md, handler): 
-    return load_from_tpl(os.path.join(cwd, 'tpl/create_ctx.c'), {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))})
+    return read_from_tpl('tpl/create_ctx.c', {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))})
 def gen_parallel_call(use_parallel, handler, end): 
-    return load_from_tpl(os.path.join(cwd, 'tpl/parallel_call.c'), {'var_end': end}) if use_parallel(handler) else FILTER
+    return read_from_tpl('tpl/parallel_call.c', {'var_end': end}) if use_parallel(handler) else FILTER
 def gen_parallel_imp(use_parallel, md, handler):
     # "upstream"
     #     "parallel_subrequests"
-    return load_from_tpl(os.path.join(cwd, 'tpl/parallel_subrequests.c'), {
+    return read_from_tpl('tpl/parallel_subrequests.c', {
         'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)),
         'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
         'var_get_mcf': '%s_get_module_main_conf(r);' % md,
@@ -119,29 +121,15 @@ def gen_handler_imp(addon, md, handler):
     __use_parallel = __upstream_has_key('parallel_subrequests')
     __use_sequential = __upstream_has_key('sequential_subrequests')
 
-    __gen_ctx = lambda md, handler: load_from_tpl(
-            os.path.join(cwd, 'tpl/parallel_ctx.h'), {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))}
-        ) if __use_parallel(handler) else load_from_tpl_lines(os.path.join(cwd, 'tpl/upstream_ctx.h'), {
+    __gen_ctx = lambda md, handler: read_from_tpl(
+            'tpl/parallel_ctx.h', {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))}
+        ) if __use_parallel(handler) else read_from_tpl_lines('tpl/upstream_ctx.h', {
             'var_peer': '    ngx_http_upstream_rr_peer_t * peer;' if __use_sequential(handler) else FILTER,
             'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))
         }) if use_upstream(handler) else FILTER
-    __gen_check_parameter = lambda: load_from_tpl(os.path.join(cwd, 'tpl/check.c'), {'var_args': req_params})
-    __gen_post_subrequest_handler = lambda md, handler: FILTER if __use_parallel(handler) else merge([
-        'static ngx_int_t __post_subrequest_handler(',
-        '    ngx_http_request_t * r, void * data, ngx_int_t rc)',
-        '{',
-        '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r->parent);' % (md, get_uri(handler)),
-        '    if (ctx && NGX_HTTP_OK == r->headers_out.status)',
-        '    {',
-        '        ctx->base.response.len = ngx_http_get_buf_size(',
-        '            &r->upstream->buffer);',
-	    '        ctx->base.response.data = r->upstream->buffer.pos;',
-        '        // TODO: you can process the response from backend server here',
-        '    }',
-        '    return ngx_http_finish_subrequest(r);',
-        '}',
-        ''
-        ])
+    __gen_check_parameter = lambda: read_from_tpl('tpl/check.c', {'var_args': req_params})
+    __gen_post_subrequest_handler = lambda md, handler: FILTER if __use_parallel(handler) else read_from_tpl(
+        'tpl/post_subrequest.c', {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))})
     __gen_sr_peer = lambda handler: 'ctx->peer' if __use_sequential(handler) else 'peer'
     __gen_sr = lambda prefix, backend_uri, handler: merge([
         merge([
