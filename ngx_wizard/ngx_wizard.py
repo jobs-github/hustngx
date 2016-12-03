@@ -250,7 +250,7 @@ def gen_handler_imp(addon, md, handler):
         'typedef struct',
         '{',
         '    ngx_http_subrequest_ctx_t base;',
-        '    ngx_http_upstream_rr_peer_t * peer;' if __use_sequential(handler) else FILTER
+        '    ngx_http_upstream_rr_peer_t * peer;' if __use_sequential(handler) else FILTER,
         '    // TODO: add your fields here',
         '} %s_%s_ctx_t;' % (md, get_uri(handler)),
         ''
