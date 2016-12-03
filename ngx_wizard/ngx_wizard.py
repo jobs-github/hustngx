@@ -21,6 +21,14 @@ def manual():
     sample:
         python ngx_wizard.py ngx_wizard.json
         """
+def write_file(path, data):
+    with open(path, 'w') as f:
+        f.writelines(data)
+def load_file(url):
+    with open(url) as f:
+        return f.read()
+def load_from_tpl(url, vars):
+    return string.Template(load_file(url)).substitute(vars)
 
 req_params = 'ngx_str_t * backend_uri, ngx_http_request_t *r'
 conf_params = 'ngx_conf_t * cf, ngx_command_t * cmd, void * conf'
@@ -32,15 +40,7 @@ parallel_subrequests_uri = os.path.join(cwd, 'tpl/parallel_subrequests.c')
 header_uri = os.path.join(cwd, 'tpl/header.h')
 main_conf_uri = os.path.join(cwd, 'tpl/main_conf.h')
 utils_uri = os.path.join(cwd, 'tpl/utils.h')
-
-def write_file(path, data):
-    with open(path, 'w') as f:
-        f.writelines(data)
-def load_file(url):
-    with open(url) as f:
-        return f.read()
-def load_from_tpl(url, vars):
-    return string.Template(load_file(url)).substitute(vars)
+type_dict = json.loads(load_file(os.path.join(cwd, 'tpl/type_dict.json')))
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
@@ -62,14 +62,7 @@ def gen_head_frame(md, submd, str):
     return load_from_tpl(header_uri, {'var_head_def': '__%s_%s_%s_h__' % (md, submd, gen_tm()), 'var_str': str})
         
 def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf):
-    __dict = {
-        'int': 'ngx_int_t',
-        'size': 'ssize_t',
-        'time': 'ngx_int_t',
-        'bool': 'ngx_bool_t',
-        'string': 'ngx_str_t'
-        }
-    __get_type = lambda t: __dict[t] if t in __dict else t
+    __get_type = lambda t: type_dict[t] if t in type_dict else t
     __gen_mcf = lambda md, mcf: load_from_tpl(main_conf_uri, {
         'var_items': merge(['    %s %s;' % (__get_type(item[TYPE]), item[NAME]) for item in mcf]) if len(mcf) > 0 else FILTER,
         'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
