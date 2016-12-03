@@ -221,7 +221,6 @@ def gen_handler_imp(addon, md, handler):
     # "methods": ["GET", "HEAD", "POST", "PUT", "DELETE"]
     # "upstream"
     #     "sequential_subrequests"
-    #         "gen_post_subrequest": [true, false]
     #         "subrequests"
     #             "use_subrequest_peer": [true, false]
     #             "request_all_peers": [true, false]
@@ -241,7 +240,6 @@ def gen_handler_imp(addon, md, handler):
     __sequential_sr = lambda handler: handler['upstream']['sequential_subrequests']
     __sequential_has_key = lambda key: lambda handler: __use_sequential(handler) and (
         key in __sequential_sr(handler) and __sequential_sr(handler)[key])
-    __gen_post_subrequest = __sequential_has_key('gen_post_subrequest')
     __use_subrequests = lambda handler: use_upstream(handler) and (
         'subrequests' in __sequential_sr(handler) and (
             None != __sequential_sr(handler)['subrequests']
@@ -294,9 +292,6 @@ def gen_handler_imp(addon, md, handler):
         '}',
         ''
         ])
-    # "upstream"
-    #     "sequential_subrequests"
-    #         "gen_post_subrequest": true 
     __gen_post_subrequest_handler = lambda md, handler: FILTER if __use_parallel(handler) else merge([
         'static ngx_int_t __post_subrequest_handler(',
         '    ngx_http_request_t * r, void * data, ngx_int_t rc)',
@@ -313,10 +308,7 @@ def gen_handler_imp(addon, md, handler):
         '    return ngx_http_finish_subrequest(r);',
         '}',
         ''
-        ]) if __gen_post_subrequest(handler) else FILTER
-    __gen_post_sr_name = lambda handler: (
-        '__post_subrequest_handler') if __gen_post_subrequest(
-            handler) else 'ngx_http_post_subrequest_handler'
+        ])
     __gen_sr_peer = lambda handler: 'ctx->subrequest_peer->peer' if __use_subrequest_peer(
             handler) else 'ctx->peer' if __use_subrequests(handler) else 'peer'
     __gen_sr = lambda prefix, backend_uri, handler: merge([
@@ -326,12 +318,11 @@ def gen_handler_imp(addon, md, handler):
             ]) if not __use_subrequests(handler) else FILTER,
         '    %sngx_http_gen_subrequest(%s, r, %s,' % (
             prefix, backend_uri, __gen_sr_peer(handler)),
-        '        &ctx->base, %s);' % __gen_post_sr_name(handler)
+        '        &ctx->base, __post_subrequest_handler);'
         ])
     # "action_for_request_body": "read"
     # "upstream" (optional)
     #     "sequential_subrequests"
-    #         "gen_post_subrequest": [true, false]
     #         "subrequests" => { "use_subrequest_peer": [true, false] }
     #     "parallel_subrequests"
     __gen_post_body_handler = lambda md, handler: merge([
