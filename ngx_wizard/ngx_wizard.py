@@ -35,12 +35,14 @@ conf_params = 'ngx_conf_t * cf, ngx_command_t * cmd, void * conf'
 use_upstream = lambda handler: 'upstream' in handler and None != handler['upstream']
 get_uri = lambda handler: handler['uri'].replace('/', '_')
 
+# init tpl
 cwd = os.path.split(os.path.realpath(__file__))[0]
 parallel_subrequests_uri = os.path.join(cwd, 'tpl/parallel_subrequests.c')
 header_uri = os.path.join(cwd, 'tpl/header.h')
 main_conf_uri = os.path.join(cwd, 'tpl/main_conf.h')
 utils_uri = os.path.join(cwd, 'tpl/utils.h')
 type_dict = json.loads(load_file(os.path.join(cwd, 'tpl/type_dict.json')))
+create_ctx_uri = os.path.join(cwd, 'tpl/create_ctx.c')
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
@@ -89,18 +91,7 @@ def gen_handler_dec(addon, md, handlers):
             ) % (md, get_uri(handler), req_params), handlers))
         ])))
 def gen_create_ctx(md, handler): 
-    return merge([
-        '    %s_%s_ctx_t * ctx = ngx_palloc(r->pool, sizeof(%s_%s_ctx_t));' % (
-            md, get_uri(handler), md, get_uri(handler)),
-        '    if (!ctx)',
-        '    {',
-        '        return NGX_ERROR;',
-        '    }',
-        '    memset(ctx, 0, sizeof(%s_%s_ctx_t));' % (md, get_uri(handler)),
-        '    ngx_http_set_addon_module_ctx(r, ctx);',
-        '    // TODO: you can initialize ctx here',
-        '',
-        ])
+    return load_from_tpl(create_ctx_uri, {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))})
 def gen_parallel_call(use_parallel, handler, end): 
     return merge([
         '    if (NGX_ERROR == __parallel_subrequests(backend_uri, r))',
