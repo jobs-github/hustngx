@@ -29,6 +29,7 @@ get_uri = lambda handler: handler['uri'].replace('/', '_')
 
 cwd = os.path.split(os.path.realpath(__file__))[0]
 parallel_subrequests_uri = os.path.join(cwd, 'tpl/parallel_subrequests.c')
+header_uri = os.path.join(cwd, 'tpl/header.h')
 
 def write_file(path, data):
     with open(path, 'w') as f:
@@ -38,8 +39,6 @@ def load_file(url):
         return f.read()
 def load_from_tpl(url, vars):
     return string.Template(load_file(url)).substitute(vars)
-#def gen_init(max_requests, tail):
-#    return load_from_tpl('tpl/init.lua', {'var_max_requests': max_requests, 'var_tail': tail})
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
@@ -58,16 +57,7 @@ def gen_tm():
     return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     
 def gen_head_frame(md, submd, str):
-    tm = gen_tm()
-    head_def = '__%s_%s_%s_h__' % (md, submd, tm)
-    return merge([
-        '#ifndef %s' % head_def,
-        '#define %s' % head_def,
-        '',
-        str,
-        '',
-        '#endif // %s' % head_def
-        ])
+    return load_from_tpl(header_uri, {'var_head_def': '__%s_%s_%s_h__' % (md, submd, gen_tm()), 'var_str': str})
         
 def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf):
     __dict = {
