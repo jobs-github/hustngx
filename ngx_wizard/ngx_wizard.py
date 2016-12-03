@@ -22,14 +22,21 @@ def manual():
         python ngx_wizard.py ngx_wizard.json
         """
 
-def write_file(path, data):
-    with open(path, 'w') as f:
-        f.writelines(data)
-
 req_params = 'ngx_str_t * backend_uri, ngx_http_request_t *r'
 conf_params = 'ngx_conf_t * cf, ngx_command_t * cmd, void * conf'
 use_upstream = lambda handler: 'upstream' in handler and None != handler['upstream']
 get_uri = lambda handler: handler['uri'].replace('/', '_')
+
+def write_file(path, data):
+    with open(path, 'w') as f:
+        f.writelines(data)
+def load_file(url):
+    with open(url) as f:
+        return f.read()
+def load_from_tpl(url, vars):
+    return string.Template(load_file(url)).substitute(vars)
+#def gen_init(max_requests, tail):
+#    return load_from_tpl('tpl/init.lua', {'var_max_requests': max_requests, 'var_tail': tail})
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
@@ -130,15 +137,13 @@ def gen_parallel_call(use_parallel, handler, end):
 def gen_parallel_imp(use_parallel, md, handler):
     # "upstream"
     #     "parallel_subrequests"
-    __gen_parallel_finialize = lambda handler: merge([
+    return merge([
         'static void __finialize(ngx_uint_t status, ngx_http_request_t *r)',
         '{',
         '    ngx_int_t rc = ngx_http_send_response_imp(status, NULL, r);',
         '    ngx_http_finalize_request(r, rc);',
         '}',
-        ''
-        ]) if use_parallel(handler) else FILTER
-    __gen_parallel_post_upstream = lambda md, handler: merge([
+        '',
         'static ngx_int_t __post_upstream(ngx_http_request_t * r, void * data, ngx_int_t rc)',
         '{',
         '    %s_%s_ctx_t * ctx = data;' % (md, get_uri(handler)),
@@ -156,9 +161,7 @@ def gen_parallel_imp(use_parallel, md, handler):
         '    }',
         '    return NGX_OK;',
         '}',
-        ''
-        ]) if use_parallel(handler) else FILTER
-    __gen_parallel_sr_imp = lambda md, handler: merge([
+        '',
         'static ngx_int_t __parallel_subrequests(ngx_str_t * backend_uri, ngx_http_request_t * r)',
         '{',
         '    // this is just a sample implement!',
@@ -210,11 +213,6 @@ def gen_parallel_imp(use_parallel, md, handler):
         '}',
         ''
         ]) if use_parallel(handler) else FILTER
-    return merge([
-        __gen_parallel_finialize(handler),
-        __gen_parallel_post_upstream(md, handler),
-        __gen_parallel_sr_imp(md, handler)
-        ])
 
 def gen_handler_imp(addon, md, handler):
     # "action_for_request_body": ["read", "discard", "default"]
