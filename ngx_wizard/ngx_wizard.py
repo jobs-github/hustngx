@@ -221,33 +221,17 @@ def gen_handler_imp(addon, md, handler):
     # "methods": ["GET", "HEAD", "POST", "PUT", "DELETE"]
     # "upstream"
     #     "sequential_subrequests"
-    #         "subrequests"
     #     "parallel_subrequests"
     __request_body_action = lambda action: lambda handler: (
         'action_for_request_body' in handler) and (
             action == handler['action_for_request_body'])
     __read_request_body = __request_body_action('read')
     __discard_request_body = __request_body_action('discard')
-    
     __upstream_has_key = lambda key: lambda handler: use_upstream(handler) and (
         key in handler['upstream'] and handler['upstream'][key])
-
     __use_parallel = __upstream_has_key('parallel_subrequests')
-    
     __use_sequential = __upstream_has_key('sequential_subrequests')
-    __sequential_sr = lambda handler: handler['upstream']['sequential_subrequests']
-    __sequential_has_key = lambda key: lambda handler: __use_sequential(handler) and (
-        key in __sequential_sr(handler) and __sequential_sr(handler)[key])
-    __use_sequential_subrequests = lambda handler: use_upstream(handler) and (
-        'sequential_subrequests' in handler['upstream'] and (
-            None != handler['upstream']['sequential_subrequests']
-            ))
-    __subrequests_has_key = lambda key: lambda handler: (
-        __use_sequential_subrequests(handler)) and (
-            key in __sequential_sr(handler)
-            ) and __sequential_sr(handler)[key]
 
-    __gen_peer = lambda handler: '    ngx_http_upstream_rr_peer_t * peer;' if __use_sequential_subrequests(handler) else FILTER
     # "upstream"
     #     "sequential_subrequests"
     #     "parallel_subrequests"
@@ -266,7 +250,7 @@ def gen_handler_imp(addon, md, handler):
         'typedef struct',
         '{',
         '    ngx_http_subrequest_ctx_t base;',
-        __gen_peer(handler),
+        '    ngx_http_upstream_rr_peer_t * peer;' if __use_sequential(handler) else FILTER
         '    // TODO: add your fields here',
         '} %s_%s_ctx_t;' % (md, get_uri(handler)),
         ''
@@ -284,8 +268,7 @@ def gen_handler_imp(addon, md, handler):
         'static ngx_int_t __post_subrequest_handler(',
         '    ngx_http_request_t * r, void * data, ngx_int_t rc)',
         '{',
-        '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r->parent);' % (
-            md, get_uri(handler)),
+        '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r->parent);' % (md, get_uri(handler)),
         '    if (ctx && NGX_HTTP_OK == r->headers_out.status)',
         '    {',
         '        ctx->base.response.len = ngx_http_get_buf_size(',
@@ -297,12 +280,12 @@ def gen_handler_imp(addon, md, handler):
         '}',
         ''
         ])
-    __gen_sr_peer = lambda handler: 'ctx->peer' if __use_sequential_subrequests(handler) else 'peer'
+    __gen_sr_peer = lambda handler: 'ctx->peer' if __use_sequential(handler) else 'peer'
     __gen_sr = lambda prefix, backend_uri, handler: merge([
         merge([
             '    // TODO: initialize the peer here',
             '    ngx_http_upstream_rr_peer_t * peer = NULL;'
-            ]) if not __use_sequential_subrequests(handler) else FILTER,
+            ]) if not __use_sequential(handler) else FILTER,
         '    %sngx_http_gen_subrequest(%s, r, %s,' % (
             prefix, backend_uri, __gen_sr_peer(handler)),
         '        &ctx->base, __post_subrequest_handler);'
@@ -331,8 +314,7 @@ def gen_handler_imp(addon, md, handler):
             ]) if __use_parallel(handler) else
         # for sequential subrequests
         merge([
-            '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);' % (
-                md, get_uri(handler)),
+            '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);' % (md, get_uri(handler)),
             '    // TODO: you can update ctx->base.args here',
             '    --r->main->count;',
             __gen_sr('', 'ctx->base.backend_uri', handler)
@@ -377,14 +359,9 @@ def gen_handler_imp(addon, md, handler):
         '        return NGX_ERROR;',
         '    }',
         ''
-        ]) if __use_sequential_subrequests(handler) else FILTER
-    __gen_init_ctx_base = lambda handler: (
-        '    ctx->base.backend_uri = backend_uri;'
-        ) if __read_request_body(handler) else FILTER
-    __gen_init_ctx = lambda handler: merge([
-        '    ctx->peer = ngx_http_first_peer(peers->peer);',
-        ''
-        ]) if __use_sequential_subrequests(handler) else FILTER
+        ]) if __use_sequential(handler) else FILTER
+    __gen_init_ctx_base = lambda handler: '    ctx->base.backend_uri = backend_uri;' if __read_request_body(handler) else FILTER
+    __gen_init_ctx = lambda handler: '    ctx->peer = ngx_http_first_peer(peers->peer);\n' if __use_sequential(handler) else FILTER
     __gen_read_body = lambda handler: merge([
         '    %src = ngx_http_read_client_request_body(r, __post_body_handler);' % (
             '' if __discard_request_body(handler) else 'ngx_int_t '),
@@ -420,22 +397,20 @@ def gen_handler_imp(addon, md, handler):
         '    return ngx_http_send_response_imp(r->headers_out.status, &response, r);'
         ])
     __gen_first_loop = lambda md, handler: merge([
-        '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);' % (
-            md, get_uri(handler)),
+        '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);' % (md, get_uri(handler)),
         '    if (!ctx)',
         '    {',
         '        return __first_%s_handler(backend_uri, r);' % get_uri(handler),
         '    }',
         ])
-    __gen_run_sr = lambda handler: 'ngx_http_run_subrequest(r, &ctx->base, %s)' % __gen_sr_peer(handler)
     __gen_next_loop = lambda handler: merge([
         '    if (NGX_HTTP_OK != r->headers_out.status)',
         '    {',
         '        ctx->peer = ngx_http_next_peer(ctx->peer);',
-        '        return (ctx->peer) ? %s' % (__gen_run_sr(handler)),
+        '        return (ctx->peer) ? ngx_http_run_subrequest(r, &ctx->base, %s)' % __gen_sr_peer(handler),
         '            : ngx_http_send_response_imp(NGX_HTTP_NOT_FOUND, NULL, r);',
         '    }'
-        ]) if __use_sequential_subrequests(handler) else FILTER
+        ]) if __use_sequential(handler) else FILTER
     __gen_final_loop = lambda: merge([
         '    // TODO: you decide the return value',
         '    return ngx_http_send_response_imp(NGX_HTTP_OK, &ctx->base.response, r);'
