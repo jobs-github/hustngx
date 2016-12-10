@@ -192,10 +192,7 @@ def gen_handler_imp(addon, md, handler):
         })
     __gen_next_loop = lambda handler: read_from_tpl('tpl/next_loop.c', {
         'var_sr_peer': __gen_sr_peer(handler)}) if __use_sequential(handler) else FILTER
-    __gen_final_loop = lambda: merge([
-        '    // TODO: you decide the return value',
-        '    return ngx_http_send_response_imp(NGX_HTTP_OK, &ctx->base.response, r);'
-        ])
+    __final_loop = read_tpl('tpl/final_loop.c')
     __gen_request_handler = lambda md, handler: merge([
         'ngx_int_t %s_%s_handler(%s)' % (md, get_uri(handler), req_params),
         '{',
@@ -211,7 +208,7 @@ def gen_handler_imp(addon, md, handler):
             ]) if __use_parallel(handler) else merge([
             __gen_first_loop(md, handler),
             __gen_next_loop(handler),
-            __gen_final_loop()
+            __final_loop
             ]) if use_upstream(handler) else merge([
             __gen_methods_filter(handler),
             __gen_discard_body(handler),
