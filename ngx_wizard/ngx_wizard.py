@@ -162,14 +162,7 @@ def gen_handler_imp(addon, md, handler):
     # "upstream"
     #     "sequential_subrequests"
     #         "subrequests"
-    __gen_init_peer = lambda handler: merge([
-        '    ngx_http_upstream_rr_peers_t * peers = ngx_http_get_backends();',
-        '    if (!peers || !peers->peer)',
-        '    {',
-        '        return NGX_ERROR;',
-        '    }',
-        ''
-        ]) if __use_sequential(handler) else FILTER
+    __gen_init_peer = lambda handler: read_tpl('tpl/init_peer.c') if __use_sequential(handler) else FILTER
     __gen_init_ctx_base = lambda handler: '    ctx->base.backend_uri = backend_uri;' if __read_request_body(handler) else FILTER
     __gen_init_ctx = lambda handler: '    ctx->peer = ngx_http_first_peer(peers->peer);\n' if __use_sequential(handler) else FILTER
     __gen_read_body = lambda handler: merge([
