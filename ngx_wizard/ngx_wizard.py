@@ -165,15 +165,8 @@ def gen_handler_imp(addon, md, handler):
     __gen_init_peer = lambda handler: read_tpl('tpl/init_peer.c') if __use_sequential(handler) else FILTER
     __gen_init_ctx_base = lambda handler: '    ctx->base.backend_uri = backend_uri;' if __read_request_body(handler) else FILTER
     __gen_init_ctx = lambda handler: '    ctx->peer = ngx_http_first_peer(peers->peer);\n' if __use_sequential(handler) else FILTER
-    __gen_read_body = lambda handler: merge([
-        '    %src = ngx_http_read_client_request_body(r, __post_body_handler);' % (
-            '' if __discard_request_body(handler) else 'ngx_int_t '),
-        '    if (rc >= NGX_HTTP_SPECIAL_RESPONSE)',
-        '    {',
-        '        return rc;',
-        '    }',
-        '    return NGX_DONE;'
-        ])
+    __gen_read_body = lambda handler: read_from_tpl('tpl/read_body.c', {
+        'var_rc': ('rc' if __discard_request_body(handler) else 'ngx_int_t rc')})
     # 'action_for_request_body'
     # 'methods'
     # 'upstream'
