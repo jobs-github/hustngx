@@ -186,13 +186,10 @@ def gen_handler_imp(addon, md, handler):
         ''
         ]) if use_upstream(handler) else FILTER
     __default_handler = read_tpl('tpl/default_handler.c')
-    __gen_first_loop = lambda md, handler: merge([
-        '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);' % (md, get_uri(handler)),
-        '    if (!ctx)',
-        '    {',
-        '        return __first_%s_handler(backend_uri, r);' % get_uri(handler),
-        '    }',
-        ])
+    __gen_first_loop = lambda md, handler: read_from_tpl('tpl/first_loop.c', {
+        'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)), 
+        'var_first_handler': '__first_%s_handler' % get_uri(handler)
+        })
     __gen_next_loop = lambda handler: merge([
         '    if (NGX_HTTP_OK != r->headers_out.status)',
         '    {',
