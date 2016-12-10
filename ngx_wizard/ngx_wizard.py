@@ -253,10 +253,7 @@ def gen_main_conf(md, mcf):
     __gen_size = __gen_int_base('ngx_parse_size(&value[1])')
     __gen_time = __gen_int_base('ngx_parse_time(&value[1], 0)')
     __gen_bool = lambda field: read_from_tpl('tpl/mcf_bool.c', {'var_field': field})
-    __gen_str = lambda field: merge([
-        '    ngx_str_t * arr = cf->args->elts;',
-        '    mcf->%s = ngx_http_make_str(&arr[1], cf->pool);' % field
-        ])
+    __gen_str = lambda field: read_from_tpl('tpl/mcf_string.c', {'var_field': field})
     __gen_unknown = lambda field: merge([
         '    ngx_str_t * arr = cf->args->elts;',
         '    ngx_str_t * val = &arr[1]; // mcf->%s' % field
