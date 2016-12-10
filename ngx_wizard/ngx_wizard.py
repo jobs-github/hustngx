@@ -241,20 +241,13 @@ def gen_handlers_imp(addon, md, handlers):
 
 def gen_main_conf(md, mcf):
     __get_mcf_func = 'ngx_http_conf_get_module_main_conf'
-    __gen_frame = lambda md, field, impl: merge([
-        'static char * ngx_http_%s(%s)' % (field, conf_params),
-        '{',
-        '    ngx_http_%s_main_conf_t * mcf = %s(cf, ngx_http_%s_module);' % (md, __get_mcf_func, md),
-        '    if (!mcf || 2 != cf->args->nelts)',
-        '    {',
-        '        return "ngx_http_%s error";' % field,
-        '    }',
-        impl,
-        '    // TODO: you can modify the value here',
-        '    return NGX_CONF_OK;',
-        '}',
-        ''
-        ])
+    __gen_frame = lambda md, field, impl: read_from_tpl('tpl/mcf_frame.c', {
+        'var_func': 'ngx_http_%s' % field,
+        'var_args': conf_params,
+        'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
+        'var_get_mcf': '%s(cf, ngx_http_%s_module)' % (__get_mcf_func, md),
+        'var_impl': impl
+        })
     __gen_int_base = lambda parse_str: lambda field: merge([
         '    ngx_str_t * value = cf->args->elts;',
         '    mcf->%s = %s;' % (field, parse_str),
