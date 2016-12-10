@@ -153,14 +153,9 @@ def gen_handler_imp(addon, md, handler):
         read_from_tpl('tpl/post_body_handler.c', {'var_impl': __gen_post_body_impl(md, handler)})
         ]) if __read_request_body(handler) else FILTER
     # 'methods'
-    __gen_methods_filter = lambda handler: merge([
-        '    if (%s)' % (reduce(lambda s1, s2: '%s && %s' % (s1, s2), map(
-            lambda m: '!(r->method & NGX_HTTP_%s)' % m.upper(), handler['methods']))),
-        '    {',
-        '        return NGX_HTTP_NOT_ALLOWED;',
-        '    }',
-        ''
-        ]) if 'methods' in handler and len(handler['methods']) > 0 else FILTER
+    __gen_methods_filter = lambda handler: read_from_tpl('tpl/http_not_allowed.c', {
+        'var_cond': string.join(['!(r->method & NGX_HTTP_%s)' % method.upper() for method in handler['methods']], ' && ')
+        }) if 'methods' in handler and len(handler['methods']) > 0 else FILTER
     # "action_for_request_body": "discard"
     __gen_discard_body = lambda handler: merge([
         '    ngx_int_t rc = ngx_http_discard_request_body(r);',
