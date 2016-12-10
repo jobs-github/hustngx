@@ -140,23 +140,17 @@ def gen_handler_imp(addon, md, handler):
     # "upstream" (optional)
     #     "sequential_subrequests"
     #     "parallel_subrequests"
-    __gen_post_body_handler = lambda md, handler: merge([
-        FILTER if use_upstream(handler) else read_tpl('tpl/post_body_cb.c'),
-        'static void __post_body_handler(ngx_http_request_t * r)',
-        '{',
-        # for parallel subrequests
-        read_from_tpl('tpl/parallel_post_body.c', {
+    __gen_post_body_impl = lambda md, handler: read_from_tpl(
+        'tpl/parallel_post_body.c', {
             'var_parallel_call': gen_parallel_call(__use_parallel, handler, '    // TODO')
-            }) if __use_parallel(handler) else
-        # for sequential subrequests
-        read_from_tpl('tpl/sequential_post_body.c', {
+        }) if __use_parallel(handler) else read_from_tpl(
+        'tpl/sequential_post_body.c', {
             'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)),
             'var_sr': __gen_sr('', 'ctx->base.backend_uri', handler)
-            }) if use_upstream(handler) else
-        # for normal
-        '    ngx_http_post_body_handler(r, __post_body_cb);',
-        '}',
-        '',
+        }) if use_upstream(handler) else '    ngx_http_post_body_handler(r, __post_body_cb);'
+    __gen_post_body_handler = lambda md, handler: merge([
+        FILTER if use_upstream(handler) else read_tpl('tpl/post_body_cb.c'),
+        read_from_tpl('tpl/post_body_handler.c', {'var_impl': __gen_post_body_impl(md, handler)})
         ]) if __read_request_body(handler) else FILTER
     # 'methods'
     __gen_methods_filter = lambda handler: merge([
