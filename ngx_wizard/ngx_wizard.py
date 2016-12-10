@@ -249,27 +249,16 @@ def gen_main_conf(md, mcf):
         'var_impl': impl
         })
     __gen_int_base = lambda parse_str: lambda field: read_from_tpl('tpl/mcf_int.c', {'var_field': field, 'var_value': parse_str})
-    __gen_int = __gen_int_base('ngx_atoi(value[1].data, value[1].len)')
-    __gen_size = __gen_int_base('ngx_parse_size(&value[1])')
-    __gen_time = __gen_int_base('ngx_parse_time(&value[1], 0)')
-    __gen_bool = lambda field: read_from_tpl('tpl/mcf_bool.c', {'var_field': field})
-    __gen_str = lambda field: read_from_tpl('tpl/mcf_string.c', {'var_field': field})
-    __gen_unknown = lambda field: merge([
-        '    ngx_str_t * arr = cf->args->elts;',
-        '    ngx_str_t * val = &arr[1]; // mcf->%s' % field
-        ])
+    __gen_default = lambda field: read_from_tpl('tpl/mcf_default.c', {'var_field': field})
     __dict = { 
-        'int': __gen_int, 
-        'size': __gen_size,
-        'time': __gen_time,
-        'bool': __gen_bool, 
-        'string': __gen_str 
+        'int': __gen_int_base('ngx_atoi(value[1].data, value[1].len)'), 
+        'size': __gen_int_base('ngx_parse_size(&value[1])'),
+        'time': __gen_int_base('ngx_parse_time(&value[1], 0)'),
+        'bool': lambda field: read_from_tpl('tpl/mcf_bool.c', {'var_field': field}), 
+        'string': lambda field: read_from_tpl('tpl/mcf_string.c', {'var_field': field}) 
         }
-    __get_func = lambda key: __dict[key] if key in __dict else __gen_unknown
-    
-    return merge(map(lambda item: __gen_frame(
-        md, item[NAME], __get_func(item[TYPE])(item[NAME])
-        ), mcf)) if len(mcf) > 0 else FILTER
+    __get_func = lambda key: __dict[key] if key in __dict else __gen_default
+    return merge([__gen_frame(md, item[NAME], __get_func(item[TYPE])(item[NAME])) for item in mcf]) if len(mcf) > 0 else FILTER
 
 def gen_module_dict():
     __module_handler = lambda md, str: (
