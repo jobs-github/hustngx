@@ -149,12 +149,10 @@ def gen_handler_imp(addon, md, handler):
             'var_parallel_call': gen_parallel_call(__use_parallel, handler, '    // TODO')
             }) if __use_parallel(handler) else
         # for sequential subrequests
-        merge([
-            '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);' % (md, get_uri(handler)),
-            '    // TODO: you can update ctx->base.args here',
-            '    --r->main->count;',
-            __gen_sr('', 'ctx->base.backend_uri', handler)
-            ]) if use_upstream(handler) else
+        read_from_tpl('tpl/sequential_post_body.c', {
+            'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)),
+            'var_sr': __gen_sr('', 'ctx->base.backend_uri', handler)
+            }) if use_upstream(handler) else
         # for normal
         '    ngx_http_post_body_handler(r, __post_body_cb);',
         '}',
