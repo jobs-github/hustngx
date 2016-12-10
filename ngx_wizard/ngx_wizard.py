@@ -190,14 +190,8 @@ def gen_handler_imp(addon, md, handler):
         'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)), 
         'var_first_handler': '__first_%s_handler' % get_uri(handler)
         })
-    __gen_next_loop = lambda handler: merge([
-        '    if (NGX_HTTP_OK != r->headers_out.status)',
-        '    {',
-        '        ctx->peer = ngx_http_next_peer(ctx->peer);',
-        '        return (ctx->peer) ? ngx_http_run_subrequest(r, &ctx->base, %s)' % __gen_sr_peer(handler),
-        '            : ngx_http_send_response_imp(NGX_HTTP_NOT_FOUND, NULL, r);',
-        '    }'
-        ]) if __use_sequential(handler) else FILTER
+    __gen_next_loop = lambda handler: read_from_tpl('tpl/next_loop.c', {
+        'var_sr_peer': __gen_sr_peer(handler)}) if __use_sequential(handler) else FILTER
     __gen_final_loop = lambda: merge([
         '    // TODO: you decide the return value',
         '    return ngx_http_send_response_imp(NGX_HTTP_OK, &ctx->base.response, r);'
