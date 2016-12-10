@@ -46,7 +46,6 @@ read_tpl = lambda url: load_file(os.path.join(cwd, url))
 read_from_tpl = lambda url, vars: load_from_tpl(os.path.join(cwd, url), vars)
 read_from_tpl_lines = lambda url, vars: load_from_tpl_lines(os.path.join(cwd, url), vars)
 
-
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
         '    $ngx_addon_dir/%s_%s_handler.c\\'
@@ -59,13 +58,10 @@ def gen_config(addon, md, handlers):
         merge(map(__gen_handler(md), map(lambda handler: get_uri(handler), handlers))),
         '    $ngx_addon_dir/ngx_http_%s_module.c"' % md
         ]))
-
 def gen_tm():
     return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-    
 def gen_head_frame(md, submd, str):
     return read_from_tpl('tpl/header.h', {'var_head_def': '__%s_%s_%s_h__' % (md, submd, gen_tm()), 'var_str': str})
-        
 def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf):
     __get_type = lambda t: type_dict[t] if t in type_dict else t
     __gen_mcf = lambda md, mcf: read_from_tpl('tpl/main_conf.h', {
@@ -84,7 +80,6 @@ def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf):
     write_file('%s/%s_utils.c' % (addon, md), merge([
         '#include "%s_utils.h"' % md
         ]))
-        
 def gen_handler_dec(addon, md, handlers):
     write_file('%s/%s_handler.h' % (addon, md), gen_head_frame(md, 'handler', merge([
         '#include "%s_utils.h"' % md,
@@ -95,7 +90,7 @@ def gen_handler_dec(addon, md, handlers):
         ])))
 def gen_create_ctx(md, handler): 
     return read_from_tpl('tpl/create_ctx.c', {'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))})
-def gen_parallel_call(use_parallel, handler, end): 
+def gen_parallel_call(use_parallel, handler, end):
     return read_from_tpl('tpl/parallel_call.c', {'var_end': end}) if use_parallel(handler) else FILTER
 def gen_parallel_imp(use_parallel, md, handler):
     # "upstream"
@@ -150,11 +145,9 @@ def gen_handler_imp(addon, md, handler):
         'static void __post_body_handler(ngx_http_request_t * r)',
         '{',
         # for parallel subrequests
-        merge([
-            '    ngx_str_t * backend_uri = ngx_http_get_addon_module_ctx(r);',
-            '    --r->main->count;',
-            gen_parallel_call(__use_parallel, handler, FILTER)
-            ]) if __use_parallel(handler) else
+        read_from_tpl('tpl/parallel_post_body.c', {
+            'var_parallel_call': gen_parallel_call(__use_parallel, handler, '    // TODO')
+            }) if __use_parallel(handler) else
         # for sequential subrequests
         merge([
             '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);' % (md, get_uri(handler)),
