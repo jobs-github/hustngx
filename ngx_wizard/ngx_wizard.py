@@ -157,14 +157,7 @@ def gen_handler_imp(addon, md, handler):
         'var_cond': string.join(['!(r->method & NGX_HTTP_%s)' % method.upper() for method in handler['methods']], ' && ')
         }) if 'methods' in handler and len(handler['methods']) > 0 else FILTER
     # "action_for_request_body": "discard"
-    __gen_discard_body = lambda handler: merge([
-        '    ngx_int_t rc = ngx_http_discard_request_body(r);',
-        '    if (NGX_OK != rc)',
-        '    {',
-        '        return rc;',
-        '    }',
-        ''
-        ]) if __discard_request_body(handler) else FILTER
+    __gen_discard_body = lambda handler: read_tpl('tpl/discard_body.c') if __discard_request_body(handler) else FILTER
     __gen_check = lambda: merge([
         '    if (!__check_parameter(backend_uri, r))',
         '    {',
