@@ -42,8 +42,10 @@ get_uri = lambda handler: handler['uri'].replace('/', '_')
 # init tpl
 cwd = os.path.split(os.path.realpath(__file__))[0]
 type_dict = json.loads(load_file(os.path.join(cwd, 'tpl/type_dict.json')))
+read_tpl = lambda url: load_file(os.path.join(cwd, url))
 read_from_tpl = lambda url, vars: load_from_tpl(os.path.join(cwd, url), vars)
 read_from_tpl_lines = lambda url, vars: load_from_tpl_lines(os.path.join(cwd, url), vars)
+
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
@@ -136,8 +138,7 @@ def gen_handler_imp(addon, md, handler):
             '    // TODO: initialize the peer here',
             '    ngx_http_upstream_rr_peer_t * peer = NULL;'
             ]) if not __use_sequential(handler) else FILTER,
-        '    %sngx_http_gen_subrequest(%s, r, %s,' % (
-            prefix, backend_uri, __gen_sr_peer(handler)),
+        '    %sngx_http_gen_subrequest(%s, r, %s,' % (prefix, backend_uri, __gen_sr_peer(handler)),
         '        &ctx->base, __post_subrequest_handler);'
         ])
     # "action_for_request_body": "read"
@@ -145,15 +146,7 @@ def gen_handler_imp(addon, md, handler):
     #     "sequential_subrequests"
     #     "parallel_subrequests"
     __gen_post_body_handler = lambda md, handler: merge([
-        FILTER if use_upstream(handler) else merge([
-            'static ngx_bool_t __post_body_cb(',
-            '    ngx_http_request_t * r, ngx_buf_t * buf, size_t buf_size)',
-            '{',
-            '    // TODO: you can process the request body here',
-            '    return true;',
-            '}',
-            ''
-            ]),
+        FILTER if use_upstream(handler) else read_tpl('tpl/post_body_cb.c'),
         'static void __post_body_handler(ngx_http_request_t * r)',
         '{',
         # for parallel subrequests
