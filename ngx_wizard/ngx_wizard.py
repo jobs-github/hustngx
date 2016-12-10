@@ -185,13 +185,7 @@ def gen_handler_imp(addon, md, handler):
         '}',
         ''
         ]) if use_upstream(handler) else FILTER
-    __gen_handler_tail = lambda: merge([
-        '    // TODO: you can implement the business here',
-        '',
-        '    ngx_str_t response = ngx_string("Hello World!");',
-        '    r->headers_out.status = NGX_HTTP_OK;',
-        '    return ngx_http_send_response_imp(r->headers_out.status, &response, r);'
-        ])
+    __default_handler = read_tpl('tpl/default_handler.c')
     __gen_first_loop = lambda md, handler: merge([
         '    %s_%s_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);' % (md, get_uri(handler)),
         '    if (!ctx)',
@@ -232,7 +226,7 @@ def gen_handler_imp(addon, md, handler):
             __gen_discard_body(handler),
             __call_check,
             __gen_read_body(handler) if __read_request_body(
-                handler) else __gen_handler_tail()
+                handler) else __default_handler
             ]),
         '}'
         ])
