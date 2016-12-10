@@ -248,18 +248,11 @@ def gen_main_conf(md, mcf):
         'var_get_mcf': '%s(cf, ngx_http_%s_module)' % (__get_mcf_func, md),
         'var_impl': impl
         })
-    __gen_int_base = lambda parse_str: lambda field: read_from_tpl('tpl/mcf_int_base.c', {'var_field': field, 'var_value': parse_str})
+    __gen_int_base = lambda parse_str: lambda field: read_from_tpl('tpl/mcf_int.c', {'var_field': field, 'var_value': parse_str})
     __gen_int = __gen_int_base('ngx_atoi(value[1].data, value[1].len)')
     __gen_size = __gen_int_base('ngx_parse_size(&value[1])')
     __gen_time = __gen_int_base('ngx_parse_time(&value[1], 0)')
-    __gen_bool = lambda field: merge([
-        '    int val = ngx_http_get_flag_slot(cf);',
-        '    if (NGX_ERROR == val)',
-        '    {',
-        '        return "ngx_http_%s error";' % field,
-        '    }',
-        '    mcf->%s = val;' % field
-        ])
+    __gen_bool = lambda field: read_from_tpl('tpl/mcf_bool.c', {'var_field': field})
     __gen_str = lambda field: merge([
         '    ngx_str_t * arr = cf->args->elts;',
         '    mcf->%s = ngx_http_make_str(&arr[1], cf->pool);' % field
