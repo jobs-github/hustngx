@@ -158,13 +158,7 @@ def gen_handler_imp(addon, md, handler):
         }) if 'methods' in handler and len(handler['methods']) > 0 else FILTER
     # "action_for_request_body": "discard"
     __gen_discard_body = lambda handler: read_tpl('tpl/discard_body.c') if __discard_request_body(handler) else FILTER
-    __gen_check = lambda: merge([
-        '    if (!__check_parameter(backend_uri, r))',
-        '    {',
-        '        return NGX_ERROR;',
-        '    }',
-        ''
-        ])
+    __call_check = read_tpl('tpl/call_check.c')
     # "upstream"
     #     "sequential_subrequests"
     #         "subrequests"
@@ -195,7 +189,7 @@ def gen_handler_imp(addon, md, handler):
         '{',
         __gen_methods_filter(handler),
         __gen_discard_body(handler),
-        __gen_check(),
+        __call_check,
         __gen_init_peer(handler),
         gen_create_ctx(md, handler),
         __gen_init_ctx_base(handler),
@@ -237,7 +231,7 @@ def gen_handler_imp(addon, md, handler):
         merge([
             __gen_methods_filter(handler),
             __gen_discard_body(handler),
-            __gen_check(),
+            __call_check,
             merge([
                 '    ngx_http_set_addon_module_ctx(r, backend_uri);',
                 __gen_read_body(handler)
@@ -250,7 +244,7 @@ def gen_handler_imp(addon, md, handler):
             ]) if use_upstream(handler) else merge([
             __gen_methods_filter(handler),
             __gen_discard_body(handler),
-            __gen_check(),
+            __call_check,
             __gen_read_body(handler) if __read_request_body(
                 handler) else __gen_handler_tail()
             ]),
