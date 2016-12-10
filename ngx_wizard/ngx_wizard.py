@@ -46,6 +46,13 @@ read_tpl = lambda url: load_file(os.path.join(cwd, url))
 read_from_tpl = lambda url, vars: load_from_tpl(os.path.join(cwd, url), vars)
 read_from_tpl_lines = lambda url, vars: load_from_tpl_lines(os.path.join(cwd, url), vars)
 
+tpl_post_body_cb = read_tpl('tpl/post_body_cb.c')
+tpl_discard_body = read_tpl('tpl/discard_body.c')
+tpl_call_check = read_tpl('tpl/call_check.c')
+tpl_init_peer = read_tpl('tpl/init_peer.c')
+tpl_default_handler = read_tpl('tpl/default_handler.c')
+tpl_final_loop = read_tpl('tpl/final_loop.c')
+
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
         '    $ngx_addon_dir/%s_%s_handler.c\\'
@@ -140,6 +147,7 @@ def gen_handler_imp(addon, md, handler):
     # "upstream" (optional)
     #     "sequential_subrequests"
     #     "parallel_subrequests"
+    
     __gen_post_body_impl = lambda md, handler: read_from_tpl(
         'tpl/parallel_post_body.c', {
             'var_parallel_call': gen_parallel_call(__use_parallel, handler, '    // TODO')
@@ -149,7 +157,7 @@ def gen_handler_imp(addon, md, handler):
             'var_sr': __gen_sr('', 'ctx->base.backend_uri', handler)
         }) if use_upstream(handler) else '    ngx_http_post_body_handler(r, __post_body_cb);'
     __gen_post_body_handler = lambda md, handler: merge([
-        FILTER if use_upstream(handler) else read_tpl('tpl/post_body_cb.c'),
+        FILTER if use_upstream(handler) else tpl_post_body_cb,
         read_from_tpl('tpl/post_body_handler.c', {'var_impl': __gen_post_body_impl(md, handler)})
         ]) if __read_request_body(handler) else FILTER
     # 'methods'
@@ -157,12 +165,11 @@ def gen_handler_imp(addon, md, handler):
         'var_cond': string.join(['!(r->method & NGX_HTTP_%s)' % method.upper() for method in handler['methods']], ' && ')
         }) if 'methods' in handler and len(handler['methods']) > 0 else FILTER
     # "action_for_request_body": "discard"
-    __gen_discard_body = lambda handler: read_tpl('tpl/discard_body.c') if __discard_request_body(handler) else FILTER
-    __call_check = read_tpl('tpl/call_check.c')
+    __gen_discard_body = lambda handler: tpl_discard_body if __discard_request_body(handler) else FILTER
     # "upstream"
     #     "sequential_subrequests"
     #         "subrequests"
-    __gen_init_peer = lambda handler: read_tpl('tpl/init_peer.c') if __use_sequential(handler) else FILTER
+    __gen_init_peer = lambda handler: tpl_init_peer if __use_sequential(handler) else FILTER
     __gen_init_ctx_base = lambda handler: '    ctx->base.backend_uri = backend_uri;' if __read_request_body(handler) else FILTER
     __gen_init_ctx = lambda handler: '    ctx->peer = ngx_http_first_peer(peers->peer);\n' if __use_sequential(handler) else FILTER
     __gen_read_body = lambda handler: read_from_tpl('tpl/read_body.c', {
@@ -175,7 +182,7 @@ def gen_handler_imp(addon, md, handler):
         '{',
         __gen_methods_filter(handler),
         __gen_discard_body(handler),
-        __call_check,
+        tpl_call_check,
         __gen_init_peer(handler),
         gen_create_ctx(md, handler),
         __gen_init_ctx_base(handler),
@@ -185,21 +192,19 @@ def gen_handler_imp(addon, md, handler):
         '}',
         ''
         ]) if use_upstream(handler) else FILTER
-    __default_handler = read_tpl('tpl/default_handler.c')
     __gen_first_loop = lambda md, handler: read_from_tpl('tpl/first_loop.c', {
         'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)), 
         'var_first_handler': '__first_%s_handler' % get_uri(handler)
         })
     __gen_next_loop = lambda handler: read_from_tpl('tpl/next_loop.c', {
         'var_sr_peer': __gen_sr_peer(handler)}) if __use_sequential(handler) else FILTER
-    __final_loop = read_tpl('tpl/final_loop.c')
     __gen_request_handler = lambda md, handler: merge([
         'ngx_int_t %s_%s_handler(%s)' % (md, get_uri(handler), req_params),
         '{',
         merge([
             __gen_methods_filter(handler),
             __gen_discard_body(handler),
-            __call_check,
+            tpl_call_check,
             merge([
                 '    ngx_http_set_addon_module_ctx(r, backend_uri);',
                 __gen_read_body(handler)
@@ -208,13 +213,13 @@ def gen_handler_imp(addon, md, handler):
             ]) if __use_parallel(handler) else merge([
             __gen_first_loop(md, handler),
             __gen_next_loop(handler),
-            __final_loop
+            tpl_final_loop
             ]) if use_upstream(handler) else merge([
             __gen_methods_filter(handler),
             __gen_discard_body(handler),
-            __call_check,
+            tpl_call_check,
             __gen_read_body(handler) if __read_request_body(
-                handler) else __default_handler
+                handler) else tpl_default_handler
             ]),
         '}'
         ])
