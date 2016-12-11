@@ -294,21 +294,15 @@ def gen_module_dict():
         }
 
 def gen_module_vars(md, mcf, handlers):
-    __item_len = 'sizeof(ngx_http_request_item_t)'
-    __gen_handler_dict = lambda md, handlers: merge([
-        'static ngx_http_request_item_t %s_handler_dict[] =' % md,
-        '{',
-        string.join([tpls['handler_item'].substitute({
+    __gen_handler_dict = lambda md, handlers: tpls['handler_dict'].substitute({
+        'var_dict': '%s_handler_dict' % md,
+        'var_dict_len': '%s_handler_dict_len' % md,
+        'var_impl': string.join([tpls['handler_item'].substitute({
             'var_uri': 'ngx_string("/%s")' % handler['uri'],
             'var_upstream': ('ngx_string("%s")' % handler['upstream']['backend_uri']) if use_upstream(handler) else 'ngx_null_string',
             'var_handler': '%s_%s_handler' % (md, get_uri(handler))
-            }) for handler in handlers], ',\n'),
-        '};',
-        '',
-        'static size_t %s_handler_dict_len = sizeof(%s_handler_dict) / %s;' % (
-            md, md, __item_len),
-        ''
-        ])
+            }) for handler in handlers], ',\n')
+        })
     __gen_mcf_cmds = lambda mcf: merge(map(
         lambda item: '    APPEND_MCF_ITEM("%s", ngx_http_%s),' % (item[NAME], item[NAME]), mcf))
     __gen_commands = lambda md, mcf: merge([
