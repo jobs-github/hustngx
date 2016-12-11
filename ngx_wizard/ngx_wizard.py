@@ -303,24 +303,13 @@ def gen_module_vars(md, mcf, handlers):
             'var_handler': '%s_%s_handler' % (md, get_uri(handler))
             }) for handler in handlers], ',\n')
         })
-    __gen_mcf_cmds = lambda mcf: merge(map(
-        lambda item: '    APPEND_MCF_ITEM("%s", ngx_http_%s),' % (item[NAME], item[NAME]), mcf))
-    __gen_commands = lambda md, mcf: merge([
-        'static ngx_command_t ngx_http_%s_commands[] =' % md,
-        '{',
-        '    {',
-        '        ngx_string("%s"),' % md,
-        '        NGX_HTTP_LOC_CONF|NGX_CONF_NOARGS,',
-        '        ngx_http_%s,' % md,
-        '        NGX_HTTP_LOC_CONF_OFFSET,',
-        '        0,',
-        '        NULL',
-        '    },',
-        __gen_mcf_cmds(mcf) if len(mcf) > 0 else FILTER,
-        '    ngx_null_command',
-        '};',
-        ''
-        ])
+    __gen_mcf_cmds = lambda mcf: merge(['    APPEND_MCF_ITEM("%s", ngx_http_%s),' % (item[NAME], item[NAME]) for item in mcf])
+    __gen_commands = lambda md, mcf: tpls['commands'].substitute({
+        'var_commands': 'ngx_http_%s_commands' % md,
+        'var_md': 'ngx_string("%s")' % md,
+        'var_handler': 'ngx_http_%s' % md,
+        'var_items': __gen_mcf_cmds(mcf) if len(mcf) > 0 else ''
+        })
     __gen_module_ctx = lambda md, mcf: merge([
         'static ngx_http_module_t ngx_http_%s_module_ctx =' % md,
         '{',
