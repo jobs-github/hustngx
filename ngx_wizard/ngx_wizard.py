@@ -310,20 +310,11 @@ def gen_module_vars(md, mcf, handlers):
         'var_handler': 'ngx_http_%s' % md,
         'var_items': __gen_mcf_cmds(mcf) if len(mcf) > 0 else ''
         })
-    __gen_module_ctx = lambda md, mcf: merge([
-        'static ngx_http_module_t ngx_http_%s_module_ctx =' % md,
-        '{',
-        '    NULL, // ngx_int_t (*preconfiguration)(ngx_conf_t *cf);',
-        '    NULL, // ngx_int_t (*postconfiguration)(ngx_conf_t *cf);',
-        '    ngx_http_%s_create_main_conf,' % md,
-        '    ngx_http_%s_init_main_conf,' % md,
-        '    NULL, // void * (*create_srv_conf)(ngx_conf_t *cf);',
-        '    NULL, // char * (*merge_srv_conf)(ngx_conf_t *cf, void *prev, void *conf);',
-        '    NULL, // void * (*create_loc_conf)(ngx_conf_t *cf);',
-        '    NULL // char * (*merge_loc_conf)(ngx_conf_t *cf, void *prev, void *conf);',
-        '};',
-        ''
-        ])
+    __gen_module_ctx = lambda md, mcf: tpls['module_ctx'].substitute({
+        'var_ctx': 'ngx_http_%s_module_ctx' % md,
+        'var_create': 'ngx_http_%s_create_main_conf' % md,
+        'var_init': 'ngx_http_%s_init_main_conf' % md
+        })
     __gen_module = lambda md: merge([
         'ngx_module_t ngx_http_%s_module =' % md,
         '{',
