@@ -37,48 +37,20 @@ substitute_tpls = lambda tpls, vars: join_lines([tpl.substitute(vars) for tpl in
 
 def load_templates():
     cwd = os.path.split(os.path.realpath(__file__))[0]
-    items = [
-        'type_dict.json',
-        'post_body_cb.c',
-        'discard_body.c',
-        'call_check.c',
-        'init_peer.c',
-        'default_handler.c',
-        'final_loop.c',
-        'header.h',
-        'main_conf.h',
-        'utils.h',
-        'create_ctx.c',
-        'parallel_call.c',
-        'parallel_subrequests.c',
-        'parallel_ctx.h',
-        'check.c',
-        'post_subrequest.c',
-        'parallel_post_body.c',
-        'sequential_post_body.c',
-        'post_body_handler.c',
-        'http_not_allowed.c',
-        'read_body.c',
-        'first_loop.c',
-        'next_loop.c',
-        'mcf_frame.c',
-        'mcf_int.c',
-        'mcf_default.c',
-        'mcf_bool.c',
-        'mcf_string.c'
-        ]
-    templates = {}
-    for item in items:
-        with open(os.path.join(os.path.join(cwd, 'tpl'), item)) as f:
-            key = os.path.splitext(item)[0]
-            val = string.Template(f.read())
-            templates[key] = val
-    items = ['upstream_ctx.h']
-    for item in items:
-        with open(os.path.join(os.path.join(cwd, 'tpl'), item)) as f:
-            key = os.path.splitext(item)[0]
-            templates[key] = [string.Template(line) for line in f]
-    return templates
+    tpl_path = os.path.join(cwd, 'tpl')
+    with open(os.path.join(tpl_path, 'tpls.json')) as f:
+        cf = json.load(f)
+        templates = {}
+        for item in cf['tpls']:
+            with open(os.path.join(tpl_path, item)) as f:
+                key = os.path.splitext(item)[0]
+                val = string.Template(f.read())
+                templates[key] = val
+        for item in cf['tpl_lines']:
+            with open(os.path.join(tpl_path, item)) as f:
+                key = os.path.splitext(item)[0]
+                templates[key] = [string.Template(line) for line in f]
+        return templates
 
 tpls = load_templates()
 type_dict = json.loads(tpls['type_dict'].template)

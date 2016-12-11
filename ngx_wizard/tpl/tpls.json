@@ -1,0 +1,34 @@
+{
+    "tpls":
+    [
+        "type_dict.json",
+        "post_body_cb.c",
+        "discard_body.c",
+        "call_check.c",
+        "init_peer.c",
+        "default_handler.c",
+        "final_loop.c",
+        "header.h",
+        "main_conf.h",
+        "utils.h",
+        "create_ctx.c",
+        "parallel_call.c",
+        "parallel_subrequests.c",
+        "parallel_ctx.h",
+        "check.c",
+        "post_subrequest.c",
+        "parallel_post_body.c",
+        "sequential_post_body.c",
+        "post_body_handler.c",
+        "http_not_allowed.c",
+        "read_body.c",
+        "first_loop.c",
+        "next_loop.c",
+        "mcf_frame.c",
+        "mcf_int.c",
+        "mcf_default.c",
+        "mcf_bool.c",
+        "mcf_string.c"
+    ],
+    "tpl_lines": ["upstream_ctx.h"]
+}
