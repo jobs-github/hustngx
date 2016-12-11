@@ -28,7 +28,8 @@
         "mcf_int.c",
         "mcf_default.c",
         "mcf_bool.c",
-        "mcf_string.c"
+        "mcf_string.c",
+        "handler_item.c"
     ],
     "tpl_lines": ["upstream_ctx.h"]
 }

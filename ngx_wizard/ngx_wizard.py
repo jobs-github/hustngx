@@ -298,15 +298,11 @@ def gen_module_vars(md, mcf, handlers):
     __gen_handler_dict = lambda md, handlers: merge([
         'static ngx_http_request_item_t %s_handler_dict[] =' % md,
         '{',
-        reduce(lambda s1, s2: '%s,\n%s' % (s1, s2), map(lambda handler: merge([
-        '    {',
-        '        ngx_string("/%s"),' % handler['uri'],
-        '        %s,' % ((
-            'ngx_string("%s")' % handler['upstream']['backend_uri']
-            ) if use_upstream(handler) else 'ngx_null_string'),
-        '        %s_%s_handler' % (md, get_uri(handler)),
-        '    }'
-        ]), handlers)),
+        reduce(lambda s1, s2: '%s,\n%s' % (s1, s2), map(lambda handler: tpls['handler_item'].substitute({
+            'var_uri': 'ngx_string("/%s")' % handler['uri'],
+            'var_upstream': ('ngx_string("%s")' % handler['upstream']['backend_uri']) if use_upstream(handler) else 'ngx_null_string',
+            'var_handler': '%s_%s_handler' % (md, get_uri(handler))
+            }), handlers)),
         '};',
         '',
         'static size_t %s_handler_dict_len = sizeof(%s_handler_dict) / %s;' % (
