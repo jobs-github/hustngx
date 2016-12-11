@@ -315,24 +315,15 @@ def gen_module_vars(md, mcf, handlers):
         'var_create': 'ngx_http_%s_create_main_conf' % md,
         'var_init': 'ngx_http_%s_init_main_conf' % md
         })
-    __gen_module = lambda md: merge([
-        'ngx_module_t ngx_http_%s_module =' % md,
-        '{',
-        '    NGX_MODULE_V1,',
-        '    &ngx_http_%s_module_ctx,' % md,
-        '    ngx_http_%s_commands,' % md,
-        '    NGX_HTTP_MODULE,',
-        '    NULL, // ngx_int_t (*init_master)(ngx_log_t *log);',
-        '    ngx_http_%s_init_module,' % md,
-        '    ngx_http_%s_init_process,' % md,
-        '    NULL, // ngx_int_t (*init_thread)(ngx_cycle_t *cycle);',
-        '    NULL, // void (*exit_thread)(ngx_cycle_t *cycle);',
-        '    ngx_http_%s_exit_process,' % md,
-        '    ngx_http_%s_exit_master,' % md,
-        '    NGX_MODULE_V1_PADDING',
-        '};',
-        ''
-        ])
+    __gen_module = lambda md: tpls['module'].substitute({
+        'var_md': 'ngx_http_%s_module' % md,
+        'var_md_ctx': 'ngx_http_%s_module_ctx' % md,
+        'var_commands': 'ngx_http_%s_commands' % md,
+        'var_init_module': 'ngx_http_%s_init_module' % md,
+        'var_init_process': 'ngx_http_%s_init_process' % md,
+        'var_exit_process': 'ngx_http_%s_exit_process' % md,
+        'var_exit_master': 'ngx_http_%s_exit_master' % md
+        })
     return merge([
         __gen_handler_dict(md, handlers),
         __gen_commands(md, mcf),
