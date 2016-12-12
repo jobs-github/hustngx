@@ -1,6 +1,6 @@
-static char * $var_func ( $var_args )
+static char * $var_func($var_args)
 {
-    $var_mcf_t * mcf = $var_get_mcf ;
+    $var_mcf_t * mcf = $var_get_mcf;
     if (!mcf || 2 != cf->args->nelts)
     {
         return "$var_func error";

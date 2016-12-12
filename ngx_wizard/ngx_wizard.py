@@ -108,7 +108,7 @@ def gen_parallel_imp(use_parallel, md, handler):
     return tpls['parallel_subrequests'].substitute({
         'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)),
         'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
-        'var_get_mcf': '%s_get_module_main_conf(r);' % md,
+        'var_get_mcf': '%s_get_module_main_conf(r)' % md,
         'var_create_ctx': gen_create_ctx(md, handler),
         }) if use_parallel(handler) else FILTER
 

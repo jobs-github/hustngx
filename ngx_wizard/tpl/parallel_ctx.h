@@ -6,4 +6,4 @@ typedef struct
     size_t finished;
     size_t err_count;
     // TODO: add your fields here
-} $var_ctx_t ;
+} $var_ctx_t;
