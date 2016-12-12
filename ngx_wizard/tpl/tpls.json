@@ -1,6 +1,7 @@
 {
     "tpls":
     [
+        "fmt.json",
         "type_dict.json",
         "post_body_cb.c",
         "discard_body.c",

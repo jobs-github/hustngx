@@ -54,6 +54,7 @@ def load_templates():
 
 tpls = load_templates()
 type_dict = json.loads(tpls['type_dict'].template)
+fmts = json.loads(tpls['fmt'].template)
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
@@ -259,40 +260,6 @@ def gen_main_conf(md, mcf):
     __get_func = lambda key: __dict[key] if key in __dict else __gen_default
     return merge([__gen_frame(md, item[NAME], __get_func(item[TYPE])(item[NAME])) for item in mcf]) if len(mcf) > 0 else FILTER
 
-def gen_module_dict():
-    __module_handler = lambda md, str: (
-        'static ngx_int_t ngx_http_%s_handler(ngx_http_request_t *r)%s') % (md, str)
-    __module_conf = lambda md, str: (
-        'static char *ngx_http_%s(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)%s'
-        ) % (md, str)
-    __init_module = lambda md, str: (
-        'static ngx_int_t ngx_http_%s_init_module(ngx_cycle_t * cycle)%s'
-        ) % (md, str)
-    __init_process = lambda md, str: (
-        'static ngx_int_t ngx_http_%s_init_process(ngx_cycle_t * cycle)%s'
-        ) % (md, str)
-    __exit_process = lambda md, str: (
-        'static void ngx_http_%s_exit_process(ngx_cycle_t * cycle)%s'
-        ) % (md, str)
-    __exit_master = lambda md, str: (
-        'static void ngx_http_%s_exit_master(ngx_cycle_t * cycle)%s'
-        ) % (md, str)
-    __create_main_conf = lambda md, str: (
-        'static void * ngx_http_%s_create_main_conf(ngx_conf_t *cf)%s') % (md, str)
-    __init_main_conf = lambda md, str: (
-        'char * ngx_http_%s_init_main_conf(ngx_conf_t * cf, void * conf)%s') % (md, str)
-    
-    return {
-        'module_handler': __module_handler,
-        'module_conf': __module_conf,
-        'init_module': __init_module,
-        'init_process': __init_process,
-        'exit_process': __exit_process,
-        'exit_master': __exit_master,
-        'create_main_conf': __create_main_conf,
-        'init_main_conf': __init_main_conf,
-        }
-
 def gen_module_vars(md, mcf, handlers):
     __gen_handler_dict = lambda md, handlers: tpls['handler_dict'].substitute({
         'var_dict': '%s_handler_dict' % md,
@@ -331,26 +298,26 @@ def gen_module_vars(md, mcf, handlers):
         __gen_module(md)
         ])
 
-def gen_module_dec(md, mcf, module_dict):
+def gen_module_dec(md, mcf):
     __gen_includes = lambda md: merge([
         '#include "%s_handler.h"' % md,
         ''
         ])
     __gen_declare = lambda md, mcf: merge([
-        module_dict['module_handler'](md, ';'),
-        module_dict['module_conf'](md, ';'),
-        module_dict['init_module'](md, ';'),
-        module_dict['init_process'](md, ';'),
-        module_dict['exit_process'](md, ';'),
-        module_dict['exit_master'](md, ';')
+        fmts['module_handler'] % (md, ';'),
+        fmts['module_conf'] % (md, ';'),
+        fmts['init_module'] % (md, ';'),
+        fmts['init_process'] % (md, ';'),
+        fmts['exit_process'] % (md, ';'),
+        fmts['exit_master'] % (md, ';')
         ])
     __gen_mcf_dec = lambda md, mcf: merge([
         merge(map(lambda item: (
             'static char * ngx_http_%s(%s);'
             ) % (item[NAME], conf_args), mcf)
         ) if len(mcf) > 0 else FILTER,
-        module_dict['create_main_conf'](md, ';'),
-        module_dict['init_main_conf'](md, ';')
+        fmts['create_main_conf'] % (md, ';'),
+        fmts['init_main_conf'] % (md, ';')
         ])
     return merge([
         __gen_includes(md),
@@ -359,9 +326,9 @@ def gen_module_dec(md, mcf, module_dict):
         ''
         ])
 
-def gen_module_imp(md, mcf, module_dict):
+def gen_module_imp(md, mcf):
     __gen_module_conf = lambda md: merge([
-        module_dict['module_conf'](md, ''),
+        fmts['module_conf'] % (md, ''),
         '{',
         '    ngx_http_core_loc_conf_t * clcf = ngx_http_conf_get_module_loc_conf(',
         '        cf, ngx_http_core_module);',
@@ -371,7 +338,7 @@ def gen_module_imp(md, mcf, module_dict):
         ''
         ])
     __gen_module_handler = lambda md: merge([
-        module_dict['module_handler'](md, ''),
+        fmts['module_handler'] % (md, ''),
         '{',
         '    ngx_http_request_item_t * it = ngx_http_get_request_item(',
         '        %s_handler_dict, %s_handler_dict_len, &r->uri);' % (md, md),
@@ -384,7 +351,7 @@ def gen_module_imp(md, mcf, module_dict):
         ''
         ])
     __gen_init_module = lambda md: merge([
-        module_dict['init_module'](md, ''),
+        fmts['init_module'] % (md, ''),
         '{',
         '    // TODO: initialize in master process',
         '    return NGX_OK;',
@@ -392,7 +359,7 @@ def gen_module_imp(md, mcf, module_dict):
         ''
         ])
     __gen_init_process = lambda md: merge([
-        module_dict['init_process'](md, ''),
+        fmts['init_process'] % (md, ''),
         '{',
         '    // TODO: initialize in worker process',
         '    return NGX_OK;',
@@ -400,26 +367,26 @@ def gen_module_imp(md, mcf, module_dict):
         ''
         ])
     __gen_exit_process = lambda md: merge([
-        module_dict['exit_process'](md, ''),
+        fmts['exit_process'] % (md, ''),
         '{',
         '    // TODO: uninitialize in worker process',
         '}',
         ''
         ])
     __gen_exit_master = lambda md: merge([
-        module_dict['exit_master'](md, ''),
+        fmts['exit_master'] % (md, ''),
         '{',
         '    // TODO: uninitialize in master process',
         '}',
         ''
         ])
     __gen_main_conf = lambda md: merge([
-        module_dict['create_main_conf'](md, ''),
+        fmts['create_main_conf'] % (md, ''),
         '{',
         '    return ngx_pcalloc(cf->pool, sizeof(ngx_http_%s_main_conf_t));' % md,
         '}',
         '',
-        module_dict['init_main_conf'](md, ''),
+        fmts['init_main_conf'] % (md, ''),
         '{',
         '    ngx_http_%s_main_conf_t * mcf = conf;' % md,
         '    if (!mcf)',
@@ -475,12 +442,11 @@ def gen_module_imp(md, mcf, module_dict):
         ])
     
 def gen_module(addon, md, mcf, handlers):
-    __module_dict = gen_module_dict()
     write_file('%s/ngx_http_%s_module.c' % (addon, md), merge([
-        gen_module_dec(md, mcf, __module_dict),
+        gen_module_dec(md, mcf),
         gen_module_vars(md, mcf, handlers),
         gen_main_conf(md, mcf),
-        gen_module_imp(md, mcf, __module_dict)
+        gen_module_imp(md, mcf)
         ]))
     
 def gen_code(mdpath, addon, obj):

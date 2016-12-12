@@ -1,0 +1,10 @@
+{
+    "module_handler": "static ngx_int_t ngx_http_%s_handler(ngx_http_request_t *r)%s",
+    "module_conf": "static char *ngx_http_%s(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)%s",
+    "init_module": "static ngx_int_t ngx_http_%s_init_module(ngx_cycle_t * cycle)%s",
+    "init_process": "static ngx_int_t ngx_http_%s_init_process(ngx_cycle_t * cycle)%s",
+    "exit_process": "static void ngx_http_%s_exit_process(ngx_cycle_t * cycle)%s",
+    "exit_master": "static void ngx_http_%s_exit_master(ngx_cycle_t * cycle)%s",
+    "create_main_conf": "static void * ngx_http_%s_create_main_conf(ngx_conf_t *cf)%s",
+    "init_main_conf": "char * ngx_http_%s_init_main_conf(ngx_conf_t * cf, void * conf)%s"
+}
