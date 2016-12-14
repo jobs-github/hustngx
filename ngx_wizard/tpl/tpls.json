@@ -39,7 +39,8 @@
         "module_handler.c",
         "init_process.c",
         "exit_process.c",
-        "mcf.c"
+        "mcf.c",
+        "return.c"
     ],
     "tpl_lines": ["upstream_ctx.h"]
 }

@@ -354,12 +354,7 @@ def gen_module_imp(md, mcf):
         'var_init': fmts['init_main_conf'] % (md, ''),
         'var_mcf_t': 'ngx_http_%s_main_conf_t' % md
         })
-    __gen_return = lambda val: merge([
-        '    if (!r)',
-        '    {',
-        '        return%s;' % val,
-        '    }',
-        ])
+    __gen_return = lambda val: tpls['return'].substitute({'var_val': val})
     __gen_ctx = lambda md: merge([
         'void * ngx_http_get_addon_module_ctx(ngx_http_request_t * r)',
         '{',
