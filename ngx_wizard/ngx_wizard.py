@@ -117,7 +117,7 @@ def gen_handler_imp(addon, md, handler):
     __gen_ctx = lambda md, handler: tpls['parallel_ctx'].substitute({
             'var_ctx_t': get_ctx(md, handler)
         }) if __use_parallel(handler) else substitute_tpls(tpls['upstream_ctx'], {
-            'var_peer': '    ngx_http_upstream_rr_peer_t * peer;' if __use_sequential(handler) else FILTER,
+            'var_peer': '    %s;' % consts['peer_def'] if __use_sequential(handler) else FILTER,
             'var_ctx_t': get_ctx(md, handler)
         }) if use_upstream(handler) else FILTER
     __gen_check_parameter = lambda: tpls['check'].substitute({'var_args': consts['request_args']})
@@ -127,7 +127,7 @@ def gen_handler_imp(addon, md, handler):
     __gen_sr = lambda prefix, backend_uri, handler: merge([
         merge([
             '    // TODO: initialize the peer here',
-            '    ngx_http_upstream_rr_peer_t * peer = NULL;'
+            '    %s = NULL;' % consts['peer_def']
             ]) if not __use_sequential(handler) else FILTER,
         '    %sngx_http_gen_subrequest(%s, r, %s,' % (prefix, backend_uri, __gen_sr_peer(handler)),
         '        &ctx->base, __post_subrequest_handler);'

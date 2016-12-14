@@ -2,5 +2,6 @@
     "request_args": "ngx_str_t * backend_uri, ngx_http_request_t *r",
     "conf_args": "ngx_conf_t * cf, ngx_command_t * cmd, void * conf",
     "mcf_fmt": "ngx_http_%s_main_conf_t",
-    "get_mcf_fmt": "%s_get_module_main_conf"
+    "get_mcf_fmt": "%s_get_module_main_conf",
+    "peer_def": "ngx_http_upstream_rr_peer_t * peer"
 }
