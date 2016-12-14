@@ -53,15 +53,13 @@ fmts = json.loads(tpls['fmt'].template)
 consts = json.loads(tpls['consts'].template)
 
 def gen_config(addon, md, handlers):
-    __gen_handler = lambda md: lambda cmd: (
-        '    $ngx_addon_dir/%s_%s_handler.c\\'
-        ) % (md, cmd)
+    __gen_handler = lambda md, uri: ('    $ngx_addon_dir/%s_%s_handler.c\\') % (md, uri)
     write_file('%s/config' % addon, merge([
         'ngx_addon_name=ngx_http_%s_module' % md,
         'HTTP_MODULES="$HTTP_MODULES ngx_http_%s_module"' % md,
         'NGX_ADDON_SRCS="$NGX_ADDON_SRCS \\',
         '    $ngx_addon_dir/%s_utils.c\\' % md,
-        merge(map(__gen_handler(md), map(lambda handler: get_uri(handler), handlers))),
+        merge([__gen_handler(md, uri) for uri in [get_uri(handler) for handler in handlers]]),
         '    $ngx_addon_dir/ngx_http_%s_module.c"' % md
         ]))
 def gen_tm():
