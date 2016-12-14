@@ -70,7 +70,7 @@ def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf):
     __get_type = lambda t: type_dict[t] if t in type_dict else t
     __gen_mcf = lambda md, mcf: tpls['main_conf'].substitute({
         'var_items': merge(['    %s %s;' % (__get_type(item[TYPE]), item[NAME]) for item in mcf]) if len(mcf) > 0 else FILTER,
-        'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
+        'var_mcf_t': consts['mcf_fmt'] % md,
         'var_get_mcf': '%s_get_module_main_conf' % md
         })
     write_file('%s/%s_utils.h' % (addon, md), gen_head_frame(md, 'utils', tpls['utils'].substitute({
@@ -99,7 +99,7 @@ def gen_parallel_call(use_parallel, handler, end):
 def gen_parallel_imp(use_parallel, md, handler):
     return tpls['parallel_subrequests'].substitute({
         'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)),
-        'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
+        'var_mcf_t': consts['mcf_fmt'] % md,
         'var_get_mcf': '%s_get_module_main_conf(r)' % md,
         'var_create_ctx': gen_create_ctx(md, handler),
         }) if use_parallel(handler) else FILTER
@@ -217,7 +217,7 @@ def gen_main_conf(md, mcf):
     __gen_frame = lambda md, field, impl: tpls['mcf_frame'].substitute({
         'var_func': 'ngx_http_%s' % field,
         'var_args': consts['conf_args'],
-        'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
+        'var_mcf_t': consts['mcf_fmt'] % md,
         'var_get_mcf': '%s(cf, ngx_http_%s_module)' % (__get_mcf_func, md),
         'var_impl': impl
         })
@@ -325,7 +325,7 @@ def gen_module_imp(md, mcf):
     __gen_main_conf = lambda md: tpls['mcf'].substitute({
         'var_create': fmts['create_main_conf'] % (md, ''),
         'var_init': fmts['init_main_conf'] % (md, ''),
-        'var_mcf_t': 'ngx_http_%s_main_conf_t' % md
+        'var_mcf_t': consts['mcf_fmt'] % md
         })
     __gen_return = lambda val: tpls['return'].substitute({'var_val': val})
     __gen_module_tail = lambda md: tpls['module_tail'].substitute({
