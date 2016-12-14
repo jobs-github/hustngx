@@ -34,7 +34,8 @@
         "handler_dict.c",
         "commands.c",
         "module_ctx.c",
-        "module.c"
+        "module.c",
+        "module_conf.c"
     ],
     "tpl_lines": ["upstream_ctx.h"]
 }

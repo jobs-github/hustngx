@@ -299,10 +299,7 @@ def gen_module_vars(md, mcf, handlers):
         ])
 
 def gen_module_dec(md, mcf):
-    __gen_includes = lambda md: merge([
-        '#include "%s_handler.h"' % md,
-        ''
-        ])
+    __gen_includes = lambda md: '#include "%s_handler.h"\n' % md
     __gen_declare = lambda md, mcf: merge([
         fmts['module_handler'] % (md, ';'),
         fmts['module_conf'] % (md, ';'),
@@ -317,26 +314,20 @@ def gen_module_dec(md, mcf):
             ) % (item[NAME], conf_args), mcf)
         ) if len(mcf) > 0 else FILTER,
         fmts['create_main_conf'] % (md, ';'),
-        fmts['init_main_conf'] % (md, ';')
+        fmts['init_main_conf'] % (md, ';'),
+        ''
         ])
     return merge([
         __gen_includes(md),
         __gen_declare(md, mcf),
-        __gen_mcf_dec(md, mcf),
-        ''
+        __gen_mcf_dec(md, mcf)
         ])
 
 def gen_module_imp(md, mcf):
-    __gen_module_conf = lambda md: merge([
-        fmts['module_conf'] % (md, ''),
-        '{',
-        '    ngx_http_core_loc_conf_t * clcf = ngx_http_conf_get_module_loc_conf(',
-        '        cf, ngx_http_core_module);',
-        '    clcf->handler = ngx_http_%s_handler;' % md,
-        '    return NGX_CONF_OK;',
-        '}',
-        ''
-        ])
+    __gen_module_conf = lambda md: tpls['module_conf'].substitute({
+        'var_declare': fmts['module_conf'] % (md, ''),
+        'var_handler': 'ngx_http_%s_handler' % md
+        })
     __gen_module_handler = lambda md: merge([
         fmts['module_handler'] % (md, ''),
         '{',
