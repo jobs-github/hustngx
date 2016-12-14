@@ -29,6 +29,7 @@ def write_file(path, data):
 use_upstream = lambda handler: 'upstream' in handler and None != handler['upstream']
 get_uri = lambda handler: handler['uri'].replace('/', '_')
 substitute_tpls = lambda tpls, vars: join_lines([tpl.substitute(vars) for tpl in tpls], '')
+get_ctx = lambda md, handler: '%s_%s_ctx_t' % (md, get_uri(handler))
 
 def load_templates():
     cwd = os.path.split(os.path.realpath(__file__))[0]
@@ -93,12 +94,12 @@ def gen_handler_dec(addon, md, handlers):
             ) % (md, get_uri(handler), consts['request_args']), handlers))
         ])))
 def gen_create_ctx(md, handler): 
-    return tpls['create_ctx'].substitute({'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))})
+    return tpls['create_ctx'].substitute({'var_ctx_t': get_ctx(md, handler)})
 def gen_parallel_call(use_parallel, handler, end):
     return tpls['parallel_call'].substitute({'var_end': end}) if use_parallel(handler) else FILTER
 def gen_parallel_imp(use_parallel, md, handler):
     return tpls['parallel_subrequests'].substitute({
-        'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)),
+        'var_ctx_t': get_ctx(md, handler),
         'var_mcf_t': consts['mcf_fmt'] % md,
         'var_get_mcf': consts['get_mcf_fmt'] % md,
         'var_create_ctx': gen_create_ctx(md, handler),
@@ -113,16 +114,15 @@ def gen_handler_imp(addon, md, handler):
         key in handler['upstream'] and handler['upstream'][key])
     __use_parallel = __upstream_has_key('parallel_subrequests')
     __use_sequential = __upstream_has_key('sequential_subrequests')
-
     __gen_ctx = lambda md, handler: tpls['parallel_ctx'].substitute({
-            'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))
+            'var_ctx_t': get_ctx(md, handler)
         }) if __use_parallel(handler) else substitute_tpls(tpls['upstream_ctx'], {
             'var_peer': '    ngx_http_upstream_rr_peer_t * peer;' if __use_sequential(handler) else FILTER,
-            'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))
+            'var_ctx_t': get_ctx(md, handler)
         }) if use_upstream(handler) else FILTER
     __gen_check_parameter = lambda: tpls['check'].substitute({'var_args': consts['request_args']})
     __gen_post_subrequest_handler = lambda md, handler: FILTER if __use_parallel(handler) else tpls['post_subrequest'].substitute({
-        'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))})
+        'var_ctx_t': get_ctx(md, handler)})
     __gen_sr_peer = lambda handler: 'ctx->peer' if __use_sequential(handler) else 'peer'
     __gen_sr = lambda prefix, backend_uri, handler: merge([
         merge([
@@ -135,7 +135,7 @@ def gen_handler_imp(addon, md, handler):
     __gen_post_body_impl = lambda md, handler: tpls['parallel_post_body'].substitute({
             'var_parallel_call': gen_parallel_call(__use_parallel, handler, '    // TODO')
         }) if __use_parallel(handler) else tpls['sequential_post_body'].substitute({
-            'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)),
+            'var_ctx_t': get_ctx(md, handler),
             'var_sr': __gen_sr('', 'ctx->base.backend_uri', handler)
         }) if use_upstream(handler) else '    ngx_http_post_body_handler(r, __post_body_cb);'
     __gen_post_body_handler = lambda md, handler: merge([
@@ -166,7 +166,7 @@ def gen_handler_imp(addon, md, handler):
         ''
         ]) if use_upstream(handler) else FILTER
     __gen_first_loop = lambda md, handler: tpls['first_loop'].substitute({
-        'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)), 
+        'var_ctx_t': get_ctx(md, handler), 
         'var_first_handler': '__first_%s_handler' % get_uri(handler)
         })
     __gen_next_loop = lambda handler: tpls['next_loop'].substitute({
