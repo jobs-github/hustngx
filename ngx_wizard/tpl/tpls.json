@@ -40,7 +40,8 @@
         "init_process.c",
         "exit_process.c",
         "mcf.c",
-        "return.c"
+        "return.c",
+        "module_tail.c"
     ],
     "tpl_lines": ["upstream_ctx.h"]
 }
