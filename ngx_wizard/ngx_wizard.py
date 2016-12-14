@@ -349,27 +349,11 @@ def gen_module_imp(md, mcf):
         'var_declare': fmts['exit_master'] % (md, ''),
         'var_type': 'master'
         })
-    __gen_main_conf = lambda md: merge([
-        fmts['create_main_conf'] % (md, ''),
-        '{',
-        '    return ngx_pcalloc(cf->pool, sizeof(ngx_http_%s_main_conf_t));' % md,
-        '}',
-        '',
-        fmts['init_main_conf'] % (md, ''),
-        '{',
-        '    ngx_http_%s_main_conf_t * mcf = conf;' % md,
-        '    if (!mcf)',
-        '    {',
-        '        return NGX_CONF_ERROR;',
-        '    }',
-        '    mcf->pool = cf->pool;',
-        '    mcf->log = cf->log;',
-        '    mcf->prefix = cf->cycle->prefix;',
-        '    // TODO: you can initialize mcf here',
-        '    return NGX_CONF_OK;',
-        '}',
-        ''
-        ])
+    __gen_main_conf = lambda md: tpls['mcf'].substitute({
+        'var_create': fmts['create_main_conf'] % (md, ''),
+        'var_init': fmts['init_main_conf'] % (md, ''),
+        'var_mcf_t': 'ngx_http_%s_main_conf_t' % md
+        })
     __gen_return = lambda val: merge([
         '    if (!r)',
         '    {',
