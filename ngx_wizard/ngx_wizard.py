@@ -341,20 +341,14 @@ def gen_module_imp(md, mcf):
         'var_declare': fmts['init_process'] % (md, ''),
         'var_type': 'worker'
         })
-    __gen_exit_process = lambda md: merge([
-        fmts['exit_process'] % (md, ''),
-        '{',
-        '    // TODO: uninitialize in worker process',
-        '}',
-        ''
-        ])
-    __gen_exit_master = lambda md: merge([
-        fmts['exit_master'] % (md, ''),
-        '{',
-        '    // TODO: uninitialize in master process',
-        '}',
-        ''
-        ])
+    __gen_exit_process = lambda md: tpls['exit_process'].substitute({
+        'var_declare': fmts['exit_process'] % (md, ''),
+        'var_type': 'worker'
+        })
+    __gen_exit_master = lambda md: tpls['exit_process'].substitute({
+        'var_declare': fmts['exit_master'] % (md, ''),
+        'var_type': 'master'
+        })
     __gen_main_conf = lambda md: merge([
         fmts['create_main_conf'] % (md, ''),
         '{',

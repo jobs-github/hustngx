@@ -37,7 +37,8 @@
         "module.c",
         "module_conf.c",
         "module_handler.c",
-        "init_process.c"
+        "init_process.c",
+        "exit_process.c"
     ],
     "tpl_lines": ["upstream_ctx.h"]
 }
