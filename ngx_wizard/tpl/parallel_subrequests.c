@@ -25,7 +25,7 @@ static ngx_int_t __post_upstream(ngx_http_request_t * r, void * data, ngx_int_t 
 static ngx_int_t __parallel_subrequests(ngx_str_t * backend_uri, ngx_http_request_t * r)
 {
     // this is just a sample implement!
-    $var_mcf_t * mcf = $var_get_mcf;
+    $var_mcf_t * mcf = $var_get_mcf(r);
     if (!mcf)
     {
         return NGX_ERROR;
