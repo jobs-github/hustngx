@@ -333,14 +333,7 @@ def gen_module_imp(md, mcf):
         'var_dict': '%s_handler_dict' % md,
         'var_dict_len': '%s_handler_dict_len' % md
         })
-    __gen_init_module = lambda md: merge([
-        fmts['init_module'] % (md, ''),
-        '{',
-        '    // TODO: initialize in master process',
-        '    return NGX_OK;',
-        '}',
-        ''
-        ])
+    __gen_init_module = lambda md: tpls['init_module'].substitute({'var_declare': fmts['init_module'] % (md, '')})
     __gen_init_process = lambda md: merge([
         fmts['init_process'] % (md, ''),
         '{',
