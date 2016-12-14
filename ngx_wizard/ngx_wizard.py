@@ -328,19 +328,11 @@ def gen_module_imp(md, mcf):
         'var_declare': fmts['module_conf'] % (md, ''),
         'var_handler': 'ngx_http_%s_handler' % md
         })
-    __gen_module_handler = lambda md: merge([
-        fmts['module_handler'] % (md, ''),
-        '{',
-        '    ngx_http_request_item_t * it = ngx_http_get_request_item(',
-        '        %s_handler_dict, %s_handler_dict_len, &r->uri);' % (md, md),
-        '    if (!it)',
-        '    {',
-        '        return NGX_ERROR;',
-        '    }',
-        '    return it->handler(&it->backend_uri, r);',
-        '}',
-        ''
-        ])
+    __gen_module_handler = lambda md: tpls['module_handler'].substitute({
+        'var_declare': fmts['module_handler'] % (md, ''),
+        'var_dict': '%s_handler_dict' % md,
+        'var_dict_len': '%s_handler_dict_len' % md
+        })
     __gen_init_module = lambda md: merge([
         fmts['init_module'] % (md, ''),
         '{',
