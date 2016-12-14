@@ -25,12 +25,7 @@ def manual():
 def write_file(path, data):
     with open(path, 'w') as f:
         f.writelines(data)
-def load_file(url):
-    with open(url) as f:
-        return f.read()
 
-request_args = 'ngx_str_t * backend_uri, ngx_http_request_t *r'
-conf_args = 'ngx_conf_t * cf, ngx_command_t * cmd, void * conf'
 use_upstream = lambda handler: 'upstream' in handler and None != handler['upstream']
 get_uri = lambda handler: handler['uri'].replace('/', '_')
 substitute_tpls = lambda tpls, vars: join_lines([tpl.substitute(vars) for tpl in tpls], '')
@@ -55,6 +50,7 @@ def load_templates():
 tpls = load_templates()
 type_dict = json.loads(tpls['type_dict'].template)
 fmts = json.loads(tpls['fmt'].template)
+consts = json.loads(tpls['consts'].template)
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md: lambda cmd: (
@@ -96,15 +92,13 @@ def gen_handler_dec(addon, md, handlers):
         '',
         merge(map(lambda handler: (
             'ngx_int_t %s_%s_handler(%s);'
-            ) % (md, get_uri(handler), request_args), handlers))
+            ) % (md, get_uri(handler), consts['request_args']), handlers))
         ])))
 def gen_create_ctx(md, handler): 
     return tpls['create_ctx'].substitute({'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))})
 def gen_parallel_call(use_parallel, handler, end):
     return tpls['parallel_call'].substitute({'var_end': end}) if use_parallel(handler) else FILTER
 def gen_parallel_imp(use_parallel, md, handler):
-    # "upstream"
-    #     "parallel_subrequests"
     return tpls['parallel_subrequests'].substitute({
         'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler)),
         'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
@@ -113,14 +107,8 @@ def gen_parallel_imp(use_parallel, md, handler):
         }) if use_parallel(handler) else FILTER
 
 def gen_handler_imp(addon, md, handler):
-    # "action_for_request_body": ["read", "discard", "default"]
-    # "methods": ["GET", "HEAD", "POST", "PUT", "DELETE"]
-    # "upstream"
-    #     "sequential_subrequests"
-    #     "parallel_subrequests"
-    __request_body_action = lambda action: lambda handler: (
-        'action_for_request_body' in handler) and (
-            action == handler['action_for_request_body'])
+    __check_kv = lambda key, val, handler: (key in handler) and (val == handler[key])
+    __request_body_action = lambda action: lambda handler: __check_kv('action_for_request_body', action, handler)
     __read_request_body = __request_body_action('read')
     __discard_request_body = __request_body_action('discard')
     __upstream_has_key = lambda key: lambda handler: use_upstream(handler) and (
@@ -134,7 +122,7 @@ def gen_handler_imp(addon, md, handler):
             'var_peer': '    ngx_http_upstream_rr_peer_t * peer;' if __use_sequential(handler) else FILTER,
             'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))
         }) if use_upstream(handler) else FILTER
-    __gen_check_parameter = lambda: tpls['check'].substitute({'var_args': request_args})
+    __gen_check_parameter = lambda: tpls['check'].substitute({'var_args': consts['request_args']})
     __gen_post_subrequest_handler = lambda md, handler: FILTER if __use_parallel(handler) else tpls['post_subrequest'].substitute({
         'var_ctx_t': '%s_%s_ctx_t' % (md, get_uri(handler))})
     __gen_sr_peer = lambda handler: 'ctx->peer' if __use_sequential(handler) else 'peer'
@@ -146,11 +134,6 @@ def gen_handler_imp(addon, md, handler):
         '    %sngx_http_gen_subrequest(%s, r, %s,' % (prefix, backend_uri, __gen_sr_peer(handler)),
         '        &ctx->base, __post_subrequest_handler);'
         ])
-    # "action_for_request_body": "read"
-    # "upstream" (optional)
-    #     "sequential_subrequests"
-    #     "parallel_subrequests"
-    
     __gen_post_body_impl = lambda md, handler: tpls['parallel_post_body'].substitute({
             'var_parallel_call': gen_parallel_call(__use_parallel, handler, '    // TODO')
         }) if __use_parallel(handler) else tpls['sequential_post_body'].substitute({
@@ -161,24 +144,16 @@ def gen_handler_imp(addon, md, handler):
         FILTER if use_upstream(handler) else tpls['post_body_cb'].template,
         tpls['post_body_handler'].substitute({'var_impl': __gen_post_body_impl(md, handler)})
         ]) if __read_request_body(handler) else FILTER
-    # 'methods'
     __gen_methods_filter = lambda handler: tpls['http_not_allowed'].substitute({
         'var_cond': string.join(['!(r->method & NGX_HTTP_%s)' % method.upper() for method in handler['methods']], ' && ')
         }) if 'methods' in handler and len(handler['methods']) > 0 else FILTER
-    # "action_for_request_body": "discard"
     __gen_discard_body = lambda handler: tpls['discard_body'].template if __discard_request_body(handler) else FILTER
-    # "upstream"
-    #     "sequential_subrequests"
-    #         "subrequests"
     __gen_init_peer = lambda handler: tpls['init_peer'].template if __use_sequential(handler) else FILTER
     __gen_init_ctx_base = lambda handler: '    ctx->base.backend_uri = backend_uri;' if __read_request_body(handler) else FILTER
     __gen_init_ctx = lambda handler: '    ctx->peer = ngx_http_first_peer(peers->peer);\n' if __use_sequential(handler) else FILTER
     __gen_read_body = lambda handler: tpls['read_body'].substitute({'var_rc': ('rc' if __discard_request_body(handler) else 'ngx_int_t rc')})
-    # 'action_for_request_body'
-    # 'methods'
-    # 'upstream'
     __gen_first_handler = lambda md, handler: FILTER if __use_parallel(handler) else merge([
-        'static ngx_int_t __first_%s_handler(%s)' % (get_uri(handler), request_args),
+        'static ngx_int_t __first_%s_handler(%s)' % (get_uri(handler), consts['request_args']),
         '{',
         __gen_methods_filter(handler),
         __gen_discard_body(handler),
@@ -199,7 +174,7 @@ def gen_handler_imp(addon, md, handler):
     __gen_next_loop = lambda handler: tpls['next_loop'].substitute({
         'var_sr_peer': __gen_sr_peer(handler)}) if __use_sequential(handler) else FILTER
     __gen_request_handler = lambda md, handler: merge([
-        'ngx_int_t %s_%s_handler(%s)' % (md, get_uri(handler), request_args),
+        'ngx_int_t %s_%s_handler(%s)' % (md, get_uri(handler), consts['request_args']),
         '{',
         merge([
             __gen_methods_filter(handler),
@@ -243,7 +218,7 @@ def gen_main_conf(md, mcf):
     __get_mcf_func = 'ngx_http_conf_get_module_main_conf'
     __gen_frame = lambda md, field, impl: tpls['mcf_frame'].substitute({
         'var_func': 'ngx_http_%s' % field,
-        'var_args': conf_args,
+        'var_args': consts['conf_args'],
         'var_mcf_t': 'ngx_http_%s_main_conf_t' % md,
         'var_get_mcf': '%s(cf, ngx_http_%s_module)' % (__get_mcf_func, md),
         'var_impl': impl
@@ -311,7 +286,7 @@ def gen_module_dec(md, mcf):
     __gen_mcf_dec = lambda md, mcf: merge([
         merge(map(lambda item: (
             'static char * ngx_http_%s(%s);'
-            ) % (item[NAME], conf_args), mcf)
+            ) % (item[NAME], consts['conf_args']), mcf)
         ) if len(mcf) > 0 else FILTER,
         fmts['create_main_conf'] % (md, ';'),
         fmts['init_main_conf'] % (md, ';'),

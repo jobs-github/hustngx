@@ -1,0 +1,4 @@
+{
+    "request_args": "ngx_str_t * backend_uri, ngx_http_request_t *r",
+    "conf_args": "ngx_conf_t * cf, ngx_command_t * cmd, void * conf"
+}
