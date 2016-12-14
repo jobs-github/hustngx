@@ -178,10 +178,7 @@ def gen_handler_imp(addon, md, handler):
             __gen_methods_filter(handler),
             __gen_discard_body(handler),
             tpls['call_check'].template,
-            merge([
-                '    ngx_http_set_addon_module_ctx(r, backend_uri);',
-                __gen_read_body(handler)
-                ]) if __read_request_body(
+            merge(['    %s' % consts['set_ctx'], __gen_read_body(handler)]) if __read_request_body(
                 handler) else gen_parallel_call(__use_parallel, handler, '    return NGX_DONE;'),
             ]) if __use_parallel(handler) else merge([
             __gen_first_loop(md, handler),
