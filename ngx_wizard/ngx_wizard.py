@@ -213,12 +213,11 @@ def gen_handlers_imp(addon, md, handlers):
         gen_handler_imp(addon, md, handler)
 
 def gen_main_conf(md, mcf):
-    __get_mcf_func = 'ngx_http_conf_get_module_main_conf'
     __gen_frame = lambda md, field, impl: tpls['mcf_frame'].substitute({
         'var_func': 'ngx_http_%s' % field,
         'var_args': consts['conf_args'],
         'var_mcf_t': consts['mcf_fmt'] % md,
-        'var_get_mcf': '%s(cf, ngx_http_%s_module)' % (__get_mcf_func, md),
+        'var_get_mcf': '%s(cf, ngx_http_%s_module)' % (consts['get_mcf'], md),
         'var_impl': impl
         })
     __gen_int_base = lambda parse_str: lambda field: tpls['mcf_int'].substitute({'var_field': field, 'var_value': parse_str})
