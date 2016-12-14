@@ -334,14 +334,7 @@ def gen_module_imp(md, mcf):
         'var_dict_len': '%s_handler_dict_len' % md
         })
     __gen_init_module = lambda md: tpls['init_module'].substitute({'var_declare': fmts['init_module'] % (md, '')})
-    __gen_init_process = lambda md: merge([
-        fmts['init_process'] % (md, ''),
-        '{',
-        '    // TODO: initialize in worker process',
-        '    return NGX_OK;',
-        '}',
-        ''
-        ])
+    __gen_init_process = lambda md: tpls['init_process'].substitute({'var_declare': fmts['init_process'] % (md, '')})
     __gen_exit_process = lambda md: merge([
         fmts['exit_process'] % (md, ''),
         '{',
