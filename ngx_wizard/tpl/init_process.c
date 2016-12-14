@@ -1,5 +1,5 @@
 $var_declare
 {
-    // TODO: initialize in worker process
+    // TODO: initialize in $var_type process
     return NGX_OK;
 }

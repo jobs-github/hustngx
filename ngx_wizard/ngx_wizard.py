@@ -333,8 +333,14 @@ def gen_module_imp(md, mcf):
         'var_dict': '%s_handler_dict' % md,
         'var_dict_len': '%s_handler_dict_len' % md
         })
-    __gen_init_module = lambda md: tpls['init_module'].substitute({'var_declare': fmts['init_module'] % (md, '')})
-    __gen_init_process = lambda md: tpls['init_process'].substitute({'var_declare': fmts['init_process'] % (md, '')})
+    __gen_init_module = lambda md: tpls['init_process'].substitute({
+        'var_declare': fmts['init_module'] % (md, ''),
+        'var_type': 'master'
+        })
+    __gen_init_process = lambda md: tpls['init_process'].substitute({
+        'var_declare': fmts['init_process'] % (md, ''),
+        'var_type': 'worker'
+        })
     __gen_exit_process = lambda md: merge([
         fmts['exit_process'] % (md, ''),
         '{',
