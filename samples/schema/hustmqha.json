@@ -30,6 +30,7 @@
     ],
     "handlers":
     [
+        { "uri": "version" },
         {
             "uri": "worker",
             "action_for_request_body": "default",
