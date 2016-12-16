@@ -121,8 +121,8 @@ def gen_handler_imp(addon, md, handler):
             'var_ctx_t': get_ctx(md, handler)
         }) if use_upstream(handler) else FILTER
     __gen_check_parameter = lambda: tpls['check'].substitute({'var_args': consts['request_args']})
-    __gen_post_subrequest_handler = lambda md, handler: FILTER if __use_parallel(handler) else tpls['post_subrequest'].substitute({
-        'var_ctx_t': get_ctx(md, handler)})
+    __gen_post_subrequest_handler = lambda md, handler: FILTER if (__use_parallel(handler) or not use_upstream(handler)
+        ) else tpls['post_subrequest'].substitute({'var_ctx_t': get_ctx(md, handler)})
     __gen_sr_peer = lambda handler: 'ctx->peer' if __use_sequential(handler) else 'peer'
     __gen_sr = lambda prefix, backend_uri, handler: merge([
         merge([
