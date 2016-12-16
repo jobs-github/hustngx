@@ -27,6 +27,7 @@
     ],
     "handlers":
     [
+        { "uri": "version" },
         {
             "uri": "get",
             "action_for_request_body": "default",
