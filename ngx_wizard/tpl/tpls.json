@@ -38,8 +38,10 @@
         "module.c",
         "module_conf.c",
         "module_handler.c",
+        "init_module.c",
         "init_process.c",
         "exit_process.c",
+        "exit_master.c",
         "mcf.c",
         "return.c",
         "module_tail.c"

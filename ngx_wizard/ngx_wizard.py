@@ -268,7 +268,10 @@ def gen_module_vars(md, mcf, handlers):
         ])
 
 def gen_module_dec(md, mcf):
-    __gen_includes = lambda md: '#include "%s_handler.h"\n' % md
+    __gen_includes = lambda md: merge([
+        '#include <c_dict.h>',
+        '#include "%s_handler.h"' % md
+        ])
     __gen_declare = lambda md, mcf: merge([
         fmts['module_handler'] % (md, ';'),
         fmts['module_conf'] % (md, ';'),
@@ -297,27 +300,19 @@ def gen_module_imp(md, mcf):
         'var_declare': fmts['module_conf'] % (md, ''),
         'var_handler': 'ngx_http_%s_handler' % md
         })
-    __gen_module_handler = lambda md: tpls['module_handler'].substitute({
-        'var_declare': fmts['module_handler'] % (md, ''),
+    __gen_module_handler = lambda md: tpls['module_handler'].substitute({'var_declare': fmts['module_handler'] % (md, '')})
+    __gen_init_module = lambda md: tpls['init_module'].substitute({'var_declare': fmts['init_module'] % (md, '')})
+    __gen_init_process = lambda md: tpls['init_process'].substitute({
+        'var_declare': fmts['init_process'] % (md, ''),
         'var_dict': '%s_handler_dict' % md,
         'var_dict_len': '%s_handler_dict_len' % md
         })
-    __gen_init_module = lambda md: tpls['init_process'].substitute({
-        'var_declare': fmts['init_module'] % (md, ''),
-        'var_type': 'master'
-        })
-    __gen_init_process = lambda md: tpls['init_process'].substitute({
-        'var_declare': fmts['init_process'] % (md, ''),
-        'var_type': 'worker'
-        })
     __gen_exit_process = lambda md: tpls['exit_process'].substitute({
         'var_declare': fmts['exit_process'] % (md, ''),
-        'var_type': 'worker'
+        'var_dict': '%s_handler_dict' % md,
+        'var_dict_len': '%s_handler_dict_len' % md
         })
-    __gen_exit_master = lambda md: tpls['exit_process'].substitute({
-        'var_declare': fmts['exit_master'] % (md, ''),
-        'var_type': 'master'
-        })
+    __gen_exit_master = lambda md: tpls['exit_process'].substitute({'var_declare': fmts['exit_master'] % (md, '')})
     __gen_main_conf = lambda md: tpls['mcf'].substitute({
         'var_create': fmts['create_main_conf'] % (md, ''),
         'var_init': fmts['init_main_conf'] % (md, ''),
