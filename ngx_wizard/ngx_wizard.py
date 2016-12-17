@@ -312,7 +312,7 @@ def gen_module_imp(md, mcf):
         'var_dict': '%s_handler_dict' % md,
         'var_dict_len': '%s_handler_dict_len' % md
         })
-    __gen_exit_master = lambda md: tpls['exit_process'].substitute({'var_declare': fmts['exit_master'] % (md, '')})
+    __gen_exit_master = lambda md: tpls['exit_master'].substitute({'var_declare': fmts['exit_master'] % (md, '')})
     __gen_main_conf = lambda md: tpls['mcf'].substitute({
         'var_create': fmts['create_main_conf'] % (md, ''),
         'var_init': fmts['init_main_conf'] % (md, ''),
