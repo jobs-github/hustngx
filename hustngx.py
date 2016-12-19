@@ -145,7 +145,7 @@ def sync(ngx_dir, md_path):
 def gen_config(ngx_dir, md):
     write_file(os.path.join(
         ngx_dir, 'Config.sh'), (
-        './configure --with-cc-opt="-g3 -O0" --with-ld-opt="-lm" --prefix=/data/%s --add-module=src/addon'
+        'export LD_LIBRARY_PATH=/usr/local/lib; ./configure --with-cc-opt="-g3 -O0" --with-ld-opt="-lm" --prefix=/data/%s --add-module=src/addon'
         ) % md)
 def gen_htpasswd(ngx_dir):
     write_file(os.path.join(
