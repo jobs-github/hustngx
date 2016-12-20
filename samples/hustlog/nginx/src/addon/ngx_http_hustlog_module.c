@@ -1,5 +1,12 @@
+#include <c_dict.h>
 #include "hustlog_handler.h"
 #include "ngx_http_utils_module.h"
+static ngx_int_t ngx_http_hustlog_handler(ngx_http_request_t *r);
+static char *ngx_http_hustlog(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static ngx_int_t ngx_http_hustlog_init_module(ngx_cycle_t * cycle);
+static ngx_int_t ngx_http_hustlog_init_process(ngx_cycle_t * cycle);
+static void ngx_http_hustlog_exit_process(ngx_cycle_t * cycle);
+static void ngx_http_hustlog_exit_master(ngx_cycle_t * cycle);
 
 static ngx_http_request_item_t hustlog_handler_dict[] =
 {
@@ -109,7 +116,7 @@ int zlog_load_conf(zlog_handler handler)
     return handler((const char *)g_zlog_conf_path.data);
 }
 
-static char * ngx_http_hustlog(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+static char *ngx_http_hustlog(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
     ngx_http_core_loc_conf_t * clcf = ngx_http_conf_get_module_loc_conf(
         cf, ngx_http_core_module);
