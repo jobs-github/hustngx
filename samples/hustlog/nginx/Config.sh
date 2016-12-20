@@ -1,1 +1,1 @@
-./configure --with-cc-opt="-g3 -O0" --with-ld-opt="-lzlog -lpthread" --prefix=/data/hustlog --add-module=src/addon
+export LD_LIBRARY_PATH=/usr/local/lib; ./configure --with-cc-opt="-g3 -O0" --with-ld-opt="-lzlog -lpthread" --prefix=/data/hustlog --add-module=src/addon
