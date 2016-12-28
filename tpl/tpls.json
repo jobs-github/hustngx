@@ -3,7 +3,8 @@
     [
         "health_check.json",
         "nginx.json",
-        "sync.json"
+        "sync.json",
+        "config.sh"
     ],
     "tpl_lines": []
 }

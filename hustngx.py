@@ -93,13 +93,9 @@ def sync(ngx_dir, md_path):
     os.system(cmd)
     os.remove(file_name)
 def gen_config(ngx_dir, md):
-    write_file(os.path.join(
-        ngx_dir, 'Config.sh'), (
-        'export LD_LIBRARY_PATH=/usr/local/lib; ./configure --with-cc-opt="-g3 -O0" --with-ld-opt="-lm" --prefix=/data/%s --add-module=src/addon'
-        ) % md)
+    write_file(os.path.join(ngx_dir, 'Config.sh'), tpls['config'].substitute({'var_md': md}))
 def gen_htpasswd(ngx_dir):
-    write_file(os.path.join(
-        ngx_dir, 'conf/htpasswd'), 'jobs:jobs\n')
+    write_file(os.path.join(ngx_dir, 'conf/htpasswd'), 'jobs:jobs\n')
 def gen_deploy(md_path):
     bin_uri = get_bin_uri("deploygen")
     copy_file("%s.py" % bin_uri, md_path)
