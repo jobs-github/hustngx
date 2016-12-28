@@ -82,51 +82,16 @@ def gen_nginx_json(ngx_dir, md):
             'var_health_check': tpls['health_check'].template
             }))
 def sync(ngx_dir, md_path):
-    json_data = [
-        {
-            "src":
-            {
-                "files":
-                [
-                    "lib_hustngx",
-                    "patch",
-                    "third_party"
-                ],
-                "suffix": "/nginx"
-            },
-            "des": 
-            {
-                "files": 
-                [
-                    ngx_dir
-                ]
-            }
-        },
-        {
-            "src":
-            {
-                "files":
-                [
-                    "upgrade.sh",
-                    "deploygen/cmds/deploy_ngx.json"
-                ]
-            },
-            "des": 
-            {
-                "files": 
-                [
-                    md_path
-                ]
-            }
-        }
-    ]
-    file = 'sync_%s.json' % gen_tm()
-    with open(file, 'w') as f:
-        json.dump(json_data, f)
+    file_name = 'sync_%s.json' % gen_tm()
+    with open(file_name, 'w') as f:
+        f.write(tpls['sync'].substitute({
+            'var_ngx_dir': '"%s"' % ngx_dir,
+            'var_md_path': '"%s"' % md_path
+            }))
     bin_uri = get_bin_uri("sync")
-    cmd = ('python %s.py %s') % (bin_uri, file)
+    cmd = ('python %s.py %s') % (bin_uri, file_name)
     os.system(cmd)
-    os.remove(file)
+    os.remove(file_name)
 def gen_config(ngx_dir, md):
     write_file(os.path.join(
         ngx_dir, 'Config.sh'), (

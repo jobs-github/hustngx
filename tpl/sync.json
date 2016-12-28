@@ -1,0 +1,38 @@
+[
+    {
+        "src":
+        {
+            "files":
+            [
+                "lib_hustngx",
+                "patch",
+                "third_party"
+            ],
+            "suffix": "/nginx"
+        },
+        "des": 
+        {
+            "files": 
+            [
+                $var_ngx_dir
+            ]
+        }
+    },
+    {
+        "src":
+        {
+            "files":
+            [
+                "upgrade.sh",
+                "deploygen/cmds/deploy_ngx.json"
+            ]
+        },
+        "des": 
+        {
+            "files": 
+            [
+                $var_md_path
+            ]
+        }
+    }
+]

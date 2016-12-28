@@ -2,7 +2,8 @@
     "tpls":
     [
         "health_check.json",
-        "nginx.json"
+        "nginx.json",
+        "sync.json"
     ],
     "tpl_lines": []
 }
