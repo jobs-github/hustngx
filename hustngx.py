@@ -77,37 +77,10 @@ def untar_ngx(nginx_tar_gz, ngx_dir, mdpath):
     return True
 def gen_nginx_json(ngx_dir, md):
     write_file(
-        os.path.join(ngx_dir, 'conf/nginx.json'), merge([
-        '{',
-        '    "module": "%s",' % md,
-        '    "worker_connections": 1048576,',
-        '    "listen": 8080,',
-        '    "keepalive_timeout": 540,',
-        '    "keepalive": 32768,',
-        '    "http_basic_auth_file": "/data/%s/conf/htpasswd",' % md,
-        '    "auth_filter": ["test"],',
-        '    "local_cmds": ["getconf", "test"],',
-        '    "main_conf": ',
-        '    [',
-        '        ["test_num", 1],',
-        '        ["test_size", "1m"],',
-        '        ["test_time", "1ms"],',
-        '        ["test_flag", "on"],',
-        '        ["test_str", "test"]',
-        '    ],',
-        '    "proxy":',
-        '    {',
-        tpls['health_check'].template,
-        '        "auth": "am9iczpqb2Jz",',
-        '        "proxy_connect_timeout": "2s",',
-        '        "proxy_send_timeout": "60s",',
-        '        "proxy_read_timeout": "60s",',
-        '        "proxy_buffer_size": "64m",',
-        '        "backends": ["backend:8087"],',
-        '        "proxy_cmds": ["/backend/test"]',
-        '    }',
-        '}'
-        ]))
+        os.path.join(ngx_dir, 'conf/nginx.json'), tpls['nginx'].substitute({
+            'var_md': md,
+            'var_health_check': tpls['health_check'].template
+            }))
 def sync(ngx_dir, md_path):
     json_data = [
         {
