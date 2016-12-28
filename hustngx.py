@@ -23,6 +23,26 @@ def manual():
         python hustngx.py nginx-1.10.0.tar.gz ngx_wizard/ngx_wizard.json
         """
 
+substitute_tpls = lambda tpls, vars: join_lines([tpl.substitute(vars) for tpl in tpls], '')
+def load_templates():
+    cwd = os.path.split(os.path.realpath(__file__))[0]
+    tpl_path = os.path.join(cwd, 'tpl')
+    with open(os.path.join(tpl_path, 'tpls.json')) as f:
+        cf = json.load(f)
+        templates = {}
+        for item in cf['tpls']:
+            with open(os.path.join(tpl_path, item)) as f:
+                key = os.path.splitext(item)[0]
+                val = string.Template(f.read())
+                templates[key] = val
+        for item in cf['tpl_lines']:
+            with open(os.path.join(tpl_path, item)) as f:
+                key = os.path.splitext(item)[0]
+                templates[key] = [string.Template(line) for line in f]
+        return templates
+
+tpls = load_templates()
+
 def get_json_data(path):
     json_filter = lambda f: (lambda f, l: os.path.splitext(f)[1] in l)(f, ['.json'])
     if not json_filter(path):
@@ -56,14 +76,6 @@ def untar_ngx(nginx_tar_gz, ngx_dir, mdpath):
     os.remove(tar_name)
     return True
 def gen_nginx_json(ngx_dir, md):
-    __health_check = merge([
-        '        "health_check":',
-        '        [',
-        '            "check interval=5000 rise=1 fall=3 timeout=5000 type=http",',
-        '            "check_http_send \\"GET /status.html HTTP/1.1\\\\r\\\\n\\\\r\\\\n\\"",',
-        '            "check_http_expect_alive http_2xx"',
-        '        ],'
-        ])
     write_file(
         os.path.join(ngx_dir, 'conf/nginx.json'), merge([
         '{',
@@ -85,7 +97,7 @@ def gen_nginx_json(ngx_dir, md):
         '    ],',
         '    "proxy":',
         '    {',
-        __health_check,
+        tpls['health_check'].template,
         '        "auth": "am9iczpqb2Jz",',
         '        "proxy_connect_timeout": "2s",',
         '        "proxy_send_timeout": "60s",',

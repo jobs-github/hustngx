@@ -1,0 +1,6 @@
+        "health_check":
+        [
+            "check interval=5000 rise=1 fall=3 timeout=5000 type=http",
+            "check_http_send \"GET /status.html HTTP/1.1\\r\\n\\r\\n\"",
+            "check_http_expect_alive http_2xx"
+        ],
