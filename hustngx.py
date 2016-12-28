@@ -18,9 +18,10 @@ get_bin_uri = lambda name: os.path.join(name, name)
 def manual(): 
     print """
     usage:
-        python hustngx.py [nginx] [conf]
+        python hustngx.py [nginx] [conf] [user]
     sample:
-        python hustngx.py nginx-1.10.0.tar.gz ngx_wizard/ngx_wizard.json
+        python hustngx.py nginx-1.10.0.tar.gz ngx_wizard.json
+        python hustngx.py nginx-1.10.0.tar.gz ngx_wizard.json jobs
         """
 
 def load_templates():
@@ -89,9 +90,9 @@ def sync(ngx_dir, md_path):
     os.remove(file_name)
 def gen_config(ngx_dir, md):
     write_file(os.path.join(ngx_dir, 'Config.sh'), tpls['config'].substitute({'var_md': md}))
-def gen_htpasswd(ngx_dir):
-    write_file(os.path.join(ngx_dir, 'conf/htpasswd'), 'jobs:jobs\n')
-def gen_deploy(md_path):
+def gen_htpasswd(user, ngx_dir):
+    write_file(os.path.join(ngx_dir, 'conf/htpasswd'), '%s:%s\n' % (user, user))
+def gen_deploy(user, md_path):
     bin_uri = get_bin_uri("deploygen")
     copy_file("%s.py" % bin_uri, md_path)
     hosts_path = os.path.join(md_path, 'hosts')
@@ -99,14 +100,14 @@ def gen_deploy(md_path):
     output = os.path.join(md_path, 'deploy.sh')
     json_path = os.path.join(md_path, 'deploy_ngx.json')
     tool_path = os.path.join(md_path, "deploygen")
-    cmd = 'python %s.py search %s %s' % (tool_path, json_path, hosts_path)
+    cmd = 'python %s.py %s %s %s' % (tool_path, user, json_path, hosts_path)
     write_file(output, os.popen(cmd))
-def apply_hustngx(ngx_dir, addon, md, md_path):
+def apply_hustngx(user, ngx_dir, addon, md, md_path):
     sync(ngx_dir, md_path)
     shutil.move(addon, os.path.join(ngx_dir, 'src/'))
     gen_nginx_json(ngx_dir, md)
-    gen_htpasswd(ngx_dir)
-    gen_deploy(md_path)
+    gen_htpasswd(user, ngx_dir)
+    gen_deploy(user, md_path)
     gen_config(ngx_dir, md)
 def gen_addon(uri):
     obj = get_json_data(uri)
@@ -119,7 +120,7 @@ def gen_addon(uri):
     cmd = 'python %s.py %s' % (bin_uri, uri)
     os.system(cmd)
     return { 'md': obj['module'], 'mdpath': mdpath, 'addon': addon }
-def gen_hustngx(nginx_tar_gz, uri):
+def gen_hustngx(user, nginx_tar_gz, uri):
     obj = gen_addon(uri)
     if not obj:
         return False
@@ -127,10 +128,12 @@ def gen_hustngx(nginx_tar_gz, uri):
     nginx_tar_gz = os.path.abspath(nginx_tar_gz)
     if not untar_ngx(nginx_tar_gz, ngx_dir, obj['mdpath']):
         return False
-    apply_hustngx(ngx_dir, obj['addon'], obj['md'], obj['mdpath'])
+    apply_hustngx(user, ngx_dir, obj['addon'], obj['md'], obj['mdpath'])
     return True
-                
-parse_shell = lambda argv: gen_hustngx(argv[1], argv[2]) if 3 == len(argv) else False
+def parse_shell(argv):
+    size = len(argv)
+    user = argv[3] if 4 == size else 'jobs'
+    return gen_hustngx(user, argv[1], argv[2]) if (3 == size or 4 == size) else False
 
 if __name__ == "__main__":
     if not parse_shell(sys.argv):
