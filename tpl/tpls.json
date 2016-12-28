@@ -5,6 +5,5 @@
         "nginx.json",
         "sync.json",
         "config.sh"
-    ],
-    "tpl_lines": []
+    ]
 }

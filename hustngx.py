@@ -23,7 +23,6 @@ def manual():
         python hustngx.py nginx-1.10.0.tar.gz ngx_wizard/ngx_wizard.json
         """
 
-substitute_tpls = lambda tpls, vars: join_lines([tpl.substitute(vars) for tpl in tpls], '')
 def load_templates():
     cwd = os.path.split(os.path.realpath(__file__))[0]
     tpl_path = os.path.join(cwd, 'tpl')
@@ -35,10 +34,6 @@ def load_templates():
                 key = os.path.splitext(item)[0]
                 val = string.Template(f.read())
                 templates[key] = val
-        for item in cf['tpl_lines']:
-            with open(os.path.join(tpl_path, item)) as f:
-                key = os.path.splitext(item)[0]
-                templates[key] = [string.Template(line) for line in f]
         return templates
 
 tpls = load_templates()
@@ -103,7 +98,6 @@ def gen_deploy(md_path):
     write_file(hosts_path, '127.0.0.1')
     output = os.path.join(md_path, 'deploy.sh')
     json_path = os.path.join(md_path, 'deploy_ngx.json')
-    
     tool_path = os.path.join(md_path, "deploygen")
     cmd = 'python %s.py search %s %s' % (tool_path, json_path, hosts_path)
     write_file(output, os.popen(cmd))
