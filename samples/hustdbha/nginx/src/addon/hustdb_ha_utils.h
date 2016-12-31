@@ -64,6 +64,9 @@ typedef struct
 
 void * hustdb_ha_get_module_main_conf(ngx_http_request_t * r);
 
+ngx_http_upstream_rr_peers_t * ngx_http_get_backends();
+size_t ngx_http_get_backend_count();
+
 ngx_str_t hustdb_ha_make_str(ngx_str_t * val, ngx_http_request_t * r);
 ngx_str_t hustdb_ha_strcat(const ngx_str_t * str, int num, ngx_pool_t * pool);
 
