@@ -46,7 +46,7 @@
         "post_conf_default.c",
         "post_conf.c",
         "return.c",
-        "upstream.h"
+        "upstream.h",
         "module_tail.c"
     ],
     "tpl_lines": ["upstream_ctx.h"]
