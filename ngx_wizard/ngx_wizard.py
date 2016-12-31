@@ -70,7 +70,7 @@ def gen_head_frame(md, submd, str):
 def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf, upstream_name):
     __get_type = lambda t: type_dict[t] if t in type_dict else t
     __gen_mcf = lambda md, mcf: tpls['main_conf'].substitute({
-        'var_items': merge(['    %s %s;' % (__get_type(item[TYPE]), item[NAME]) for item in mcf]) if len(mcf) > 0 else FILTER,
+        'var_items': merge(['    %s %s;' % (__get_type(item[TYPE]), item[NAME]) for item in mcf]) if len(mcf) > 0 else '',
         'var_mcf_t': consts['mcf_fmt'] % md,
         'var_get_mcf': consts['get_mcf_fmt'] % md
         })
