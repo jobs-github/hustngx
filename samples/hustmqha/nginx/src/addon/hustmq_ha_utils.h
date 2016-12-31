@@ -66,6 +66,9 @@ typedef enum
 
 void * hustmq_ha_get_module_main_conf(ngx_http_request_t * r);
 
+ngx_http_upstream_rr_peers_t * ngx_http_get_backends();
+size_t ngx_http_get_backend_count();
+
 ngx_uint_t hustmq_ha_get_max_queue_size();
 ngx_bool_t hustmq_ha_check_queue(const char * qname, const int qname_len);
 int hustmq_ha_get_ready_sum(const int * arr, size_t size);
