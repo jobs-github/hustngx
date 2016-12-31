@@ -25,6 +25,7 @@
         ["string", "sync_passwd"],
         ["string", "binlog_uri"]
     ],
+    "upstream": "backend",
     "handlers":
     [
         { "uri": "version" },

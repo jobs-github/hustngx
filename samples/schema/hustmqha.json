@@ -28,6 +28,7 @@
         ["time", "do_post_timeout"],
         ["time", "do_get_timeout"]
     ],
+    "upstream": "backend",
     "handlers":
     [
         { "uri": "version" },
