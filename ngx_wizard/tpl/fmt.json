@@ -6,5 +6,6 @@
     "exit_process": "static void ngx_http_%s_exit_process(ngx_cycle_t * cycle)%s",
     "exit_master": "static void ngx_http_%s_exit_master(ngx_cycle_t * cycle)%s",
     "create_main_conf": "static void * ngx_http_%s_create_main_conf(ngx_conf_t *cf)%s",
-    "init_main_conf": "char * ngx_http_%s_init_main_conf(ngx_conf_t * cf, void * conf)%s"
+    "init_main_conf": "static char * ngx_http_%s_init_main_conf(ngx_conf_t * cf, void * conf)%s",
+    "post_conf": "static ngx_int_t ngx_http_%s_postconfiguration(ngx_conf_t * cf)%s"
 }

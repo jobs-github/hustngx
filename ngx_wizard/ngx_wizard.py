@@ -67,7 +67,7 @@ def gen_tm():
     return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 def gen_head_frame(md, submd, str):
     return tpls['header'].substitute({'var_head_def': '__%s_%s_%s_h__' % (md, submd, gen_tm()), 'var_str': str})
-def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf):
+def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf, upstream_name):
     __get_type = lambda t: type_dict[t] if t in type_dict else t
     __gen_mcf = lambda md, mcf: tpls['main_conf'].substitute({
         'var_items': merge(['    %s %s;' % (__get_type(item[TYPE]), item[NAME]) for item in mcf]) if len(mcf) > 0 else FILTER,
@@ -80,7 +80,8 @@ def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf):
             '#include <ngx_http_peer_selector.h>' if has_peer_sel else FILTER,
             '#include <ngx_http_fetch.h>' if has_http_fetch else FILTER
             ]),
-        'var_mcf': __gen_mcf(md, mcf)
+        'var_mcf': __gen_mcf(md, mcf),
+        'var_upstream': '' if None == upstream_name else tpls['upstream'].template
         })))
     write_file('%s/%s_utils.c' % (addon, md), merge([
         '#include "%s_utils.h"' % md
@@ -248,6 +249,7 @@ def gen_module_vars(md, mcf, handlers):
         })
     __gen_module_ctx = lambda md, mcf: tpls['module_ctx'].substitute({
         'var_ctx': 'ngx_http_%s_module_ctx' % md,
+        'var_post': 'ngx_http_%s_postconfiguration' % md,
         'var_create': 'ngx_http_%s_create_main_conf' % md,
         'var_init': 'ngx_http_%s_init_main_conf' % md
         })
@@ -287,6 +289,7 @@ def gen_module_dec(md, mcf):
         ) if len(mcf) > 0 else FILTER,
         fmts['create_main_conf'] % (md, ';'),
         fmts['init_main_conf'] % (md, ';'),
+        fmts['post_conf'] % (md, ';'),
         ''
         ])
     return merge([
@@ -295,7 +298,7 @@ def gen_module_dec(md, mcf):
         __gen_mcf_dec(md, mcf)
         ])
 
-def gen_module_imp(md, mcf):
+def gen_module_imp(md, mcf, upstream_name):
     __gen_module_conf = lambda md: tpls['module_conf'].substitute({
         'var_declare': fmts['module_conf'] % (md, ''),
         'var_handler': 'ngx_http_%s_handler' % md
@@ -318,6 +321,12 @@ def gen_module_imp(md, mcf):
         'var_init': fmts['init_main_conf'] % (md, ''),
         'var_mcf_t': consts['mcf_fmt'] % md
         })
+    __gen_post_conf = lambda md, upstream_name: tpls['post_conf_default'].substitute({
+        'var_post': fmts['post_conf'] % (md, ''),
+        }) if None == upstream_name else tpls['post_conf'].substitute({
+        'var_post': fmts['post_conf'] % (md, ''),
+        'var_upstream': upstream_name
+        })
     __gen_return = lambda val: tpls['return'].substitute({'var_val': val})
     __gen_module_tail = lambda md: tpls['module_tail'].substitute({
         'var_null_return': __gen_return(' NULL'),
@@ -336,12 +345,12 @@ def gen_module_imp(md, mcf):
         __gen_module_tail(md)
         ])
     
-def gen_module(addon, md, mcf, handlers):
+def gen_module(addon, md, mcf, upstream_name, handlers):
     write_file('%s/ngx_http_%s_module.c' % (addon, md), merge([
         gen_module_dec(md, mcf),
         gen_module_vars(md, mcf, handlers),
         gen_main_conf(md, mcf),
-        gen_module_imp(md, mcf)
+        gen_module_imp(md, mcf, upstream_name)
         ]))
     
 def gen_code(mdpath, addon, obj):
@@ -355,13 +364,14 @@ def gen_code(mdpath, addon, obj):
     has_peer_sel = __has_md('ngx_http_peer_selector')(obj)
     has_shm_dict = __has_md('ngx_shm_dict')(obj)
     has_http_fetch = __has_md('ngx_http_fetch')(obj)
+    upstream_name = obj['upstream'] if 'upstream' in obj else None
     mcf = __get_mcf(obj)
     handlers = obj['handlers']
     gen_config(addon, md, handlers)
-    gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf)
+    gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf, upstream_name)
     gen_handler_dec(addon, md, handlers)
     gen_handlers_imp(addon, md, handlers)
-    gen_module(addon, md, mcf, handlers)
+    gen_module(addon, md, mcf, upstream_name, handlers)
     return True
         
 def get_json_data(path):
