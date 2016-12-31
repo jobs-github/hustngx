@@ -92,26 +92,6 @@
     {
         "src":
         {
-            "prefix": "../lib_hustngx/nginx/src/http/",
-            "files":
-            [
-                "ngx_http_peer_selector.h"
-            ]
-        },
-        "des":
-        {
-            "prefix": "../../",
-            "files":
-            [
-                "hustdb/",
-                "hustmq/"
-            ],
-            "suffix": "ha/nginx/src/http/"
-        }
-    },
-    {
-        "src":
-        {
             "prefix": "../lib_hustngx/nginx/src/http/modules/",
             "files":
             [

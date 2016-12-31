@@ -4,7 +4,6 @@
 #include <ngx_core.h>
 #include <ngx_http.h>
 #include <ngx_http_addon_def.h>
-#include <ngx_http_peer_selector.h>
 #include <ngx_http_utils_module.h>
 #include <ngx_http_fetch.h>
 #include "message_queue_def.h"

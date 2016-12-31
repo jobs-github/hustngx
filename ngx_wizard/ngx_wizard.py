@@ -77,7 +77,6 @@ def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf, upstre
     write_file('%s/%s_utils.h' % (addon, md), gen_head_frame(md, 'utils', tpls['utils'].substitute({
         'var_includes': merge([
             '#include <ngx_shm_dict.h>' if has_shm_dict else FILTER,
-            '#include <ngx_http_peer_selector.h>' if has_peer_sel else FILTER,
             '#include <ngx_http_fetch.h>' if has_http_fetch else FILTER
             ]),
         'var_mcf': __gen_mcf(md, mcf),
