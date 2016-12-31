@@ -342,6 +342,7 @@ def gen_module_imp(md, mcf, upstream_name):
         __gen_exit_process(md),
         __gen_exit_master(md),
         __gen_main_conf(md),
+        __gen_post_conf(md, upstream_name),
         __gen_module_tail(md)
         ])
     
