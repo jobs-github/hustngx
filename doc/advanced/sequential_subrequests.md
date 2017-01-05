@@ -4,7 +4,42 @@ sequential subrequests
 本节重点讲解 `sequential subrequests` （多轮串行子请求）相关的技术原理。
 
 ### 节点选择 ###
-`sequential subrequests` 是 nginx http 模块开发中难度最大的技术点之一。正确进行 `sequential subrequests` 编程的关键，是将 `backend` 节点选择的控制权从 nginx 内核转移到客户端 （nginx 扩展模块），这样你可以自己决定将子请求转发给哪一个后端机器。 `lib_hustngx` 中的 [`ngx_http_peer_selector_module`](lib_hustngx/http_module.md) 可以完美地解决此问题。
+`sequential subrequests` 是 nginx http 模块开发中难度最大的技术点之一。正确进行 `sequential subrequests` 编程的关键，是将 `backend` 节点选择的控制权从 nginx 内核转移到客户端 （nginx 扩展模块），这样你可以自己决定将子请求转发给哪一个后端机器。 `lib_hustngx` 中的 `ngx_http_peer_selector_module` 可以完美地解决此问题。加入 `ngx_http_peer_selector` 之后，在进行 `subrequest` 的过程中，`backend` 机器节点的选择的 **控制权将属于客户端** （也就是你自己编写的 nginx 模块）。此时你可以自由控制 `backend` 节点的选择方法和顺序。
+
+例如：
+
+    static ngx_int_t __first_autost_handler(ngx_str_t * backend_uri, ngx_http_request_t *r)
+	{
+	    ......
+	
+	    ctx->peer = ngx_http_first_peer(peers->peer);
+	    return ngx_http_gen_subrequest(backend_uri, r, ctx->peer,
+	        &ctx->base, __post_subrequest_handler);
+	}
+
+    ngx_int_t hustmqha_autost_handler(ngx_str_t * backend_uri, ngx_http_request_t *r)
+	{
+	    hustmqha_autost_ctx_t * ctx = ngx_http_get_addon_module_ctx(r);
+	    if (!ctx)
+	    {
+	        return __first_autost_handler(backend_uri, r);
+	    }
+	    if (NGX_HTTP_OK != r->headers_out.status)
+	    {
+	        ctx->peer = ngx_http_next_peer(ctx->peer);
+	        return (ctx->peer) ? ngx_http_run_subrequest(r, &ctx->base, ctx->peer)
+	            : ngx_http_send_response_imp(NGX_HTTP_NOT_FOUND, NULL, r);
+	    }
+	    // TODO: you decide the return value
+	    return ngx_http_send_response_imp(NGX_HTTP_OK, &ctx->base.response, r);
+	}
+
+注意代码中的如下两处调用：
+
+    ngx_http_gen_subrequest(backend_uri, r, ctx->peer, &ctx->base, __post_subrequest_handler);
+    ngx_http_run_subrequest(r, &ctx->base, ctx->peer);
+
+其中的 `ctx->peer` 将会直接传递给 `upstream` 模块，作为请求的转发节点。
 
 ### 状态机 ###
 另外一个关键点是要理解 `subrequest` 的状态机模型。每一个子请求发出去之后，nginx 将回到主循环中，等待下一个事件的触发。因此所有跨越子请求的上下文，都需要由你自己保存下来（`hustngx`生成的代码中以 `ctx` 作为类型定义的结尾）。
