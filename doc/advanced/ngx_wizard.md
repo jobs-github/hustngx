@@ -16,7 +16,6 @@ ngx_wizard
         "module": "hustmqha",
         "includes": 
         [
-            "ngx_http_peer_selector", 
             "ngx_shm_dict", 
             "ngx_http_fetch"
         ],
@@ -38,17 +37,8 @@ ngx_wizard
                 "methods": ["PUT", "POST"],
                 "upstream":
                 {
-                    "sequential_subrequests":
-                    {
-                        "backend_uri": "/hustmq/put",
-                        "gen_post_subrequest": false,
-                        "use_round_robin": true,
-                        "subrequests":
-                        {
-                            "use_subrequest_peer": false,
-                            "request_all_peers": false
-                        }
-                    }
+                    "backend_uri": "/hustmq/put",
+                    "sequential_subrequests": true
                 }
             },
             {
@@ -57,17 +47,8 @@ ngx_wizard
                 "methods": ["GET"],
                 "upstream":
                 {
-                    "sequential_subrequests":
-                    {
-                        "backend_uri": "/hustmq/get",
-                        "gen_post_subrequest": false,
-                        "use_round_robin": false,
-                        "subrequests":
-                        {
-                            "use_subrequest_peer": false,
-                            "request_all_peers": false
-                        }
-                    }
+                    "backend_uri": "/hustmq/get",
+                    "sequential_subrequests": true
                 }
             },
             {
@@ -105,11 +86,6 @@ ngx_wizard
 　　　　　　[`backend_uri`](ngx_wizard/backend_uri.md)  
 　　　　　　[`parallel_subrequests`](ngx_wizard/parallel_subrequests.md)  
 　　　　　　[`sequential_subrequests`](ngx_wizard/sequential_subrequests.md)  
-　　　　　　　　[`gen_post_subrequest`](ngx_wizard/gen_post_subrequest.md)  
-　　　　　　　　[`use_round_robin`](ngx_wizard/use_round_robin.md)  
-　　　　　　　　[`subrequests`](ngx_wizard/subrequests.md)  
-　　　　　　　　　　[`use_subrequest_peer`](ngx_wizard/use_subrequest_peer.md)  
-　　　　　　　　　　[`request_all_peers`](ngx_wizard/request_all_peers.md)  
 
 **字段约束：**
 
@@ -121,9 +97,7 @@ ngx_wizard
 
 	*  [`uri`](ngx_wizard/uri.md)
 
-* [`parallel_subrequests`](ngx_wizard/parallel_subrequests.md)  和 [`sequential_subrequests`](ngx_wizard/sequential_subrequests.md) **不能共存** ，只能配置其中一种。
-
-* [`use_round_robin`](ngx_wizard/use_round_robin.md) 优先级高于 [`use_subrequest_peer`](ngx_wizard/use_subrequest_peer.md)，当两个都配置为 `true` 的时候，只有 [`use_round_robin`](ngx_wizard/use_round_robin.md) 生效
+* [`parallel_subrequests`](ngx_wizard/parallel_subrequests.md)  和 [`sequential_subrequests`](ngx_wizard/sequential_subrequests.md) **不能共存** ，只能配置其中一种。  
 
 [上一级](index.md)
 
