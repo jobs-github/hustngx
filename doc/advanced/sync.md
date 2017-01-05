@@ -76,6 +76,6 @@ sync
 　　　　　　[`files`](sync/files.md)  
 　　　　　　[`suffix`](sync/suffix.md)  
 
-[上一级](index.md)
+[回上页](index.md)
 
 [回首页](../index.md)

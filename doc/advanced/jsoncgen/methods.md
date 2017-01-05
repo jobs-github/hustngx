@@ -11,6 +11,6 @@ methods
 
 描述结构体的方法列表，其中每一个子项都是 [method](method.md) 。
 
-[上一级](../jsoncgen.md)
+[回上页](../jsoncgen.md)
 
 [回首页](../../index.md)

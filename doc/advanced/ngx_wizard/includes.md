@@ -18,6 +18,6 @@ includes
 
 加入 `ngx_http_fetch` 模块之后，可以以 `context-free` 的方式创建 `ngx_http_request_t` ，相关的接口可参考 [`lib_ngx_http_fetch`](../lib_hustngx/http_module.md) 。
 
-[上一级](../ngx_wizard.md)
+[回上页](../ngx_wizard.md)
 
 [回首页](../../index.md)

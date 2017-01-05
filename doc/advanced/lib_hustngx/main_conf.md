@@ -59,6 +59,6 @@
         ]
     }
 
-[上一级](genconf.md)
+[回上页](genconf.md)
 
 [回首页](../../index.md)

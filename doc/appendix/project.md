@@ -147,6 +147,6 @@ Nginx 工程配置
         . auto/module
     fi
     
-[上一级](index.md)
+[回上页](index.md)
 
 [回首页](../index.md)

@@ -24,6 +24,6 @@ nginx 模块各个 `handler` 对 `upstream` 的支持的配置信息，该字段
 
 * [`sequential_subrequests`](sequential_subrequests.md)
 
-[上一级](../ngx_wizard.md)
+[回上页](../ngx_wizard.md)
 
 [回首页](../../index.md)

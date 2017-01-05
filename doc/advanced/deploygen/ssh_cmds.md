@@ -189,6 +189,6 @@
 
 可以看到， `@index_place_holder` 依次被替换为对应的序号。
 
-[上一级](../deploygen.md)
+[回上页](../deploygen.md)
 
 [回首页](../../index.md)

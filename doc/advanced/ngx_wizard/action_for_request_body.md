@@ -21,6 +21,6 @@ nginx 模块各个 `handler` 对于http请求的包体的处理方法。各个�
 
 **如果忽略该字段，则按照 `default` 行为进行处理**。
 
-[上一级](../ngx_wizard.md)
+[回上页](../ngx_wizard.md)
 
 [回首页](../../index.md)

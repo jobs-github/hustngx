@@ -91,6 +91,6 @@
 * `mutikill.sh`  
 用于杀掉 `hustdict` 压力测试脚本进程。路径：`hustngx/samples/hustdict/nginx/mutikill.sh`  
 
-[上一级](index.md)
+[回上页](index.md)
 
 [回首页](../index.md)

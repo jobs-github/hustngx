@@ -173,6 +173,6 @@ nginx 本身对于共享内存进行了封装，提供了如下操作共享内�
     ngx_int_t ngx_shm_dict_test_decr(ngx_pool_t * pool, ngx_shm_dict_mod_args_t * args);
 关于 `ngx_shm_dict` 的详细使用方式，可以参考 [`hustdict`](../../appendix/hustdict.md)。
    
-[上一级](../lib_hustngx.md)
+[回上页](../lib_hustngx.md)
 
 [回首页](../../index.md)

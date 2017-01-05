@@ -23,6 +23,6 @@ Nginx Module Development Process
 	- 部署命令是否正确，可以在测试机器中进行部署，看结果是否正确。
 	- 部署的主机列表是否正确，可通过文本比对工具进行比较。  
 
-[上一级](index.md)
+[回上页](index.md)
 
 [回首页](../index.md)

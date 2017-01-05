@@ -11,6 +11,6 @@
 
 需要执行 `scp` 命令的文件列表（从本地拷贝到远程），其中每一个子项都是 [scp_cmd](scp_cmd.md)
 
-[上一级](../deploygen.md)
+[回上页](../deploygen.md)
 
 [回首页](../../index.md)

@@ -7,6 +7,6 @@ lib_hustngx
 * [http 扩展模块](lib_hustngx/http_module.md)
 * [nginx 配置文件生成器](lib_hustngx/genconf.md)
 
-[上一级](index.md)
+[回上页](index.md)
 
 [回首页](../index.md)

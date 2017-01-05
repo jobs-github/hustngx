@@ -20,6 +20,6 @@
 
 可以看到， `http_basic_auth_file` 被注释掉了。
 
-[上一级](genconf.md)
+[回上页](genconf.md)
 
 [回首页](../../index.md)

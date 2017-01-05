@@ -15,6 +15,6 @@
 
 - 如果定义为 `ssh` ，则 [`value`](value.md) 只能是 [`ssh_cmds`](ssh_cmds.md)
 
-[上一级](../deploygen.md)
+[回上页](../deploygen.md)
 
 [回首页](../../index.md)

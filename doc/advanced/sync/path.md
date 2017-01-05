@@ -17,6 +17,6 @@
 
 - [`suffix`](suffix.md)
 
-[上一级](../sync.md)
+[回上页](../sync.md)
 
 [回首页](../../index.md)

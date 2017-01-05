@@ -98,6 +98,6 @@ nginx 内置的 `ngx_http_auth_basic_module` 由于使用了非对称加密存�
 
 具体的写法可以参考 [`parallel subrequests`](../parallel_subrequests.md) 。
 
-[上一级](../lib_hustngx.md)
+[回上页](../lib_hustngx.md)
 
 [回首页](../../index.md)

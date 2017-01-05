@@ -13,6 +13,6 @@ structs
 
 **该字段必须填写。**
 
-[上一级](../jsoncgen.md)
+[回上页](../jsoncgen.md)
 
 [回首页](../../index.md)

@@ -19,6 +19,6 @@ struct
 
 - [array_methods](array_methods.md)
 
-[上一级](../jsoncgen.md)
+[回上页](../jsoncgen.md)
 
 [回首页](../../index.md)

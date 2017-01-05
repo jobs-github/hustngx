@@ -90,6 +90,6 @@ nginx 配置文件生成器
 　　[`backends`](backends.md)  
 　　[`proxy_cmds`](proxy_cmds.md)  
 
-[上一级](../lib_hustngx.md)
+[回上页](../lib_hustngx.md)
 
 [回首页](../../index.md)

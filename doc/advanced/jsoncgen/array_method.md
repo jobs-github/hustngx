@@ -13,6 +13,6 @@ array_method
 
 如果同时定义了 [array_methods](jsoncgen/array_methods.md) 和 [methods](methods.md) ，则 [array_methods](array_methods.md) 所包含的字段必须全部在 [methods](methods.md) 中定义。
 
-[上一级](../jsoncgen.md)
+[回上页](../jsoncgen.md)
 
 [回首页](../../index.md)

@@ -17,6 +17,6 @@ nginx 模块全局性质的配置字段。其中 `<type-str>` 目前支持的类
 - `bool`  
 - `string`
 
-[上一级](../ngx_wizard.md)
+[回上页](../ngx_wizard.md)
 
 [回首页](../../index.md)

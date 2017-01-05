@@ -11,6 +11,6 @@
 
 如果配置了该字段，`hustngx` 会自动生成 `parallel subrequests`（并行子请求） 的代码模板。具体可参考[这里](../parallel_subrequests.md)。
 
-[上一级](../ngx_wizard.md)
+[回上页](../ngx_wizard.md)
 
 [回首页](../../index.md)

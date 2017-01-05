@@ -13,6 +13,6 @@
 
 `sync` 将会把 `src` 定义的 [path](path.md) 拷贝到 `des` 定义的 [path](path.md) 中。
 
-[上一级](../sync.md)
+[回上页](../sync.md)
 
 [回首页](../../index.md)

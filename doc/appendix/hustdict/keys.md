@@ -16,6 +16,6 @@ keys
 
     curl -i -X GET "http://localhost:8085/keys?all=true"
 
-[上一级](../hustdict.md)
+[回上页](../hustdict.md)
 
 [回首页](../../index.md)

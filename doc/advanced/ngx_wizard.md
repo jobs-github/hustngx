@@ -99,6 +99,6 @@ ngx_wizard
 
 * [`parallel_subrequests`](ngx_wizard/parallel_subrequests.md)  和 [`sequential_subrequests`](ngx_wizard/sequential_subrequests.md) **不能共存** ，只能配置其中一种。  
 
-[上一级](index.md)
+[回上页](index.md)
 
 [回首页](../index.md)

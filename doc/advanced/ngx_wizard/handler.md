@@ -19,6 +19,6 @@ nginx 模块命令处理器。`<key-str>` 包含如下字段：
 
 - [`upstream`](upstream.md)
 
-[上一级](../ngx_wizard.md)
+[回上页](../ngx_wizard.md)
 
 [回首页](../../index.md)

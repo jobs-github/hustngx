@@ -13,6 +13,6 @@ nginx 模块名称，由 `<module-str>` 指定。
 
 **该字段必须填写** 。
 
-[上一级](../ngx_wizard.md)
+[回上页](../ngx_wizard.md)
 
 [回首页](../../index.md)

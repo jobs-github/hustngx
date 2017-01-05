@@ -29,6 +29,6 @@ method
 
 - `load` : 从文件读取 `json` 字符串并解码成自定义对象
 
-[上一级](../jsoncgen.md)
+[回上页](../jsoncgen.md)
 
 [回首页](../../index.md)

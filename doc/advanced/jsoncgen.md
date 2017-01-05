@@ -82,6 +82,6 @@ jsoncgen
 
 	* 如果同时定义了两者，则 [`array_methods`](jsoncgen/array_methods.md) 所包含的字段必须全部在 [`methods`](jsoncgen/methods.md) 中定义。
 
-[上一级](index.md)
+[回上页](index.md)
 
 [回首页](../index.md)

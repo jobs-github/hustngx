@@ -11,6 +11,6 @@ members
 
 描述结构体的成员列表，其中每一个子项都是 [member](member.md) 。
 
-[上一级](../jsoncgen.md)
+[回上页](../jsoncgen.md)
 
 [回首页](../../index.md)

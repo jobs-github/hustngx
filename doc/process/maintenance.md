@@ -17,6 +17,6 @@ Nginx Module Maintenance Process
 3. 用文本比对工具（例如 `Beyond Compare`）对比 `/data/tools/hustngx/hustmqha` 以及 `/data/src/hustmqha` 的差异，并将 `/data/tools/hustngx/hustmqha` 新增的部分 **逐行同步** 至 `/data/src/hustmqha` 。
 4. 如果需要增加新的命令处理接口，重复如上步骤。
 
-[上一级](index.md)
+[回上页](index.md)
 
 [回首页](../index.md)

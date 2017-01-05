@@ -26,6 +26,6 @@
 	    void * data;
 	} ngx_binary_t;
 
-[上一级](../hustdict.md)
+[回上页](../hustdict.md)
 
 [回首页](../../index.md)

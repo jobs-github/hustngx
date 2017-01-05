@@ -77,6 +77,6 @@ deploygen
 
 * `@index_place_holder` : 具体使用方法可参考 [`ssh_cmds`](deploygen/ssh_cmds.md) 
 
-[上一级](index.md)
+[回上页](index.md)
 
 [回首页](../index.md)

@@ -42,6 +42,6 @@ nginx 在收到该信号之后会通知老的 `worker` 进程停止 `accept` 新
 
     kill -QUIT $oldpid
 
-[上一级](index.md)
+[回上页](index.md)
 
 [回首页](../index.md)

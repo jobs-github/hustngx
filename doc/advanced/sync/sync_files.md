@@ -11,6 +11,6 @@
 
 描述要同步的文件列表，其中每一个子项都是 [sync_file](sync_file.md) 。
 
-[上一级](../sync.md)
+[回上页](../sync.md)
 
 [回首页](../../index.md)
