@@ -10,10 +10,6 @@ hustngx
 ==
 
 * [简介](intro/index.md)
-	* [参考](intro/reference.md)
-	* [目标](intro/aim.md)
-	* [组件](intro/components.md)
-	* [限制](intro/limitation.md)
 * [快速入门](guide/index.md)
 * [进阶](advanced/index.md)
 	* [`sequential subrequests`](advanced/sequential_subrequests.md)
