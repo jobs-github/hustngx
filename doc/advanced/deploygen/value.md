@@ -5,4 +5,4 @@
 
 [上一级](../deploygen.md)
 
-[根目录](../../index.md)
+[回首页](../../index.md)

@@ -20,4 +20,4 @@ includes
 
 [上一级](../ngx_wizard.md)
 
-[根目录](../../index.md)
+[回首页](../../index.md)

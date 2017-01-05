@@ -6,4 +6,4 @@
 * [`Nginx Module Development Process`](development.md)
 * [`Nginx Module Maintenance Process`](maintenance.md)
 
-[根目录](../index.md)
+[回首页](../index.md)

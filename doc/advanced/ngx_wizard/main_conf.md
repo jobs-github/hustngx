@@ -15,4 +15,4 @@ nginx 模块全局性质的配置字段列表。每一个子项都是 [conf](con
 
 [上一级](../ngx_wizard.md)
 
-[根目录](../../index.md)
+[回首页](../../index.md)

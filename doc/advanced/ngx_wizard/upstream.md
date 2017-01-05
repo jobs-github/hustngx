@@ -26,4 +26,4 @@ nginx 模块各个 `handler` 对 `upstream` 的支持的配置信息，该字段
 
 [上一级](../ngx_wizard.md)
 
-[根目录](../../index.md)
+[回首页](../../index.md)

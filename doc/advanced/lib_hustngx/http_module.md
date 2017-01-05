@@ -100,4 +100,4 @@ nginx 内置的 `ngx_http_auth_basic_module` 由于使用了非对称加密存�
 
 [上一级](../lib_hustngx.md)
 
-[根目录](../../index.md)
+[回首页](../../index.md)

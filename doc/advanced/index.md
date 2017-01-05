@@ -12,4 +12,4 @@
 * [`sync`](sync.md)
 * [`upgrade`](upgrade.md)
 
-[根目录](../index.md)
+[回首页](../index.md)

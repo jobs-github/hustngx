@@ -75,4 +75,4 @@ hustngx包含如下组件：
 
 **当前 hustngx 支持的 nginx 版本为 1.10.0 stable version**
 
-[根目录](../index.md)
+[回首页](../index.md)

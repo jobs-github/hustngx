@@ -15,4 +15,4 @@ nginx 模块各个 `handler` 所处理的命令的唯一标识符。
 
 [上一级](../ngx_wizard.md)
 
-[根目录](../../index.md)
+[回首页](../../index.md)

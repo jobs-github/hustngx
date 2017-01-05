@@ -15,4 +15,4 @@ nginx 模块名称，由 `<module-str>` 指定。
 
 [上一级](../ngx_wizard.md)
 
-[根目录](../../index.md)
+[回首页](../../index.md)

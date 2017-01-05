@@ -21,4 +21,4 @@ nginx 模块命令处理器。`<key-str>` 包含如下字段：
 
 [上一级](../ngx_wizard.md)
 
-[根目录](../../index.md)
+[回首页](../../index.md)

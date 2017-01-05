@@ -15,4 +15,4 @@ nginx 模块各个 `handler` 所支持的 http 方法列表。每一个子项都
 
 [上一级](../ngx_wizard.md)
 
-[根目录](../../index.md)
+[回首页](../../index.md)
