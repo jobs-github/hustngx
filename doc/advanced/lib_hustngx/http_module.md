@@ -18,14 +18,9 @@ nginx 内置的 `ngx_http_auth_basic_module` 由于使用了非对称加密存�
 
 ### `ngx_http_peer_selector_module` ###
 * `ngx_http_addon_def.h`
-* `ngx_http_peer_selector.h`
 * `ngx_http_peer_selector_module.c`
 
-[includes](../ngx_wizard/includes.md) 一节中描述过该模块的功能。
-
-如果想发挥 `subrequest` 的最大效用，必须获得 `backend` 节点选择的控制权，因此 **大多数情况下，建议启用此模块** 。
-
-如果你想将控制权临时交还给 nginx 内核，可以参考 [`use_round_robin`](../ngx_wizard/use_round_robin.md) 的做法。
+[sequential_subrequests](../sequential_subrequests.md) 一节中描述过该模块的功能。
 
 `ngx_http_addon_def.h` 属于接口文件，其实现将由 `hustngx` 自动生成。
 
