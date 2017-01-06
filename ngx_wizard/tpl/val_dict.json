@@ -1,0 +1,5 @@
+{
+    "int": "ngx_atoi(val.data, val.len)",
+    "string": "ngx_http_make_str(&val, r->pool)",
+    "bool": "ngx_http_decode_bool(&val)"
+}

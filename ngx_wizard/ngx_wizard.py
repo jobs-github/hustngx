@@ -10,6 +10,7 @@ import json
 
 TYPE = 0
 NAME = 1
+VAL  = 2
 
 FILTER = '@null_string_place_holder'
 join_lines = lambda lines, dim: string.join(filter(lambda item: -1 == item.find(FILTER), lines), dim)
@@ -29,7 +30,10 @@ def write_file(path, data):
 use_upstream = lambda handler: 'upstream' in handler and None != handler['upstream']
 get_uri = lambda handler: handler['uri'].replace('/', '_')
 substitute_tpls = lambda tpls, vars: join_lines([tpl.substitute(vars) for tpl in tpls], '')
-get_ctx = lambda md, handler: '%s_%s_ctx_t' % (md, get_uri(handler))
+generator = lambda fmt: lambda md, handler: fmt % (md, get_uri(handler))
+get_ctx = generator('%s_%s_ctx_t')
+get_args = generator('%s_%s_args_t')
+get_decoder = generator('%s_decode_%s_args')
 
 def load_templates():
     cwd = os.path.split(os.path.realpath(__file__))[0]
@@ -50,8 +54,10 @@ def load_templates():
 
 tpls = load_templates()
 type_dict = json.loads(tpls['type_dict'].template)
+val_dict = json.loads(tpls['val_dict'].template)
 fmts = json.loads(tpls['fmt'].template)
 consts = json.loads(tpls['consts'].template)
+get_type = lambda t: type_dict[t] if t in type_dict else t
 
 def gen_config(addon, md, handlers):
     __gen_handler = lambda md, uri: ('    $ngx_addon_dir/%s_%s_handler.c\\') % (md, uri)
@@ -68,9 +74,8 @@ def gen_tm():
 def gen_head_frame(md, submd, str):
     return tpls['header'].substitute({'var_head_def': '__%s_%s_%s_h__' % (md, submd, gen_tm()), 'var_str': str})
 def gen_utils(addon, md, has_shm_dict, has_peer_sel, has_http_fetch, mcf, upstream_name):
-    __get_type = lambda t: type_dict[t] if t in type_dict else t
     __gen_mcf = lambda md, mcf: tpls['main_conf'].substitute({
-        'var_items': merge(['    %s %s;' % (__get_type(item[TYPE]), item[NAME]) for item in mcf]) if len(mcf) > 0 else '',
+        'var_items': merge(['    %s %s;' % (get_type(item[TYPE]), item[NAME]) for item in mcf]) if len(mcf) > 0 else '',
         'var_mcf_t': consts['mcf_fmt'] % md,
         'var_get_mcf': consts['get_mcf_fmt'] % md
         })
@@ -114,6 +119,18 @@ def gen_handler_imp(addon, md, handler):
         key in handler['upstream'] and handler['upstream'][key])
     __use_parallel = __upstream_has_key('parallel_subrequests')
     __use_sequential = __upstream_has_key('sequential_subrequests')
+    __gen_args_decoder = lambda md, handler: tpls['decode_args'].substitute({
+        'var_fields': merge(['    %s %s;' % (type_dict[arg[TYPE]], arg[NAME]) for arg in handler['args']]),
+        'var_flags': merge(['    ngx_bool_t has_%s;' % arg[NAME] for arg in handler['args']]),
+        'var_arg_t': get_args(md, handler),
+        'var_decoder': get_decoder(md, handler),
+        'var_reset': merge(['    args->%s = %s;' % (arg[NAME], arg[VAL]) if len(arg) > VAL else FILTER for arg in handler['args']]),
+        'var_impl': merge([tpls['decode_arg'].substitute({
+            'var_key': arg[NAME].upper(),
+            'var_field': arg[NAME],
+            'var_val': val_dict[arg[TYPE]]
+            }) for arg in handler['args']]),
+        }) if 'args' in handler else FILTER
     __gen_ctx = lambda md, handler: tpls['parallel_ctx'].substitute({
             'var_ctx_t': get_ctx(md, handler)
         }) if __use_parallel(handler) else substitute_tpls(tpls['upstream_ctx'], {
@@ -196,6 +213,7 @@ def gen_handler_imp(addon, md, handler):
     write_file('%s/%s_%s_handler.c' % (addon, md, get_uri(handler)), merge([
         '#include "%s_handler.h"' % md,
         '',
+        __gen_args_decoder(md, handler),
         __gen_ctx(md, handler),
         __gen_check_parameter(),
         gen_parallel_imp(__use_parallel, md, handler),
