@@ -33,7 +33,7 @@ substitute_tpls = lambda tpls, vars: join_lines([tpl.substitute(vars) for tpl in
 generator = lambda fmt: lambda md, handler: fmt % (md, get_uri(handler))
 get_ctx = generator('%s_%s_ctx_t')
 get_args = generator('%s_%s_args_t')
-get_decoder = generator('%s_decode_%s_args')
+get_decoder = generator('%s_%s_decode_args')
 
 def load_templates():
     cwd = os.path.split(os.path.realpath(__file__))[0]

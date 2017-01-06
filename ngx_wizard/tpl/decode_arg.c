@@ -2,4 +2,5 @@
     if (NGX_OK == ngx_http_arg(r, $var_key.data, $var_key.len, &val))
     {
         args->$var_field = $var_val;
+        args->has_$var_field = true;
     }
