@@ -30,7 +30,17 @@ ngx_wizard
         ],
         "handlers":
         [
-            
+            {
+                "uri": "test",
+                "args":
+                [
+                    ["int", "int_val", "-1"],
+                    ["bool", "bool_val", "true"],
+                    ["size", "size_val", "1024"],
+                    ["time", "time_val", "60"],
+                    ["string", "str_val"]
+                ]
+            },
             {
                 "uri": "put",
                 "action_for_request_body": "read",
@@ -79,6 +89,8 @@ ngx_wizard
 [`handlers`](ngx_wizard/handlers.md)  
 　　[`handler`](ngx_wizard/handler.md)  
 　　　　[`uri`](ngx_wizard/uri.md)  
+　　　　[`args`](ngx_wizard/args.md)  
+　　　　　　[`arg`](ngx_wizard/arg.md)  
 　　　　[`action_for_request_body`](ngx_wizard/action_for_request_body.md)  
 　　　　[`methods`](ngx_wizard/methods.md)  
 　　　　　　[`method`](ngx_wizard/method.md)  
