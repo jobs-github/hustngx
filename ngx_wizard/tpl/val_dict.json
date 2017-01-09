@@ -1,5 +1,7 @@
 {
     "int": "ngx_atoi(val.data, val.len)",
-    "string": "ngx_http_make_str(&val, r->pool)",
-    "bool": "ngx_http_decode_bool(&val)"
+    "size": "ngx_parse_size(&val)",
+    "time": "ngx_parse_time(&val, 0)",
+    "bool": "ngx_http_decode_bool(&val)",
+    "string": "ngx_http_make_str(&val, r->pool)"
 }

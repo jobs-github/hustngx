@@ -412,6 +412,7 @@ def gen_addon(uri):
 
 def parse_shell(argv):
     return gen_addon(argv[1]) if 2 == len(argv) else False
+
 if __name__ == "__main__":
     if not parse_shell(sys.argv):
         manual()
