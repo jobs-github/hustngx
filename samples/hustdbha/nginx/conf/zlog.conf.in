@@ -9,4 +9,4 @@ file perms = 755
 default = "[%d] [%V] | %m%n"
 
 [rules]
-*.*             "/data/hustdbha/logs/%M(sync_dir)/%d(%Y-%m-%d-%H-%M).log"; default
+*.*             "@@PREFIX_HUSTDBHA@@/logs/%M(sync_dir)/%d(%Y-%m-%d-%H-%M).log"; default

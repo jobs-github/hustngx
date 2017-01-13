@@ -4,15 +4,15 @@
     "listen": 8080,
     "keepalive_timeout": 540,
     "keepalive": 32768,
-    "http_basic_auth_file": "/data/hustmqha/conf/htpasswd",
-    "nginx_root": "/data/hustmqha/html",
+    "http_basic_auth_file": "@@PREFIX_HUSTMQHA@@/conf/htpasswd",
+    "nginx_root": "@@PREFIX_HUSTMQHA@@/html",
     "auth_filter": ["version", "get", "sub"],
     "local_cmds":
     [
         "version", "autost", "stat_all", "stat",
-        "put", "get", "ack", "timeout", 
-        "lock", "max", "purge", 
-        "worker", "evget", "evsub", 
+        "put", "get", "ack", "timeout",
+        "lock", "max", "purge",
+        "worker", "evget", "evsub",
         "sub", "pub", "do_get", "do_post",
         "do_get_status", "do_post_status"
     ],
@@ -45,7 +45,7 @@
     ],
     "proxy":
     {
-        "health_check": 
+        "health_check":
         [
             "check interval=5000 rise=1 fall=3 timeout=5000 type=http",
             "check_http_send \"GET /status.html HTTP/1.1\\r\\n\\r\\n\"",
