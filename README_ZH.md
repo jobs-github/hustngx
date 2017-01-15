@@ -46,7 +46,7 @@ hustngx 是一套用于 nginx 模块开发的自动化代码生成框架。
 
 - 需要一套 nginx 模块开发的实用的基础函数库
 
-- 需要一套量产 nginx 模块的自动化工具
+- 需要一套 **量产** nginx 模块的自动化工具
 
 - 不想被 nginx 模块开发中 subrequest 的各种坑所折磨
 
@@ -56,21 +56,7 @@ hustngx 是一套用于 nginx 模块开发的自动化代码生成框架。
 
 ## hustngx有什么？ ##
 
-hustngx包含如下组件：
-
 ![modules](res/modules_zh.png)
-
-- **lib_hustngx**: nginx 模块开发基础函数库
-- **patch**: nginx 源代码补丁文件
-- **third_party**: nginx 第三方模块
-- **ngx_wizard**: nginx 模块代码生成工具
-- **deploygen**: nginx 一键部署脚本生成工具
-- **sync**: 文件同步工具
-- **upgrade**: nginx 平滑升级工具
-- **hustngx**: 对以上所有工具的整合(从 lib_hustngx 到 upgrade)
-- **jsoncgen**: 基于json的对象代码生成器
-
-其中 ngx_wizard, jsoncgen，deploygen，sync, upgrade 均可作为独立的工具使用。
 
 ## 限制 ##
 
