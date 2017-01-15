@@ -74,7 +74,7 @@ jsoncgen
 
 	* 建议定义 [`members`](jsoncgen/members.md)，把 [`array_methods`](jsoncgen/array_methods.md) 作为可选字段。
 
-	* 特殊情况下，可以只定义 [`array_methods`](jsoncgen/array_methods.md) ，用于生成基本数据类型的 **数组** 相关的函数实现，可参考 [`cjson_serialization`](../lib_hustngx/core_module.md) ， **这种做法你不会用到，因为这只适用于基本类型的数组代码生成，不适用于自定义类型** 。
+	* 特殊情况下，可以只定义 [`array_methods`](jsoncgen/array_methods.md) ，用于生成基本数据类型的 **数组** 相关的函数实现，可参考 [`cjson_serialization`](lib_hustngx/core_module.md) ， **这种做法你不会用到，因为这只适用于基本类型的数组代码生成，不适用于自定义类型** 。
 
 * [`methods`](jsoncgen/methods.md) 和 [`array_methods`](jsoncgen/array_methods.md) 至少要定义一个，不可以两个都忽略。
 
