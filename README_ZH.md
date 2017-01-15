@@ -3,9 +3,6 @@
 # hustngx - 为懒人打造的nginx模块开发利器 #
 ![logo](res/logo.png)
 
-以下是 `hustngx` 的设计图：
-![design](res/design.png)
-
 ## hustngx是什么？ ##
 
 hustngx 是一套用于 nginx 模块开发的自动化代码生成框架。
@@ -55,9 +52,13 @@ hustngx 是一套用于 nginx 模块开发的自动化代码生成框架。
 
 那么 hustngx 就是为你量身打造的工具链，在它的帮助下，**你的生产力将如虎添翼**。
 
+![hustngx](res/hustngx.png)
+
 ## hustngx有什么？ ##
 
 hustngx包含如下组件：
+
+![modules](res/modules_zh.png)
 
 - **lib_hustngx**: nginx 模块开发基础函数库
 - **patch**: nginx 源代码补丁文件
