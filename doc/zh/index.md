@@ -1,16 +1,9 @@
 hustngx
 ==
 
-*Author: Jobs*  
-*Email: yao050421103@gmail.com*
-
-**友情提示：请千万别跳过第一章，尤其是第一小节**  
-
 目录
 ==
 
-* [简介](intro/index.md)
-* [快速入门](guide/index.md)
 * [进阶](advanced/index.md)
 	* [`sequential subrequests`](advanced/sequential_subrequests.md)
 	* [`parallel subrequests`](advanced/parallel_subrequests.md)
