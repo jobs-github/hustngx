@@ -24,7 +24,7 @@ nginx 内部定义了如下几个关键的宏：
 
     kill -USR2 $old_pid
 
-nginx 会将 `$old_pid` 对应的 pid 文件（通常为 `logs/nginx.pid`）重命名，并利用最新的可执行文件启动新的 `master` 进程；
+nginx 会将 `$old_pid` 对应的 pid 文件（通常为 `logs/nginx.pid`）重命名，并利用最新的可执行文件启动新的 `master` 进程。
 
 之后向 nginx 发送 `WINCH` 信号：
 
