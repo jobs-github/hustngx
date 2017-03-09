@@ -1,17 +1,17 @@
 `ssh_cmds`
 ----------
 
-**类型:** `array`
+**Type:** `array`
 
-**值:** `["<cmd-str>", "<cmd-str>", ... , "<cmd-str>"]`
+**Value:** `["<cmd-str>", "<cmd-str>", ... , "<cmd-str>"]`
 
-**属性:** [`key`](key.md) 如果定义为 `ssh` ，则 [`value`](value.md) 只能是 [`ssh_cmds`](ssh_cmds.md)
+**Attribute:** if [`key`](key.md) is set as `ssh`, then [`value`](value.md) should be [`ssh_cmds`](ssh_cmds.md) only
 
-**父节点:** 无
+**Parent:** None
 
-`ssh` 远程执行的命令列表。`<cmd-str>` 代表标准的 linux 命令。
+List of commands executed by `ssh`. `<cmd-str>` is the standard linux command.  
 
-如果需要执行复杂的命令，例如带有条件分支或者循环，可以写成一个单独的脚本，然后在 `<cmd-str>` 列表中加入脚本的执行代码：
+If you need to execute complicated commands including conditional-branch or loop-body, please write a standalone script and add execute it by `<cmd-str>`:  
 
     [
         {
@@ -35,11 +35,11 @@
         ......
 	]
 
-**特殊标签:** `@index_place_holder`
+**Special tag:** `@index_place_holder`
 
-如果在 `<cmd-str>` 中配置了 `@index_place_holder` ，则 `deploygen` 会根据 `host_file` 中各个机器出现的次序 **依次将该标签替换为对应的序号** 。
+If `<cmd-str>` is configured with `@index_place_holder`, `deploygen` will **replace the tag with the sequence number in order** of machines stored in `host_file`.  
 
-例如，将 `deploy.json` 配置为如下内容：
+For instance, configure `deploy.json` like this:  
 
     [
         {
@@ -79,17 +79,17 @@
         }
     ]
 
-编辑 `host.txt` 内容如下：
+Edit `host.txt` as below:  
 
     192.168.1.101
     192.168.1.102
     192.168.1.103
 
-运行如下命令：
+Run command:  
 
     python deploygen.py jobs deploy.json host.txt > deploy.sh
 
-则生成的脚本内容如下：
+The output script:  
 
     #!/bin/sh
     ##############################################################################
@@ -187,8 +187,8 @@
     
     echo 'finish!'
 
-可以看到， `@index_place_holder` 依次被替换为对应的序号。
+As you see, `@index_place_holder` is replaced by the sequence number in order.  
 
-[回上页](../deploygen.md)
+[Previous](../deploygen.md)
 
-[回首页](../../index.md)
+[Home](../../index.md)
