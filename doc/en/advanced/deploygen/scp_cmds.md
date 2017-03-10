@@ -5,7 +5,7 @@
 
 **Value:** `[<scp_cmd>, <scp_cmd>, ... , <scp_cmd>]`
 
-**Attribute:** if [`key`](key.md) is set as `scp`, then [`value`](value.md) should be [`scp_cmds`](scp_cmds.md) only
+**Attribute:** If [`key`](key.md) is set as `scp`, then [`value`](value.md) should be [`scp_cmds`](scp_cmds.md) only
 
 **Parent:** None
 

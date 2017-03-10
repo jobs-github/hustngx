@@ -5,7 +5,7 @@
 
 **Value:** `["local": <file-url>, "remote": <file-url>]`
 
-**Attribute:** see [`scp_cmds`](scp_cmds.md)
+**Attribute:** Refer to [`scp_cmds`](scp_cmds.md)
 
 **Parent:** [`scp_cmds`](scp_cmds.md)
 

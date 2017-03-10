@@ -5,7 +5,7 @@
 
 **Value:** `["<cmd-str>", "<cmd-str>", ... , "<cmd-str>"]`
 
-**Attribute:** if [`key`](key.md) is set as `ssh`, then [`value`](value.md) should be [`ssh_cmds`](ssh_cmds.md) only
+**Attribute:** If [`key`](key.md) is set as `ssh`, then [`value`](value.md) should be [`ssh_cmds`](ssh_cmds.md) only
 
 **Parent:** None
 

@@ -5,7 +5,7 @@
 
 **Value:** `scp | ssh`
 
-**Attribute:** required
+**Attribute:** Required
 
 **Parent:** None
 
