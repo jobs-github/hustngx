@@ -9,7 +9,7 @@
 
 **父节点:** 无
 
-`local_cmds` 中关闭 `http_basic_auth_module` 验证的命令列表。
+`local_cmds` 中关闭 `http basic authentication` 的命令列表。
 
 例如，你需要 `test` 无需验证即可访问 nginx， 则可以将它添加到 `auth_filter` 中，最终生成的 `nginx.conf` 该字段的内容如下：
 
