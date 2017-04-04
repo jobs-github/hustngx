@@ -1,4 +1,4 @@
-parallel subrequests
+Parallel Subrequests
 --
 
 In this chapter, we will introduce the details on `parallel subrequests`. Before reading this chapter, please make sure you've understood the contents in [`sequential subrequests`](sequential_subrequests.md).  

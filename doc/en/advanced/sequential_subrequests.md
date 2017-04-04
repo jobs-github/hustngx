@@ -1,4 +1,4 @@
-sequential subrequests
+Sequential Subrequests
 --
 
 In this chapter, we will introduce the details on `sequential subrequests`.  
