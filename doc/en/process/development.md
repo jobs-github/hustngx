@@ -12,7 +12,7 @@ Nginx Module Development Process
 - Refer to [jsoncgen](../advanced/jsoncgen.md) for configuration on communication message  
 - Refer to [appendix](../appendix/project.md) for nginx project & configuration  
 - **Unit-test, pressure-test and cross-test** is the key to ensure the availability of service. **Any step can not be omitted**.  
-    - Unit-test is used to ensure availability of service's basic functions. You can **go through every logical branch of the program** by step debugging.  
+    - Unit-test is used to ensure availability of service's basic functions. You can **go through every logical branch of the program** by single-step debugging.  
     - Pressure-test is used to ensure that **there is no problem of any leakage of resources** in the case of repeated processing of a large number of requests. Pressure-test scripts are usually done by person who developed the module.  
     - The cross-test are usually performed by **third-parties** (can not be performed by the person who developed the module) to ensure the fault-tolerance and high availability of service.  
 - The process on submitting code to repository is easily overlooked by developers.  
