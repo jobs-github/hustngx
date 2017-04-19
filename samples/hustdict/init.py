@@ -10,6 +10,7 @@ def init_hustdict(argv):
     root = os.path.dirname(os.path.dirname(cwd))
     os.system('cd ../../ && python hustngx.py nginx-1.12.0.tar.gz samples/schema/hustdict.json')
     items = [
+        'auto/modules',
         'src/addon', 
         'conf/nginx.json', 
         'conf/nginx.conf', 
