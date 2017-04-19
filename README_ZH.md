@@ -60,7 +60,7 @@ hustngx 是一套用于 nginx 模块开发的自动化代码生成框架。
 
 ## 限制 ##
 
-**当前 hustngx 支持的 nginx 版本为 1.10.0 stable version**
+**当前 hustngx 支持的 nginx 版本为 1.12.0 stable version**
 
 ## hustngx怎么用？ ##
 
@@ -78,7 +78,7 @@ hustngx 是一套用于 nginx 模块开发的自动化代码生成框架。
 
 运行如下命令：
 
-    python hustngx.py nginx-1.10.0.tar.gz hello.json
+    python hustngx.py nginx-1.12.0.tar.gz hello.json
 
 此时可以看到生成了 `hustmqha` 目录，进入该目录，可以看到如下文件（目录）：
 
@@ -120,8 +120,8 @@ hustngx 是一套用于 nginx 模块开发的自动化代码生成框架。
 可以看到服务器返回如下内容：
 
     HTTP/1.1 200 OK
-	Server: nginx/1.10.0
-	Date: Tue, 03 Nov 2015 03:54:37 GMT
+	Server: nginx/1.12.0
+	Date: Tue, 18 Apr 2017 03:54:37 GMT
 	Content-Type: text/plain
 	Content-Length: 12
 	Connection: keep-alive

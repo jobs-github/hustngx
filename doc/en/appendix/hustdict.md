@@ -33,7 +33,7 @@ Path: `hustngx/samples/schema/hustdict.json`
 
 Run command:  
 
-    python hustngx.py nginx-1.10.0.tar.gz samples/schema/hustdict.json
+    python hustngx.py nginx-1.12.0.tar.gz samples/schema/hustdict.json
 
 It will generate the project template: `hustngx/samples/schema/hustdict`
 

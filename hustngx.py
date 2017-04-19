@@ -20,8 +20,8 @@ def manual():
     usage:
         python hustngx.py [nginx] [conf] [user]
     sample:
-        python hustngx.py nginx-1.10.0.tar.gz ngx_wizard.json
-        python hustngx.py nginx-1.10.0.tar.gz ngx_wizard.json jobs
+        python hustngx.py nginx-1.12.0.tar.gz ngx_wizard.json
+        python hustngx.py nginx-1.12.0.tar.gz ngx_wizard.json jobs
         """
 
 def load_templates():

@@ -8,7 +8,7 @@ import shutil
 def init_hustdict(argv):
     cwd = os.path.dirname(os.path.abspath(argv[0]))
     root = os.path.dirname(os.path.dirname(cwd))
-    os.system('cd ../../ && python hustngx.py nginx-1.10.0.tar.gz samples/schema/hustdict.json')
+    os.system('cd ../../ && python hustngx.py nginx-1.12.0.tar.gz samples/schema/hustdict.json')
     items = [
         'src/addon', 
         'conf/nginx.json', 

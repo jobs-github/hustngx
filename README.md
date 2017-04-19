@@ -52,7 +52,7 @@ Then hustngx is the right tool kit tailored for you. You will **work faster and 
 
 ## Limitation ##
 
-**The latest hustngx supports nginx 1.10.0 stable version**
+**The latest hustngx supports nginx 1.12.0 stable version**
 
 ## Usage ##
 
@@ -70,7 +70,7 @@ Untar `hustngx.tar.gz`, cd to folder `hustngx`, edit file `hello.json` and add c
 
 Run command:  
 
-    python hustngx.py nginx-1.10.0.tar.gz hello.json
+    python hustngx.py nginx-1.12.0.tar.gz hello.json
 
 Then folder `hustmqha` will be generated. switch to this folder and you will see the following files:  
 
@@ -112,8 +112,8 @@ Input the following test command:
 Then server will output the following information:  
 
     HTTP/1.1 200 OK
-	Server: nginx/1.10.0
-	Date: Tue, 03 Nov 2015 03:54:37 GMT
+	Server: nginx/1.12.0
+	Date: Tue, 18 Apr 2017 03:54:37 GMT
 	Content-Type: text/plain
 	Content-Length: 12
 	Connection: keep-alive

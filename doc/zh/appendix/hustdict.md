@@ -33,7 +33,7 @@
 
 运行如下命令：
 
-    python hustngx.py nginx-1.10.0.tar.gz samples/schema/hustdict.json
+    python hustngx.py nginx-1.12.0.tar.gz samples/schema/hustdict.json
 
 即可生成对应的工程模板：`hustngx/samples/schema/hustdict`
 

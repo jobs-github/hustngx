@@ -8,7 +8,7 @@ import shutil
 def init_hustlog(argv):
     cwd = os.path.dirname(os.path.abspath(argv[0]))
     root = os.path.dirname(os.path.dirname(cwd))
-    os.system('cd ../../ && python hustngx.py nginx-1.10.0.tar.gz samples/schema/hustlog.json')
+    os.system('cd ../../ && python hustngx.py nginx-1.12.0.tar.gz samples/schema/hustlog.json')
     items = [
         'auto/install',
         'auto/modules',
