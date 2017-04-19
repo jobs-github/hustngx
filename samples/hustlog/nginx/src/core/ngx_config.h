@@ -128,6 +128,19 @@ typedef intptr_t        ngx_flag_t;
 #define NGX_MAX_UINT32_VALUE  (uint32_t) 0xffffffff
 #define NGX_MAX_INT32_VALUE   (uint32_t) 0x7fffffff
 
+
+#if (NGX_COMPAT)
+
+#define NGX_COMPAT_BEGIN(slots)  uint64_t spare[slots];
+#define NGX_COMPAT_END
+
+#else
+
+#define NGX_COMPAT_BEGIN(slots)
+#define NGX_COMPAT_END
+
+#endif
+
 #undef SIG_RELOAD_CONFIGURATION
 #define SIG_RELOAD_CONFIGURATION SIGUSR1
 
