@@ -20,19 +20,19 @@ def init_hustdbha(argv):
         'conf/hustdbtable.json.decr',
         'conf/hustdbtable.json.incr',
         'conf/nginx.conf', 
-        'conf/nginx.json', 
+        'conf/nginx.json.in', 
         'conf/private.pem', 
         'conf/public.pem', 
         'conf/sample.hustdbtable.json', 
         'conf/sample.hustdbtable.json.decr', 
         'conf/sample.hustdbtable.json.incr', 
-        'conf/zlog.conf', 
+        'conf/zlog.conf.in', 
         'src/addon',
         'src/core/nginx.c',
         'src/core/ngx_config.h',
         'src/os/unix/ngx_process_cycle.c',
         'test',
-        'Config.sh'
+        'Config.sh.in'
         ]
     src_dir = os.path.join(root, 'samples/hustdbha/nginx')
     dst_dir = os.path.join(root, 'samples/schema/hustdb_ha/nginx')

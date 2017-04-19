@@ -15,10 +15,10 @@ def init_hustmqha(argv):
         'conf/htpasswd',
         'conf/htpasswd.py',
         'conf/nginx.conf', 
-        'conf/nginx.json', 
+        'conf/nginx.json.in', 
         'src/addon',
         'test',
-        'Config.sh'
+        'Config.sh.in'
         ]
     src_dir = os.path.join(root, 'samples/hustmqha/nginx')
     dst_dir = os.path.join(root, 'samples/schema/hustmq_ha/nginx')
