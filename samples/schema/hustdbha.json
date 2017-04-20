@@ -17,7 +17,6 @@
         ["time", "fetch_connect_timeout"],
         ["time", "fetch_send_timeout"],
         ["time", "fetch_read_timeout"],
-        ["time", "fetch_timeout"],
         ["size", "fetch_buffer_size"],
         ["int", "sync_port"],
         ["string", "sync_status_uri"],
