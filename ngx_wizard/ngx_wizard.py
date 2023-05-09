@@ -21,7 +21,7 @@ def manual():
     usage:
         python ngx_wizard.py [conf]
     sample:
-        python ngx_wizard.py ngx_wizard.json
+        python ngx_wizard.py sample.json
         """
 def write_file(path, data):
     with open(path, 'w') as f:

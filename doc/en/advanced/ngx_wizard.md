@@ -6,7 +6,7 @@ ngx_wizard
     usage:
         python ngx_wizard.py [conf]
     sample:
-        python ngx_wizard.py ngx_wizard.json
+        python ngx_wizard.py sample.json
 
 ### Configuration ###
 
