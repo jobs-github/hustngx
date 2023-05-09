@@ -699,7 +699,7 @@ static ngx_int_t ngx_http_hustmq_ha_init_process(ngx_cycle_t * cycle)
 
 static void ngx_http_hustmq_ha_exit_process(ngx_cycle_t * cycle)
 {
-    __uninit_addon_handler_dict(hustmq_ha_handler_dict, hustmq_ha_handler_dict_len);
+    __uninit_addon_handler_dict();
     // TODO: uninitialize in worker process
 }
 

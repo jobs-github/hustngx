@@ -1,5 +1,5 @@
 $var_declare
 {
-    __uninit_addon_handler_dict($var_dict, $var_dict_len);
+    __uninit_addon_handler_dict();
     // TODO: uninitialize in worker process
 }

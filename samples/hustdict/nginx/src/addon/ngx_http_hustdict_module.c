@@ -224,7 +224,7 @@ static ngx_int_t ngx_http_hustdict_init_process(ngx_cycle_t * cycle)
 
 static void ngx_http_hustdict_exit_process(ngx_cycle_t * cycle)
 {
-    __uninit_addon_handler_dict(hustdict_handler_dict, hustdict_handler_dict_len);
+    __uninit_addon_handler_dict();
     // TODO: uninitialize in worker process
 }
 

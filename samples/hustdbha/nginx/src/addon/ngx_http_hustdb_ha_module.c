@@ -740,7 +740,7 @@ static ngx_int_t ngx_http_hustdb_ha_init_process(ngx_cycle_t * cycle)
 
 static void ngx_http_hustdb_ha_exit_process(ngx_cycle_t * cycle)
 {
-    __uninit_addon_handler_dict(hustdb_ha_handler_dict, hustdb_ha_handler_dict_len);
+    __uninit_addon_handler_dict();
     // TODO: uninitialize in worker process
 }
 
